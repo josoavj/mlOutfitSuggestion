@@ -1,0 +1,12 @@
+[
+  {
+    "title": "Daily Work Meeting",
+    "category": "work",
+    "tags": ["office"]
+  },
+  {
+    "title": "Client presentation",
+    "category": "meeting",
+    "tags": ["formal"]
+  }
+]
