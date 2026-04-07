@@ -1,0 +1,56 @@
+[
+  {
+    "id": "office_chic",
+    "label": "Office Chic",
+    "styles": ["classic", "minimalist"],
+    "occasions": ["work", "meeting"],
+    "weather": ["mild", "cold"],
+    "genders": ["female", "male", "unisex"],
+    "body_shapes": ["hourglass", "rectangle", "pear", "inverted_triangle", "oval"]
+  },
+  {
+    "id": "smart_casual",
+    "label": "Smart Casual",
+    "styles": ["casual", "minimalist"],
+    "occasions": ["work", "casual"],
+    "weather": ["mild", "hot"],
+    "genders": ["female", "male", "unisex"],
+    "body_shapes": ["hourglass", "rectangle", "pear", "inverted_triangle", "oval"]
+  },
+  {
+    "id": "sport_active",
+    "label": "Sport Active",
+    "styles": ["sport", "casual"],
+    "occasions": ["sport", "outdoor"],
+    "weather": ["mild", "hot", "rainy"],
+    "genders": ["female", "male", "unisex"],
+    "body_shapes": ["hourglass", "rectangle", "pear", "inverted_triangle", "oval"]
+  },
+  {
+    "id": "elegant_evening",
+    "label": "Elegant Evening",
+    "styles": ["elegant", "classic"],
+    "occasions": ["event", "date"],
+    "weather": ["mild", "cold"],
+    "genders": ["female", "male", "unisex"],
+    "body_shapes": ["hourglass", "rectangle", "pear", "inverted_triangle", "oval"]
+  },
+  {
+    "id": "rain_ready",
+    "label": "Rain Ready",
+    "styles": ["practical", "casual"],
+    "occasions": ["work", "casual", "outdoor"],
+    "weather": ["rainy", "cold"],
+    "genders": ["female", "male", "unisex"],
+    "body_shapes": ["hourglass", "rectangle", "pear", "inverted_triangle", "oval"]
+  },
+  {
+    "id": "summer_light",
+    "label": "Summer Light",
+    "styles": ["casual", "elegant", "minimalist"],
+    "occasions": ["casual", "event", "date"],
+    "weather": ["hot"],
+    "genders": ["female", "male", "unisex"],
+    "body_shapes": ["hourglass", "rectangle", "pear", "inverted_triangle", "oval"]
+  }
+]
