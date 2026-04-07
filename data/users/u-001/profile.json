@@ -1,0 +1,13 @@
+{
+  "user_id": "u-001",
+  "gender": "female",
+  "age": 29,
+  "height_cm": 168,
+  "style_preferences": ["minimalist", "elegant"],
+  "body_measurements": {
+    "shoulders_cm": 95,
+    "waist_cm": 70,
+    "hips_cm": 98
+  },
+  "location": "Lyon"
+}
