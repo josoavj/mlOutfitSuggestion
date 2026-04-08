@@ -208,6 +208,10 @@ curl -X POST "http://127.0.0.1:8000/recommend/context" \
     "gender": "female",
     "age": 29,
     "height_cm": 168,
+    "clothing_size": "m",
+    "top_size": "m",
+    "bottom_size": "m",
+    "shoe_size": "40",
     "style_preferences": ["minimalist", "elegant"],
     "body_measurements": {
       "shoulders_cm": 95,
@@ -233,6 +237,10 @@ curl -X POST "http://127.0.0.1:8000/recommend" \
     "gender": "female",
     "age": 29,
     "height_cm": 168,
+    "clothing_size": "m",
+    "top_size": "m",
+    "bottom_size": "m",
+    "shoe_size": "40",
     "style_preferences": ["minimalist", "elegant"],
     "body_measurements": {
       "shoulders_cm": 95,
@@ -254,3 +262,91 @@ curl -X POST "http://127.0.0.1:8000/recommend" \
 - Le jeu de donnees d'entrainement est synthetique (bootstrapping).
 - Pour la production, remplacer par de vraies interactions utilisateurs et feedback implicite/explicite.
 - Integrer une source meteo reelle et agenda reel pour MagicMirror.
+
+## Collecte feedback (donnees reelles)
+
+Endpoints:
+- `POST /feedback/event`
+- `POST /feedback/events`
+- `GET /feedback/stats`
+
+Exemple d'evenement:
+
+```json
+{
+  "session_id": "s-001",
+  "user_id": "u-001",
+  "outfit_id": "smart_casual",
+  "event_type": "impression",
+  "position": 0,
+  "gender": "female",
+  "age": 29,
+  "height_cm": 168,
+  "clothing_size": "m",
+  "top_size": "m",
+  "bottom_size": "m",
+  "shoe_size": "40",
+  "body_shape": "hourglass",
+  "style_preferences": ["minimalist", "elegant"],
+  "dominant_occasion": "work",
+  "weather_bucket": "rainy"
+}
+```
+
+## Entrainement avec donnees reelles
+
+Le trainer peut utiliser les feedbacks reels et fallback sur le synthetique.
+
+```bash
+python -m src.outfit_ml.train \
+  --prefer-real-data \
+  --real-feedback-log data/feedback/events.jsonl \
+  --min-real-samples 200 \
+  --split-mode time
+```
+
+Metriques ajoutees si `session_id` est present:
+- `precision_at_3`
+- `recall_at_3`
+- `ndcg_at_3`
+
+Exemple batch (session complete en un appel):
+
+```json
+{
+  "events": [
+    {
+      "session_id": "s-001",
+      "user_id": "u-001",
+      "outfit_id": "smart_casual",
+      "event_type": "impression",
+      "position": 0,
+      "gender": "female",
+      "age": 29,
+      "height_cm": 168,
+      "clothing_size": "m",
+      "top_size": "m",
+      "bottom_size": "m",
+      "shoe_size": "40",
+      "body_shape": "hourglass",
+      "style_preferences": ["minimalist", "elegant"],
+      "dominant_occasion": "work",
+      "weather_bucket": "rainy"
+    },
+    {
+      "session_id": "s-001",
+      "user_id": "u-001",
+      "outfit_id": "smart_casual",
+      "event_type": "selected",
+      "position": 0,
+      "gender": "female",
+      "age": 29,
+      "height_cm": 168,
+      "body_shape": "hourglass",
+      "style_preferences": ["minimalist", "elegant"],
+      "dominant_occasion": "work",
+      "weather_bucket": "rainy"
+    }
+  ]
+}
+```
