@@ -1,11 +1,13 @@
 from __future__ import annotations
 
+from datetime import datetime
 from typing import Literal
 
 from pydantic import BaseModel, Field
 
 
 Gender = Literal["female", "male", "non_binary", "unknown"]
+ClothingSize = Literal["xs", "s", "m", "l", "xl", "xxl", "unknown"]
 BodyShape = Literal[
     "hourglass",
     "rectangle",
@@ -38,6 +40,10 @@ class RecommendationRequest(BaseModel):
     gender: Gender = "unknown"
     age: int = Field(ge=10, le=100)
     height_cm: int = Field(ge=120, le=230)
+    clothing_size: ClothingSize = "unknown"
+    top_size: ClothingSize = "unknown"
+    bottom_size: ClothingSize = "unknown"
+    shoe_size: str = "unknown"
     style_preferences: list[str] = Field(default_factory=list)
     body_shape: BodyShape | None = None
     body_measurements: BodyMeasurements | None = None
@@ -52,6 +58,10 @@ class ContextRecommendationRequest(BaseModel):
     gender: Gender = "unknown"
     age: int = Field(ge=10, le=100)
     height_cm: int = Field(ge=120, le=230)
+    clothing_size: ClothingSize = "unknown"
+    top_size: ClothingSize = "unknown"
+    bottom_size: ClothingSize = "unknown"
+    shoe_size: str = "unknown"
     style_preferences: list[str] = Field(default_factory=list)
     body_shape: BodyShape | None = None
     body_measurements: BodyMeasurements | None = None
@@ -71,6 +81,10 @@ class UserProfile(BaseModel):
     gender: Gender = "unknown"
     age: int = Field(ge=10, le=100)
     height_cm: int = Field(ge=120, le=230)
+    clothing_size: ClothingSize = "unknown"
+    top_size: ClothingSize = "unknown"
+    bottom_size: ClothingSize = "unknown"
+    shoe_size: str = "unknown"
     style_preferences: list[str] = Field(default_factory=list)
     body_shape: BodyShape | None = None
     body_measurements: BodyMeasurements | None = None
@@ -142,3 +156,48 @@ class CameraRecommendationResponse(BaseModel):
     matched_user_id: str
     face_match: FaceMatch
     recommendation: RecommendationResponse
+
+
+FeedbackEventType = Literal["impression", "click", "selected", "dismissed"]
+
+
+class FeedbackEventRequest(BaseModel):
+    session_id: str
+    user_id: str
+    outfit_id: str
+    event_type: FeedbackEventType
+    timestamp: datetime | None = None
+    position: int | None = Field(default=None, ge=0)
+    gender: Gender = "unknown"
+    age: int = Field(ge=10, le=100)
+    height_cm: int = Field(ge=120, le=230)
+    clothing_size: ClothingSize = "unknown"
+    top_size: ClothingSize = "unknown"
+    bottom_size: ClothingSize = "unknown"
+    shoe_size: str = "unknown"
+    body_shape: BodyShape = "unknown"
+    style_preferences: list[str] = Field(default_factory=list)
+    dominant_occasion: str = "casual"
+    weather_bucket: str = "mild"
+
+
+class FeedbackEventResponse(BaseModel):
+    status: str
+    event_id: str
+
+
+class FeedbackStatsResponse(BaseModel):
+    total_events: int
+    unique_users: int
+    unique_sessions: int
+    event_type_counts: dict[str, int]
+
+
+class FeedbackBatchRequest(BaseModel):
+    events: list[FeedbackEventRequest] = Field(default_factory=list, min_length=1)
+
+
+class FeedbackBatchResponse(BaseModel):
+    status: str
+    created_count: int
+    event_ids: list[str]
