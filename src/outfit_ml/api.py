@@ -13,6 +13,7 @@ from .context import (
     fetch_today_agenda_entries,
     fetch_user_profile,
 )
+from .feedback import append_feedback_event, append_feedback_events, feedback_stats
 from .recommend import OutfitRecommender
 from .schemas import (
     AutoRecommendationRequest,
@@ -23,6 +24,11 @@ from .schemas import (
     FaceEnrollResponse,
     FaceIdentifyRequest,
     FaceIdentifyResponse,
+    FeedbackEventRequest,
+    FeedbackEventResponse,
+    FeedbackBatchRequest,
+    FeedbackBatchResponse,
+    FeedbackStatsResponse,
     RecommendationRequest,
     RecommendationResponse,
 )
@@ -74,6 +80,10 @@ def recommend_from_context(request: ContextRecommendationRequest) -> Recommendat
         gender=request.gender,
         age=request.age,
         height_cm=request.height_cm,
+        clothing_size=request.clothing_size,
+        top_size=request.top_size,
+        bottom_size=request.bottom_size,
+        shoe_size=request.shoe_size,
         style_preferences=request.style_preferences,
         body_shape=request.body_shape,
         body_measurements=request.body_measurements,
@@ -110,6 +120,10 @@ def recommend_auto(request: AutoRecommendationRequest) -> RecommendationResponse
         gender=profile.gender,
         age=profile.age,
         height_cm=profile.height_cm,
+        clothing_size=profile.clothing_size,
+        top_size=profile.top_size,
+        bottom_size=profile.bottom_size,
+        shoe_size=profile.shoe_size,
         style_preferences=profile.style_preferences,
         body_shape=profile.body_shape,
         body_measurements=profile.body_measurements,
@@ -185,3 +199,24 @@ def recommend_from_camera(request: CameraRecommendationRequest) -> CameraRecomme
         face_match=best_match,
         recommendation=recommendation,
     )
+
+
+@app.post("/feedback/event", response_model=FeedbackEventResponse)
+def create_feedback_event(request: FeedbackEventRequest) -> FeedbackEventResponse:
+    event_id = append_feedback_event(request)
+    return FeedbackEventResponse(status="ok", event_id=event_id)
+
+
+@app.post("/feedback/events", response_model=FeedbackBatchResponse)
+def create_feedback_events(request: FeedbackBatchRequest) -> FeedbackBatchResponse:
+    event_ids = append_feedback_events(request.events)
+    return FeedbackBatchResponse(
+        status="ok",
+        created_count=len(event_ids),
+        event_ids=event_ids,
+    )
+
+
+@app.get("/feedback/stats", response_model=FeedbackStatsResponse)
+def get_feedback_stats() -> FeedbackStatsResponse:
+    return feedback_stats()
