@@ -1,0 +1,4 @@
+session_id,user_id,outfit_id,rank_position,score_model,shown_at
+s-20260409-001,u-001,smart_casual,0,0.8732,2026-04-09T08:15:01Z
+s-20260409-001,u-001,office_chic,1,0.8244,2026-04-09T08:15:01Z
+s-20260409-002,u-002,office_chic,0,0.8521,2026-04-09T09:00:02Z
