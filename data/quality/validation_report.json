@@ -1,0 +1,112 @@
+{
+  "dataset_root": "data/dataset",
+  "table_results": [
+    {
+      "table_name": "users",
+      "file_path": "data/dataset/users.csv",
+      "row_count": 2,
+      "missing_columns": [],
+      "duplicate_count": 0,
+      "null_rate_by_column": {
+        "user_id": 0.0,
+        "gender": 0.0,
+        "age": 0.0,
+        "height_cm": 0.0,
+        "body_shape": 0.0,
+        "clothing_size": 0.0,
+        "top_size": 0.0,
+        "bottom_size": 0.0,
+        "shoe_size": 0.0,
+        "style_preferences": 0.0,
+        "location_home": 0.0,
+        "updated_at": 0.0
+      },
+      "invalid_values": {
+        "gender": 0,
+        "body_shape": 0,
+        "clothing_size": 0,
+        "top_size": 0,
+        "bottom_size": 0
+      },
+      "passed": true
+    },
+    {
+      "table_name": "outfits_catalog",
+      "file_path": "data/dataset/outfits_catalog.csv",
+      "row_count": 2,
+      "missing_columns": [],
+      "duplicate_count": 0,
+      "null_rate_by_column": {
+        "outfit_id": 0.0,
+        "label": 0.0,
+        "styles": 0.0,
+        "occasions": 0.0,
+        "weather_compatibility": 0.0,
+        "fit_profiles": 0.0,
+        "formality_level": 0.0,
+        "season": 0.0
+      },
+      "invalid_values": {},
+      "passed": true
+    },
+    {
+      "table_name": "context_sessions",
+      "file_path": "data/dataset/context_sessions.csv",
+      "row_count": 2,
+      "missing_columns": [],
+      "duplicate_count": 0,
+      "null_rate_by_column": {
+        "session_id": 0.0,
+        "user_id": 0.0,
+        "timestamp": 0.0,
+        "location": 0.0,
+        "weather_bucket": 0.0,
+        "temperature_c": 0.0,
+        "agenda_labels": 0.0,
+        "camera_confidence": 0.0
+      },
+      "invalid_values": {
+        "weather_bucket": 0,
+        "agenda_labels": 0
+      },
+      "passed": true
+    },
+    {
+      "table_name": "recommendation_impressions",
+      "file_path": "data/dataset/recommendation_impressions.csv",
+      "row_count": 3,
+      "missing_columns": [],
+      "duplicate_count": 0,
+      "null_rate_by_column": {
+        "session_id": 0.0,
+        "user_id": 0.0,
+        "outfit_id": 0.0,
+        "rank_position": 0.0,
+        "score_model": 0.0,
+        "shown_at": 0.0
+      },
+      "invalid_values": {},
+      "passed": true
+    },
+    {
+      "table_name": "interactions",
+      "file_path": "data/dataset/interactions.csv",
+      "row_count": 5,
+      "missing_columns": [],
+      "duplicate_count": 0,
+      "null_rate_by_column": {
+        "session_id": 0.0,
+        "user_id": 0.0,
+        "outfit_id": 0.0,
+        "event_type": 0.0,
+        "event_time": 0.0,
+        "dwell_time_ms": 0.0
+      },
+      "invalid_values": {
+        "event_type": 0
+      },
+      "passed": true
+    }
+  ],
+  "global_passed": true
+}
