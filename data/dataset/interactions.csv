@@ -1,0 +1,6 @@
+session_id,user_id,outfit_id,event_type,event_time,dwell_time_ms
+s-20260409-001,u-001,smart_casual,impression,2026-04-09T08:15:01Z,0
+s-20260409-001,u-001,smart_casual,selected,2026-04-09T08:15:11Z,5400
+s-20260409-001,u-001,office_chic,impression,2026-04-09T08:15:01Z,0
+s-20260409-002,u-002,office_chic,impression,2026-04-09T09:00:02Z,0
+s-20260409-002,u-002,office_chic,click,2026-04-09T09:00:10Z,2300
