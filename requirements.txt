@@ -7,3 +7,4 @@ scikit-learn==1.7.1
 joblib==1.5.1
 python-dotenv==1.1.1
 Pillow==11.3.0
+pyarrow>=19.0.1,<20.0.0
