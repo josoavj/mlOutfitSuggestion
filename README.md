@@ -45,6 +45,18 @@ Le modele est sauvegarde dans:
 - models/outfit_ranker.joblib
 - models/outfit_ranker_metrics.json
 
+Validation du dataset structure (option recommandee avant entrainement):
+
+```bash
+python -m src.outfit_ml.validate_dataset --dataset-root data/dataset
+```
+
+Conversion du dataset CSV vers Parquet partitionne par date:
+
+```bash
+python -m src.outfit_ml.export_parquet --dataset-root data/dataset --output-root data/parquet
+```
+
 ## Lancer l'API
 
 Option rapide recommandee avec `.env`:
