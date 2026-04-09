@@ -1,0 +1,3 @@
+session_id,user_id,timestamp,location,weather_bucket,temperature_c,agenda_labels,camera_confidence
+s-20260409-001,u-001,2026-04-09T08:15:00Z,Lyon,rainy,14.2,work|meeting,0.92
+s-20260409-002,u-002,2026-04-09T09:00:00Z,Paris,mild,19.1,work,0.89
