@@ -14,7 +14,7 @@
 ## Variables d'environnement essentielles
 
 - OPENWEATHER_API_KEY: cle OpenWeather
-- MAGICMIRROR_DATA_SOURCE: api ou file
+- MAGICMIRROR_DATA_SOURCE: api, file ou supabase
 - MAGICMIRROR_API_BASE_URL: base URL backend app (si mode api)
 - MAGICMIRROR_PROFILE_PATH_TEMPLATE: route profil user
 - MAGICMIRROR_AGENDA_PATH_TEMPLATE: route agenda user
@@ -22,6 +22,15 @@
 - MAGICMIRROR_AGENDA_FILE_TEMPLATE: fichier agenda (si mode file)
 - FACE_REGISTRY_PATH: registre local embeddings visage
 - FEEDBACK_LOG_PATH: journal JSONL des interactions
+- API_AUTH_ENABLED / API_AUTH_KEY: protection des endpoints ML
+- ALLOWED_ORIGINS: whitelist CORS des clients
+
+Variables Supabase (si mode supabase):
+- SUPABASE_URL
+- SUPABASE_SERVICE_ROLE_KEY ou SUPABASE_ANON_KEY
+- SUPABASE_PROFILE_TABLE / SUPABASE_PROFILE_USER_ID_COLUMN
+- SUPABASE_AGENDA_TABLE / SUPABASE_AGENDA_USER_ID_COLUMN / SUPABASE_AGENDA_DATE_COLUMN
+- SUPABASE_AGENDA_TITLE_COLUMN / SUPABASE_AGENDA_CATEGORY_COLUMN / SUPABASE_AGENDA_TAGS_COLUMN
 
 ## Endpoints principaux
 
@@ -42,12 +51,13 @@ Feedback:
 
 ## Workflow recommande en production
 
-1. Identification utilisateur (camera) via /mirror/recommend-from-camera.
-2. Affichage top-k tenues.
-3. Journaliser les impressions et actions avec /feedback/events.
-4. Verifier la qualite de donnees avant re-entrainement.
-5. Re-entrainer avec prefer-real-data.
-6. Exporter en Parquet pour stockage analytique.
+1. Auth API activee (entete X-API-Key).
+2. Identification utilisateur (camera) via /mirror/recommend-from-camera.
+3. Affichage top-k tenues.
+4. Journaliser les impressions et actions avec /feedback/events.
+5. Verifier la qualite de donnees avant re-entrainement.
+6. Re-entrainer avec prefer-real-data.
+7. Exporter en Parquet pour stockage analytique.
 
 ## Commandes utiles
 
