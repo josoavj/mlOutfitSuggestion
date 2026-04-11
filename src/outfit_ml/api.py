@@ -1,8 +1,10 @@
 from __future__ import annotations
 
+import os
 from functools import lru_cache
 
-from fastapi import FastAPI, HTTPException
+from fastapi import Depends, FastAPI, Header, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 
 from .context import (
@@ -38,7 +40,42 @@ from .vision import FaceRegistry, VisionError, VisionUnavailableError
 load_dotenv()
 
 
+def _allowed_origins() -> list[str]:
+    raw = os.getenv("ALLOWED_ORIGINS", "*").strip()
+    if not raw:
+        return ["*"]
+    return [item.strip() for item in raw.split(",") if item.strip()]
+
+
+def _api_auth_enabled() -> bool:
+    return os.getenv("API_AUTH_ENABLED", "false").strip().lower() == "true"
+
+
+def _api_key() -> str:
+    return os.getenv("API_AUTH_KEY", "").strip()
+
+
+def require_api_key(x_api_key: str | None = Header(default=None, alias="X-API-Key")) -> None:
+    if not _api_auth_enabled():
+        return
+
+    key = _api_key()
+    if not key:
+        raise HTTPException(status_code=500, detail="API_AUTH_ENABLED=true mais API_AUTH_KEY manquante")
+
+    if x_api_key != key:
+        raise HTTPException(status_code=401, detail="Cle API invalide")
+
+
 app = FastAPI(title="Outfit Suggestion API", version="0.1.0")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=_allowed_origins(),
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 @lru_cache
@@ -57,7 +94,10 @@ def health() -> dict[str, str]:
 
 
 @app.post("/recommend", response_model=RecommendationResponse)
-def recommend(request: RecommendationRequest) -> RecommendationResponse:
+def recommend(
+    request: RecommendationRequest,
+    _: None = Depends(require_api_key),
+) -> RecommendationResponse:
     try:
         recommender = get_recommender()
         return recommender.recommend(request)
@@ -69,7 +109,10 @@ def recommend(request: RecommendationRequest) -> RecommendationResponse:
 
 
 @app.post("/recommend/context", response_model=RecommendationResponse)
-def recommend_from_context(request: ContextRecommendationRequest) -> RecommendationResponse:
+def recommend_from_context(
+    request: ContextRecommendationRequest,
+    _: None = Depends(require_api_key),
+) -> RecommendationResponse:
     try:
         weather = fetch_openweather(request.location)
     except OpenWeatherError as exc:
@@ -96,7 +139,10 @@ def recommend_from_context(request: ContextRecommendationRequest) -> Recommendat
 
 
 @app.post("/recommend/auto", response_model=RecommendationResponse)
-def recommend_auto(request: AutoRecommendationRequest) -> RecommendationResponse:
+def recommend_auto(
+    request: AutoRecommendationRequest,
+    _: None = Depends(require_api_key),
+) -> RecommendationResponse:
     try:
         profile = fetch_user_profile(request.user_id)
         agenda_entries = fetch_today_agenda_entries(request.user_id)
@@ -136,7 +182,10 @@ def recommend_auto(request: AutoRecommendationRequest) -> RecommendationResponse
 
 
 @app.post("/vision/enroll", response_model=FaceEnrollResponse)
-def vision_enroll(request: FaceEnrollRequest) -> FaceEnrollResponse:
+def vision_enroll(
+    request: FaceEnrollRequest,
+    _: None = Depends(require_api_key),
+) -> FaceEnrollResponse:
     try:
         registry = get_face_registry()
         registry.enroll(request.user_id, request.image_base64)
@@ -149,7 +198,10 @@ def vision_enroll(request: FaceEnrollRequest) -> FaceEnrollResponse:
 
 
 @app.post("/vision/identify", response_model=FaceIdentifyResponse)
-def vision_identify(request: FaceIdentifyRequest) -> FaceIdentifyResponse:
+def vision_identify(
+    request: FaceIdentifyRequest,
+    _: None = Depends(require_api_key),
+) -> FaceIdentifyResponse:
     try:
         registry = get_face_registry()
         matches = registry.identify(
@@ -166,7 +218,10 @@ def vision_identify(request: FaceIdentifyRequest) -> FaceIdentifyResponse:
 
 
 @app.post("/mirror/recommend-from-camera", response_model=CameraRecommendationResponse)
-def recommend_from_camera(request: CameraRecommendationRequest) -> CameraRecommendationResponse:
+def recommend_from_camera(
+    request: CameraRecommendationRequest,
+    _: None = Depends(require_api_key),
+) -> CameraRecommendationResponse:
     try:
         registry = get_face_registry()
         matches = registry.identify(
@@ -202,13 +257,19 @@ def recommend_from_camera(request: CameraRecommendationRequest) -> CameraRecomme
 
 
 @app.post("/feedback/event", response_model=FeedbackEventResponse)
-def create_feedback_event(request: FeedbackEventRequest) -> FeedbackEventResponse:
+def create_feedback_event(
+    request: FeedbackEventRequest,
+    _: None = Depends(require_api_key),
+) -> FeedbackEventResponse:
     event_id = append_feedback_event(request)
     return FeedbackEventResponse(status="ok", event_id=event_id)
 
 
 @app.post("/feedback/events", response_model=FeedbackBatchResponse)
-def create_feedback_events(request: FeedbackBatchRequest) -> FeedbackBatchResponse:
+def create_feedback_events(
+    request: FeedbackBatchRequest,
+    _: None = Depends(require_api_key),
+) -> FeedbackBatchResponse:
     event_ids = append_feedback_events(request.events)
     return FeedbackBatchResponse(
         status="ok",
@@ -218,5 +279,5 @@ def create_feedback_events(request: FeedbackBatchRequest) -> FeedbackBatchRespon
 
 
 @app.get("/feedback/stats", response_model=FeedbackStatsResponse)
-def get_feedback_stats() -> FeedbackStatsResponse:
+def get_feedback_stats(_: None = Depends(require_api_key)) -> FeedbackStatsResponse:
     return feedback_stats()
