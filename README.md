@@ -76,6 +76,29 @@ export OPENWEATHER_API_KEY="ta_cle_openweather"
 uvicorn src.outfit_ml.api:app --reload
 ```
 
+## Liaison API avec l'application (MagicMirror/Flutter)
+
+Le service expose une API FastAPI consommee directement par l'application.
+
+Configuration minimale recommandee:
+
+```env
+API_AUTH_ENABLED=true
+API_AUTH_KEY=replace_with_strong_shared_secret
+ALLOWED_ORIGINS=https://your-magicmirror-app.example.com
+```
+
+L'application doit envoyer l'entete HTTP suivant:
+
+```text
+X-API-Key: replace_with_strong_shared_secret
+```
+
+Endpoint principal recommande cote app:
+- `POST /mirror/recommend-from-camera`
+
+Ce endpoint couvre le flux complet (identification + contexte + recommandations).
+
 ## Mode integration automatique (direct application)
 
 Pour une integration directe, configure l'API de ton application:
