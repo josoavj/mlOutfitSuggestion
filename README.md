@@ -1,13 +1,13 @@
 # ML Outfit Suggestion
 
-Base de projet ML pour proposer des tenues personnalisees pour MagicMirror selon:
-- sexe
-- age
-- taille
-- planning du jour
-- preferences vestimentaires
-- morphologie (detectee automatiquement si mesures disponibles)
-- meteo et lieu
+Base de projet ML pour proposer des tenues personnalisées pour MagicMirror selon les critères suivants:
+- Sexe
+- Âge
+- Taille
+- Planning du jour
+- Preférences vestimentaires
+- Morphologie (Detectée automatiquement si mesures disponibles)
+- Météo et lieu
 
 ## Architecture
 
