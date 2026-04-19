@@ -69,6 +69,21 @@ uvicorn src.outfit_ml.api:app --reload
 
 L'API charge automatiquement les variables depuis `.env`.
 
+## Interface Web de test
+
+Une mini interface web est disponible pour tester rapidement les endpoints de recommandation:
+
+- URL: `http://127.0.0.1:8000/ui`
+- Mode manuel: appelle `POST /recommend`
+- Mode auto: appelle `POST /recommend/auto`
+
+L'interface permet de:
+- saisir les champs du profil et du contexte
+- envoyer une cle API via `X-API-Key` si `API_AUTH_ENABLED=true`
+- visualiser les suggestions et la reponse JSON brute
+- consulter un dashboard technique via `GET /dashboard/technical`
+  (etat service, source de donnees, presence des metriques modele, stats feedback)
+
 Option via export shell:
 
 ```bash
