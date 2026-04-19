@@ -107,6 +107,7 @@ class OpenWeatherResponse(BaseModel):
 class OutfitSuggestion(BaseModel):
     outfit_id: str
     outfit_label: str
+    outfit_items: list[str] = Field(default_factory=list)
     score: float
     reasons: list[str]
 
