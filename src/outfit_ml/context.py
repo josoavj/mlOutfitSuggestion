@@ -124,7 +124,7 @@ def _fetch_supabase_agenda(user_id: str) -> list[dict]:
 
     table = os.getenv("SUPABASE_AGENDA_TABLE", "agenda_events").strip()
     user_column = os.getenv("SUPABASE_AGENDA_USER_ID_COLUMN", "user_id").strip()
-    date_column = os.getenv("SUPABASE_AGENDA_DATE_COLUMN", "start_at").strip()
+    date_column = os.getenv("SUPABASE_AGENDA_DATE_COLUMN", "start_time").strip()
     today_only = os.getenv("SUPABASE_AGENDA_TODAY_ONLY", "true").strip().lower() == "true"
 
     if today_only:
@@ -304,15 +304,25 @@ def fetch_today_agenda_entries(user_id: str) -> list[AgendaEntry]:
 
     entries: list[AgendaEntry] = []
     title_col = os.getenv("SUPABASE_AGENDA_TITLE_COLUMN", "title").strip()
-    category_col = os.getenv("SUPABASE_AGENDA_CATEGORY_COLUMN", "category").strip()
+    category_col = os.getenv("SUPABASE_AGENDA_CATEGORY_COLUMN", "event_type").strip()
     tags_col = os.getenv("SUPABASE_AGENDA_TAGS_COLUMN", "tags").strip()
 
     for item in entries_raw:
         title = item.get(title_col) or item.get("name") or item.get("title") or ""
-        category = item.get(category_col) or item.get("type") or item.get("category") or ""
+        category = (
+            item.get(category_col)
+            or item.get("event_type")
+            or item.get("type")
+            or item.get("category")
+            or ""
+        )
         tags = item.get(tags_col) or item.get("tags") or []
         if isinstance(tags, str):
             tags = [tags]
+        if not tags:
+            description = item.get("description")
+            if isinstance(description, str) and description.strip():
+                tags = [description.strip()]
 
         entries.append(
             AgendaEntry(
