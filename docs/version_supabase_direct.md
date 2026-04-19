@@ -32,11 +32,11 @@ SUPABASE_PROFILE_USER_ID_COLUMN=user_id
 
 SUPABASE_AGENDA_TABLE=agenda_events
 SUPABASE_AGENDA_USER_ID_COLUMN=user_id
-SUPABASE_AGENDA_DATE_COLUMN=start_at
+SUPABASE_AGENDA_DATE_COLUMN=start_time
 SUPABASE_AGENDA_TODAY_ONLY=true
 SUPABASE_AGENDA_TITLE_COLUMN=title
-SUPABASE_AGENDA_CATEGORY_COLUMN=category
-SUPABASE_AGENDA_TAGS_COLUMN=tags
+SUPABASE_AGENDA_CATEGORY_COLUMN=event_type
+SUPABASE_AGENDA_TAGS_COLUMN=description
 ```
 
 3. Lancer l'API:
@@ -51,26 +51,30 @@ uvicorn src.outfit_ml.api:app --reload
 
 Colonnes minimales:
 - user_id
+
+Colonnes recommandees:
 - gender
 - age
 - height_cm
+- preferred_styles (json/array ou texte parseable)
+
+Colonnes optionnelles (fallback automatique si absentes):
+- morphology
 - clothing_size
 - top_size
 - bottom_size
 - shoe_size
-- style_preferences (json/array ou texte parseable)
-- body_shape (optionnel)
-- body_measurements (json optionnel)
+- body_measurements (json)
 - location (ou city)
 
 ### agenda_events
 
 Colonnes minimales:
 - user_id
-- start_at
+- start_time
 - title (ou mapping via SUPABASE_AGENDA_TITLE_COLUMN)
-- category (ou mapping via SUPABASE_AGENDA_CATEGORY_COLUMN)
-- tags (ou mapping via SUPABASE_AGENDA_TAGS_COLUMN)
+- event_type (ou mapping via SUPABASE_AGENDA_CATEGORY_COLUMN)
+- description (ou mapping via SUPABASE_AGENDA_TAGS_COLUMN)
 
 ## Endpoints recommandes
 
