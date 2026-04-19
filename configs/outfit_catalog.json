@@ -2,6 +2,12 @@
   {
     "id": "office_chic",
     "label": "Office Chic",
+    "items": [
+      "chemise manches courtes blanche",
+      "pantalon chino marine",
+      "derbies marron",
+      "ceinture cuir marron"
+    ],
     "styles": ["classic", "minimalist"],
     "occasions": ["work", "meeting"],
     "weather": ["mild", "cold"],
@@ -11,6 +17,12 @@
   {
     "id": "smart_casual",
     "label": "Smart Casual",
+    "items": [
+      "t-shirt uni ecru",
+      "jean straight bleu brut",
+      "surchemise legere beige",
+      "sneakers blanches"
+    ],
     "styles": ["casual", "minimalist"],
     "occasions": ["work", "casual"],
     "weather": ["mild", "hot"],
@@ -20,6 +32,12 @@
   {
     "id": "sport_active",
     "label": "Sport Active",
+    "items": [
+      "t-shirt technique respirant",
+      "jogger noir",
+      "coupe-vent fin",
+      "chaussures running"
+    ],
     "styles": ["sport", "casual"],
     "occasions": ["sport", "outdoor"],
     "weather": ["mild", "hot", "rainy"],
@@ -29,6 +47,12 @@
   {
     "id": "elegant_evening",
     "label": "Elegant Evening",
+    "items": [
+      "chemise slim noire",
+      "pantalon tailleur anthracite",
+      "mocassins cuir",
+      "montre acier"
+    ],
     "styles": ["elegant", "classic"],
     "occasions": ["event", "date"],
     "weather": ["mild", "cold"],
@@ -38,6 +62,12 @@
   {
     "id": "rain_ready",
     "label": "Rain Ready",
+    "items": [
+      "t-shirt coton gris",
+      "pantalon cargo deperlant",
+      "veste impermeable a capuche",
+      "boots impermeables"
+    ],
     "styles": ["practical", "casual"],
     "occasions": ["work", "casual", "outdoor"],
     "weather": ["rainy", "cold"],
@@ -47,6 +77,12 @@
   {
     "id": "summer_light",
     "label": "Summer Light",
+    "items": [
+      "chemise en lin manches courtes",
+      "pantalon fluide beige",
+      "sandales en cuir",
+      "lunettes de soleil"
+    ],
     "styles": ["casual", "elegant", "minimalist"],
     "occasions": ["casual", "event", "date"],
     "weather": ["hot"],
