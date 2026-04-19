@@ -1,10 +1,15 @@
 from __future__ import annotations
 
 import os
+import json
 from functools import lru_cache
+from pathlib import Path
+from datetime import UTC, datetime
 
 from fastapi import Depends, FastAPI, Header, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 from dotenv import load_dotenv
 
 from .context import (
@@ -69,6 +74,11 @@ def require_api_key(x_api_key: str | None = Header(default=None, alias="X-API-Ke
 
 app = FastAPI(title="Outfit Suggestion API", version="0.1.0")
 
+WEB_DIR = Path(__file__).resolve().parents[2] / "web"
+MODEL_METRICS_PATH = Path(__file__).resolve().parents[2] / "models" / "outfit_ranker_metrics.json"
+if WEB_DIR.exists():
+    app.mount("/ui-assets", StaticFiles(directory=str(WEB_DIR)), name="ui-assets")
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=_allowed_origins(),
@@ -91,6 +101,62 @@ def get_face_registry() -> FaceRegistry:
 @app.get("/health")
 def health() -> dict[str, str]:
     return {"status": "ok"}
+
+
+def _load_model_metrics() -> tuple[bool, dict]:
+    if not MODEL_METRICS_PATH.exists():
+        return False, {}
+
+    try:
+        content = MODEL_METRICS_PATH.read_text(encoding="utf-8")
+        parsed = json.loads(content)
+    except Exception:  # noqa: BLE001
+        return True, {"error": "metrics_file_invalid"}
+
+    if not isinstance(parsed, dict):
+        return True, {"error": "metrics_format_invalid"}
+    return True, parsed
+
+
+@app.get("/ui")
+def ui_page() -> FileResponse:
+    if not WEB_DIR.exists():
+        raise HTTPException(status_code=404, detail="UI non disponible")
+    return FileResponse(WEB_DIR / "index.html")
+
+
+@app.get("/dashboard/technical")
+def technical_dashboard(_: None = Depends(require_api_key)) -> dict:
+    model_present, model_metrics = _load_model_metrics()
+    feedback = feedback_stats().model_dump()
+    now_utc = datetime.now(UTC)
+    metrics_modified_iso: str | None = None
+    metrics_age_seconds: float | None = None
+    if model_present:
+        modified_ts = MODEL_METRICS_PATH.stat().st_mtime
+        modified_dt = datetime.fromtimestamp(modified_ts, tz=UTC)
+        metrics_modified_iso = modified_dt.isoformat()
+        metrics_age_seconds = max(0.0, (now_utc - modified_dt).total_seconds())
+
+    return {
+        "service": {
+            "status": "ok",
+            "version": app.version,
+            "server_time_utc": now_utc.isoformat(),
+            "api_auth_enabled": _api_auth_enabled(),
+            "data_source": os.getenv("MAGICMIRROR_DATA_SOURCE", "api").strip().lower(),
+            "allowed_origins_count": len(_allowed_origins()),
+        },
+        "model": {
+            "metrics_present": model_present,
+            "metrics_path": str(MODEL_METRICS_PATH),
+            "metrics_last_modified": MODEL_METRICS_PATH.stat().st_mtime if model_present else None,
+            "metrics_last_modified_utc": metrics_modified_iso,
+            "metrics_age_seconds": metrics_age_seconds,
+            "metrics": model_metrics,
+        },
+        "feedback": feedback,
+    }
 
 
 @app.post("/recommend", response_model=RecommendationResponse)
