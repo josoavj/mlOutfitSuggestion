@@ -14,6 +14,7 @@ from .features import KNOWN_OCCASIONS, KNOWN_STYLES, KNOWN_WEATHER
 class OutfitItem:
     id: str
     label: str
+    items: list[str]
     styles: list[str]
     occasions: list[str]
     weather: list[str]
@@ -31,6 +32,7 @@ def load_catalog(path: Path) -> list[OutfitItem]:
             OutfitItem(
                 id=row["id"],
                 label=row["label"],
+                items=[str(value) for value in row.get("items", [])],
                 styles=row["styles"],
                 occasions=row["occasions"],
                 weather=row["weather"],
