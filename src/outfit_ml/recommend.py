@@ -93,6 +93,7 @@ class OutfitRecommender:
                 OutfitSuggestion(
                     outfit_id=item.id,
                     outfit_label=item.label,
+                    outfit_items=item.items,
                     score=float(round(score, 4)),
                     reasons=reasons,
                 )
