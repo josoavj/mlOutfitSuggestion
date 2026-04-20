@@ -2,6 +2,38 @@
   {
     "id": "office_chic",
     "label": "Office Chic",
+    "items": [
+      "chemise manches courtes blanche",
+      "pantalon chino marine",
+      "derbies marron",
+      "ceinture cuir marron"
+    ],
+    "items_by_gender": {
+      "female": [
+        "blouse fluide blanche",
+        "pantalon cigarette marine",
+        "mocassins fins camel",
+        "sac épaule structuré"
+      ],
+      "male": [
+        "chemise blanche oxford",
+        "pantalon chino marine",
+        "derbies marron",
+        "ceinture cuir marron"
+      ],
+      "non_binary": [
+        "chemise ample ivoire",
+        "pantalon droit anthracite",
+        "sneakers minimalistes",
+        "sac bandoulière"
+      ],
+      "unisex": [
+        "chemise blanche minimaliste",
+        "pantalon droit marine",
+        "chaussures ville cuir",
+        "ceinture sobre"
+      ]
+    },
     "styles": ["classic", "minimalist"],
     "occasions": ["work", "meeting"],
     "weather": ["mild", "cold"],
@@ -11,6 +43,38 @@
   {
     "id": "smart_casual",
     "label": "Smart Casual",
+    "items": [
+      "t-shirt uni écru",
+      "jean straight bleu brut",
+      "surchemise légère beige",
+      "sneakers blanches"
+    ],
+    "items_by_gender": {
+      "female": [
+        "top coton écru",
+        "jean mom bleu clair",
+        "surchemise beige",
+        "baskets blanches"
+      ],
+      "male": [
+        "t-shirt écru",
+        "jean straight bleu brut",
+        "surchemise beige",
+        "sneakers blanches"
+      ],
+      "non_binary": [
+        "t-shirt oversize écru",
+        "jean droit délavé",
+        "veste légère beige",
+        "baskets blanches"
+      ],
+      "unisex": [
+        "t-shirt uni écru",
+        "jean droit bleu",
+        "surchemise légère",
+        "sneakers blanches"
+      ]
+    },
     "styles": ["casual", "minimalist"],
     "occasions": ["work", "casual"],
     "weather": ["mild", "hot"],
@@ -20,6 +84,38 @@
   {
     "id": "sport_active",
     "label": "Sport Active",
+    "items": [
+      "t-shirt technique respirant",
+      "jogger noir",
+      "coupe-vent fin",
+      "chaussures running"
+    ],
+    "items_by_gender": {
+      "female": [
+        "brassière ou top sport",
+        "legging technique noir",
+        "veste coupe-vent légère",
+        "chaussures running"
+      ],
+      "male": [
+        "t-shirt technique respirant",
+        "jogger sport noir",
+        "coupe-vent fin",
+        "chaussures running"
+      ],
+      "non_binary": [
+        "top technique respirant",
+        "pantalon training noir",
+        "coupe-vent légère",
+        "chaussures running"
+      ],
+      "unisex": [
+        "t-shirt technique",
+        "bas sport noir",
+        "veste coupe-vent",
+        "chaussures running"
+      ]
+    },
     "styles": ["sport", "casual"],
     "occasions": ["sport", "outdoor"],
     "weather": ["mild", "hot", "rainy"],
@@ -29,6 +125,38 @@
   {
     "id": "elegant_evening",
     "label": "Elegant Evening",
+    "items": [
+      "chemise slim noire",
+      "pantalon tailleur anthracite",
+      "mocassins cuir",
+      "montre acier"
+    ],
+    "items_by_gender": {
+      "female": [
+        "top satiné noir",
+        "pantalon taille haute noir",
+        "escarpins ou mocassins élégants",
+        "pochette minimaliste"
+      ],
+      "male": [
+        "chemise noire ajustée",
+        "pantalon tailleur anthracite",
+        "mocassins cuir",
+        "montre acier"
+      ],
+      "non_binary": [
+        "chemise noire fluide",
+        "pantalon élégant noir",
+        "derbies lisses",
+        "accessoire sobre"
+      ],
+      "unisex": [
+        "haut noir élégant",
+        "pantalon habillé anthracite",
+        "chaussures habillées",
+        "accessoire discret"
+      ]
+    },
     "styles": ["elegant", "classic"],
     "occasions": ["event", "date"],
     "weather": ["mild", "cold"],
@@ -38,6 +166,38 @@
   {
     "id": "rain_ready",
     "label": "Rain Ready",
+    "items": [
+      "t-shirt coton gris",
+      "pantalon cargo déperlant",
+      "veste imperméable à capuche",
+      "boots imperméables"
+    ],
+    "items_by_gender": {
+      "female": [
+        "pull fin gris",
+        "pantalon cargo déperlant",
+        "trench court imperméable",
+        "bottines imperméables"
+      ],
+      "male": [
+        "t-shirt coton gris",
+        "pantalon cargo déperlant",
+        "veste imperméable à capuche",
+        "boots imperméables"
+      ],
+      "non_binary": [
+        "haut manches longues gris",
+        "pantalon technique déperlant",
+        "veste imperméable",
+        "chaussures imperméables"
+      ],
+      "unisex": [
+        "haut gris confortable",
+        "pantalon déperlant",
+        "veste de pluie",
+        "boots imperméables"
+      ]
+    },
     "styles": ["practical", "casual"],
     "occasions": ["work", "casual", "outdoor"],
     "weather": ["rainy", "cold"],
@@ -47,6 +207,38 @@
   {
     "id": "summer_light",
     "label": "Summer Light",
+    "items": [
+      "chemise en lin manches courtes",
+      "pantalon fluide beige",
+      "sandales en cuir",
+      "lunettes de soleil"
+    ],
+    "items_by_gender": {
+      "female": [
+        "blouse en lin claire",
+        "jupe midi légère ou pantalon fluide beige",
+        "sandales en cuir",
+        "lunettes de soleil"
+      ],
+      "male": [
+        "chemise en lin manches courtes",
+        "pantalon léger beige",
+        "sandales en cuir",
+        "lunettes de soleil"
+      ],
+      "non_binary": [
+        "chemise en lin ample",
+        "bas léger beige",
+        "sandales confort",
+        "lunettes de soleil"
+      ],
+      "unisex": [
+        "haut en lin clair",
+        "pantalon fluide beige",
+        "sandales en cuir",
+        "lunettes de soleil"
+      ]
+    },
     "styles": ["casual", "elegant", "minimalist"],
     "occasions": ["casual", "event", "date"],
     "weather": ["hot"],
