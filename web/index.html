@@ -1,21 +1,23 @@
 
 <style>
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+
   :root {
-    --g1: #c34f21;
-    --g2: #2f6d62;
-    --g3: #7c3f8a;
-    --glass-bg: rgba(255,255,255,0.55);
-    --glass-border: rgba(255,255,255,0.7);
-    --glass-shadow: 0 8px 32px rgba(60,40,20,0.10), 0 1.5px 0 rgba(255,255,255,0.7) inset;
-    --panel-bg: rgba(255,255,255,0.42);
-    --panel-border: rgba(255,255,255,0.6);
-    --input-bg: rgba(255,255,255,0.55);
-    --input-border: rgba(180,160,140,0.28);
-    --label-color: rgba(60,44,30,0.55);
-    --ink: #1a1209;
-    --ink2: rgba(40,28,15,0.6);
-    --accent: #c34f21;
-    --accent2: #2f6d62;
+    --g1: #1e3f71;
+    --g2: #102949;
+    --g3: #3f6ea8;
+    --glass-bg: rgba(14,30,54,0.64);
+    --glass-border: rgba(164,206,255,0.36);
+    --glass-shadow: 0 10px 34px rgba(3,12,24,0.45), 0 1px 0 rgba(197,226,255,0.16) inset;
+    --panel-bg: rgba(11,26,46,0.62);
+    --panel-border: rgba(160,203,255,0.32);
+    --input-bg: rgba(8,22,40,0.62);
+    --input-border: rgba(139,189,255,0.44);
+    --label-color: rgba(216,235,255,0.92);
+    --ink: #f7fbff;
+    --ink2: rgba(224,239,255,0.90);
+    --accent: #72b0ff;
+    --accent2: #9bc7ff;
     --radius-xl: 22px;
     --radius-lg: 16px;
     --radius-md: 11px;
@@ -24,19 +26,37 @@
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
   body {
-    font-family: -apple-system, "SF Pro Display", "Segoe UI", sans-serif;
+    font-family: "Poppins", "Segoe UI", sans-serif;
     font-size: 14px;
     line-height: 1.5;
     color: var(--ink);
     background: transparent;
   }
 
+  .context-card {
+    background: rgba(24,58,98,0.46);
+    border: 1px solid rgba(139,188,250,0.26);
+    border-radius: var(--radius-lg);
+    padding: 0.8rem 1rem;
+    margin-bottom: 8px;
+    display: grid;
+    gap: 4px;
+  }
+  .context-card p { font-size: 12px; color: var(--ink2); }
+  .context-title {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent2);
+  }
+
   .scene {
     background:
-      radial-gradient(ellipse at 15% 10%, rgba(195,79,33,0.22) 0%, transparent 45%),
-      radial-gradient(ellipse at 85% 15%, rgba(47,109,98,0.20) 0%, transparent 40%),
-      radial-gradient(ellipse at 50% 85%, rgba(124,63,138,0.14) 0%, transparent 45%),
-      linear-gradient(160deg, #f5ede0 0%, #eaf0ec 50%, #f0e8f2 100%);
+      radial-gradient(ellipse at 16% 12%, rgba(98,160,244,0.30) 0%, transparent 48%),
+      radial-gradient(ellipse at 86% 12%, rgba(58,113,193,0.30) 0%, transparent 44%),
+      radial-gradient(ellipse at 50% 88%, rgba(25,63,116,0.54) 0%, transparent 52%),
+      linear-gradient(155deg, #050f1f 0%, #0b1b32 52%, #10284a 100%);
     border-radius: 24px;
     padding: 20px;
     min-height: 100px;
@@ -59,7 +79,7 @@
     -webkit-backdrop-filter: blur(16px) saturate(1.4);
     border: 1px solid var(--panel-border);
     border-radius: var(--radius-xl);
-    box-shadow: 0 4px 24px rgba(60,40,20,0.07), 0 1px 0 rgba(255,255,255,0.8) inset;
+    box-shadow: 0 6px 26px rgba(4,12,24,0.35), 0 1px 0 rgba(187,222,255,0.14) inset;
     padding: 1.1rem 1.3rem;
   }
 
@@ -74,9 +94,9 @@
     filter: blur(28px);
     pointer-events: none;
   }
-  .orb1 { width: 100px; height: 100px; background: rgba(195,79,33,0.25); top: -20px; right: 30px; }
-  .orb2 { width: 80px; height: 80px; background: rgba(47,109,98,0.22); bottom: -10px; right: 10px; }
-  .orb3 { width: 60px; height: 60px; background: rgba(124,63,138,0.18); top: 10px; right: 100px; }
+  .orb1 { width: 100px; height: 100px; background: rgba(102,169,255,0.32); top: -20px; right: 30px; }
+  .orb2 { width: 80px; height: 80px; background: rgba(73,133,217,0.28); bottom: -10px; right: 10px; }
+  .orb3 { width: 60px; height: 60px; background: rgba(155,203,255,0.22); top: 10px; right: 100px; }
 
   .eyebrow {
     font-size: 10px; font-weight: 600; letter-spacing: 0.14em;
@@ -92,7 +112,7 @@
 
   .mode-seg {
     display: flex; gap: 0; margin-bottom: 12px;
-    background: rgba(0,0,0,0.06); border-radius: var(--radius-lg); padding: 3px;
+    background: rgba(3,11,23,0.56); border-radius: var(--radius-lg); padding: 3px;
   }
   .seg-btn {
     flex: 1; padding: 7px 10px; border-radius: 13px; border: none;
@@ -100,14 +120,15 @@
     color: var(--ink2); background: transparent; transition: all 0.18s;
   }
   .seg-btn.active {
-    background: rgba(255,255,255,0.88);
-    color: var(--ink);
-    box-shadow: 0 1px 6px rgba(0,0,0,0.10), 0 0.5px 0 rgba(255,255,255,0.9) inset;
+    background: rgba(126,178,247,0.42);
+    color: #ffffff;
+    box-shadow: 0 1px 8px rgba(0,0,0,0.30), 0 0.5px 0 rgba(210,232,255,0.42) inset;
   }
 
   .grid { display: grid; gap: 8px; }
   .g2 { grid-template-columns: repeat(2, minmax(0,1fr)); }
   .g3 { grid-template-columns: repeat(3, minmax(0,1fr)); }
+  .hidden-field { display: none !important; }
 
   label { display: grid; gap: 3px; font-size: 11px; font-weight: 500; color: var(--label-color); }
 
@@ -119,22 +140,22 @@
     border-radius: var(--radius-md);
     padding: 7px 10px;
     font: inherit; font-size: 13px; color: var(--ink);
-    box-shadow: 0 1px 3px rgba(0,0,0,0.05), 0 0.5px 0 rgba(255,255,255,0.8) inset;
+    box-shadow: 0 1px 4px rgba(2,8,18,0.35), 0 0.5px 0 rgba(184,220,255,0.16) inset;
     transition: border-color 0.15s, box-shadow 0.15s;
     -webkit-appearance: none; appearance: none;
     outline: none;
   }
   input:focus, select:focus {
-    border-color: rgba(47,109,98,0.5);
-    box-shadow: 0 0 0 3px rgba(47,109,98,0.12), 0 0.5px 0 rgba(255,255,255,0.8) inset;
+    border-color: rgba(123,181,252,0.72);
+    box-shadow: 0 0 0 3px rgba(78,145,231,0.22), 0 0.5px 0 rgba(184,220,255,0.22) inset;
   }
 
   .btn-run {
     display: inline-flex; align-items: center; gap: 7px;
     padding: 9px 20px; border: none; border-radius: var(--radius-pill);
     font: inherit; font-size: 13px; font-weight: 600; cursor: pointer; color: #fff;
-    background: linear-gradient(135deg, #d4603a 0%, #c34f21 55%, #a83d16 100%);
-    box-shadow: 0 4px 16px rgba(195,79,33,0.30), 0 1px 0 rgba(255,200,160,0.3) inset;
+    background: linear-gradient(135deg, #4f8fdf 0%, #2f71c6 52%, #1c4d90 100%);
+    box-shadow: 0 4px 18px rgba(20,64,122,0.55), 0 1px 0 rgba(205,230,255,0.34) inset;
     transition: opacity 0.15s, transform 0.1s;
     letter-spacing: -0.1px;
   }
@@ -143,13 +164,13 @@
 
   .btn-refresh {
     display: inline-flex; align-items: center; gap: 6px;
-    padding: 7px 14px; border: 1px solid rgba(47,109,98,0.30); border-radius: var(--radius-pill);
+    padding: 7px 14px; border: 1px solid rgba(162,207,255,0.46); border-radius: var(--radius-pill);
     font: inherit; font-size: 12px; font-weight: 500; cursor: pointer;
     color: var(--accent2);
-    background: rgba(47,109,98,0.08);
+    background: rgba(60,117,196,0.30);
     transition: background 0.15s, transform 0.1s;
   }
-  .btn-refresh:hover { background: rgba(47,109,98,0.14); }
+  .btn-refresh:hover { background: rgba(88,146,226,0.42); }
   .btn-refresh:active { transform: scale(0.97); }
 
   .row-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 10px; }
@@ -158,28 +179,28 @@
     display: inline-flex; align-items: center; gap: 5px;
     font-size: 11px; font-weight: 600; padding: 3px 10px;
     border-radius: var(--radius-pill);
-    background: rgba(0,0,0,0.06); color: var(--ink2);
-    border: 1px solid rgba(255,255,255,0.5);
+    background: rgba(6,18,34,0.56); color: var(--ink2);
+    border: 1px solid rgba(180,216,255,0.34);
     backdrop-filter: blur(6px);
     margin-bottom: 10px;
   }
-  .status-pill.ok { background: rgba(47,109,98,0.12); color: #1e5c52; border-color: rgba(47,109,98,0.25); }
-  .status-pill.err { background: rgba(195,79,33,0.12); color: #7a2e0e; border-color: rgba(195,79,33,0.25); }
-  .status-pill.loading { background: rgba(47,109,98,0.07); color: #2f6d62; border-color: rgba(47,109,98,0.20); }
+  .status-pill.ok { background: rgba(27, 193, 126, 0.28); color: #dbffef; border-color: rgba(97, 247, 180, 0.58); }
+  .status-pill.err { background: rgba(20, 151, 103, 0.30); color: #d4ffe9; border-color: rgba(88, 230, 165, 0.50); }
+  .status-pill.loading { background: rgba(23, 173, 116, 0.24); color: #ddfff0; border-color: rgba(95, 242, 176, 0.48); }
   .pulse { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
   .pulse.anim { animation: blink 1.1s ease-in-out infinite; }
   @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
 
-  .divider { border: none; border-top: 1px solid rgba(255,255,255,0.5); margin: 10px 0; }
+  .divider { border: none; border-top: 1px solid rgba(160,205,255,0.24); margin: 10px 0; }
 
   .cards { display: grid; gap: 7px; margin-bottom: 10px; }
   .card {
-    background: rgba(255,255,255,0.52);
+    background: rgba(14,33,58,0.62);
     backdrop-filter: blur(12px);
-    border: 1px solid rgba(255,255,255,0.7);
+    border: 1px solid rgba(167,210,255,0.32);
     border-radius: var(--radius-lg);
     padding: 0.8rem 1rem;
-    box-shadow: 0 2px 12px rgba(60,40,20,0.07);
+    box-shadow: 0 2px 12px rgba(4,14,26,0.35);
     display: grid; gap: 4px;
   }
   .card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 3px; }
@@ -187,23 +208,30 @@
   .score-pill {
     font-size: 10.5px; font-weight: 600; padding: 2px 9px;
     border-radius: var(--radius-pill);
-    background: rgba(47,109,98,0.12); color: #1e5c52;
-    border: 1px solid rgba(47,109,98,0.2);
+    background: rgba(27, 193, 126, 0.24); color: #defff0;
+    border: 1px solid rgba(98, 246, 181, 0.54);
   }
   .card p { font-size: 12px; color: var(--ink2); }
   .card .reasons { font-style: italic; font-size: 11.5px; }
+  .outfit-items {
+    margin: 2px 0 6px 18px;
+    padding: 0;
+    color: var(--ink2);
+    font-size: 11.8px;
+  }
+  .outfit-items li { margin: 2px 0; }
 
   .dash-grid { display: grid; grid-template-columns: repeat(5, minmax(0,1fr)); gap: 7px; margin-bottom: 10px; }
   .kpi {
-    background: rgba(255,255,255,0.48);
+    background: rgba(13,31,56,0.62);
     backdrop-filter: blur(12px);
-    border: 1px solid rgba(255,255,255,0.65);
+    border: 1px solid rgba(167,210,255,0.30);
     border-radius: var(--radius-lg);
     padding: 0.7rem 0.8rem;
-    box-shadow: 0 2px 10px rgba(60,40,20,0.06);
+    box-shadow: 0 2px 10px rgba(5,14,26,0.32);
   }
   .kpi-label { font-size: 9.5px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink2); margin-bottom: 5px; }
-  .kpi h3 { font-size: 14px; font-weight: 600; color: var(--ink); }
+  .kpi h3 { font-size: 14px; font-weight: 700; color: #b8ffd9; text-shadow: 0 0 10px rgba(74, 232, 158, 0.28); }
 
   .bars { display: grid; gap: 6px; margin-bottom: 10px; }
   .bar-row { display: grid; grid-template-columns: 100px 1fr 32px; align-items: center; gap: 8px; }
@@ -211,13 +239,13 @@
   .bar-value { font-size: 11.5px; font-weight: 600; text-align: right; color: var(--ink); }
   .bar-track {
     height: 7px; border-radius: 99px;
-    background: rgba(0,0,0,0.08);
+    background: rgba(5,16,30,0.45);
     overflow: hidden;
     box-shadow: inset 0 1px 2px rgba(0,0,0,0.08);
   }
   .bar-fill {
     height: 100%; border-radius: 99px;
-    background: linear-gradient(90deg, #2f6d62, #49a390);
+    background: linear-gradient(90deg, #1da96f, #4ae89e);
   }
 
   .section-label {
@@ -293,7 +321,14 @@
       </label>
       <label>Pointure <input id="shoeSize" value="40" /></label>
       <label>Morphologie
-        <select id="bodyShape"><option>hourglass</option><option>rectangle</option><option>pear</option><option>inverted_triangle</option><option>oval</option><option selected>unknown</option></select>
+        <select id="bodyShape">
+          <option value="hourglass">Sablier (épaules et hanches équilibrées)</option>
+          <option value="rectangle">Rectangle (silhouette plutôt droite)</option>
+          <option value="pear">Poire (hanches plus larges que les épaules)</option>
+          <option value="inverted_triangle">Triangle inversé (épaules plus larges)</option>
+          <option value="oval">Ovale (volume plus central)</option>
+          <option value="unknown" selected>Je ne sais pas (estimation auto)</option>
+        </select>
       </label>
     </div>
     <div class="divider"></div>
@@ -307,8 +342,8 @@
     <p class="section-title">Contexte</p>
     <div class="grid g3">
       <label>Location <input id="location" value="Lyon" /></label>
-      <label>Température °C <input id="temperature" type="number" step="0.1" value="14" /></label>
-      <label>Météo (manuel) <input id="condition" value="Rain" /></label>
+      <label id="manualTempField">Température °C <input id="temperature" type="number" step="0.1" value="14" /></label>
+      <label id="manualConditionField">Météo (manuel) <input id="condition" value="Rain" /></label>
     </div>
     <div class="divider"></div>
     <div class="run-row">
@@ -364,10 +399,62 @@ function setMode(m) {
   currentMode = m;
   document.getElementById('modeManual').className = 'seg-btn' + (m==='manual'?' active':'');
   document.getElementById('modeAuto').className = 'seg-btn' + (m==='auto'?' active':'');
+
+  const isAuto = m === 'auto';
+  const tempField = document.getElementById('manualTempField');
+  const conditionField = document.getElementById('manualConditionField');
+
+  if (tempField) {
+    tempField.classList.toggle('hidden-field', isAuto);
+  }
+  if (conditionField) {
+    conditionField.classList.toggle('hidden-field', isAuto);
+  }
 }
 
 function byId(id) { return document.getElementById(id); }
 function parseCsv(s) { return s.split(',').map(v=>v.trim()).filter(Boolean); }
+
+function toFrenchText(value) {
+  const text = String(value || '');
+  return text
+    .replace(/coherent/gi, 'cohérent')
+    .replace(/meteo/gi, 'météo')
+    .replace(/preferences/gi, 'préférences')
+    .replace(/interpretee/gi, 'interprétée')
+    .replace(/precisee/gi, 'précisée')
+    .replace(/detaillee/gi, 'détaillée')
+    .replace(/proposee/gi, 'proposée')
+    .replace(/adapte a/gi, 'adapté à')
+    .replace(/compatibilite/gi, 'compatibilité');
+}
+
+function toSentenceCase(value) {
+  const text = String(value || '').trim();
+  if (!text) return '';
+  return text.charAt(0).toUpperCase() + text.slice(1);
+}
+
+function toTitleCase(value) {
+  const text = String(value || '').trim();
+  if (!text) return '';
+  return text
+    .split(/\s+/)
+    .map((part) => part ? part.charAt(0).toUpperCase() + part.slice(1).toLowerCase() : '')
+    .join(' ');
+}
+
+function bodyShapeLabel(value) {
+  const map = {
+    hourglass: 'Sablier',
+    rectangle: 'Rectangle',
+    pear: 'Poire',
+    inverted_triangle: 'Triangle inversé',
+    oval: 'Ovale',
+    unknown: 'Non précisée',
+  };
+  return map[value] || String(value || 'Non précisée');
+}
 
 function setStatus(elId, text, type) {
   const el = byId(elId);
@@ -412,19 +499,90 @@ function buildManualPayload() {
 }
 
 function buildAutoPayload() {
-  return { user_id: byId('userId').value.trim(), location: byId('location').value.trim()||null, top_k: Number(byId('topK').value) };
+  return {
+    user_id: byId('userId').value.trim(),
+    location: byId('location').value.trim() || null,
+    gender: byId('gender').value,
+    age: Number(byId('age').value),
+    height_cm: Number(byId('heightCm').value),
+    clothing_size: byId('clothingSize').value,
+    top_size: byId('topSize').value,
+    bottom_size: byId('bottomSize').value,
+    shoe_size: byId('shoeSize').value.trim() || 'unknown',
+    style_preferences: parseCsv(byId('styles').value),
+    body_shape: byId('bodyShape').value,
+    agenda: parseCsv(byId('agenda').value),
+    top_k: Number(byId('topK').value),
+  };
+}
+
+function syncContextFromResolved(payload) {
+  const ctx = payload && payload.resolved_context;
+  if (!ctx) return;
+
+  if (ctx.location) {
+    byId('location').value = ctx.location;
+  }
+
+  if (ctx.weather && typeof ctx.weather.temperature_c === 'number') {
+    byId('temperature').value = String(Number(ctx.weather.temperature_c).toFixed(1));
+  }
+
+  if (ctx.weather && ctx.weather.condition) {
+    byId('condition').value = String(ctx.weather.condition);
+  }
 }
 
 function renderSuggestions(payload) {
   const cards = byId('cards');
   cards.innerHTML = '';
+  const ctx = payload && payload.resolved_context;
   const suggestions = (payload&&payload.suggestions)||[];
+
+  if (ctx && currentMode === 'auto') {
+    const openweather = ctx.openweather || null;
+    const agenda = Array.isArray(ctx.agenda_labels) ? ctx.agenda_labels : [];
+    const conditionText = openweather && openweather.condition
+      ? openweather.condition
+      : (ctx.weather && ctx.weather.condition ? ctx.weather.condition : '—');
+    const descriptionText = openweather && openweather.description ? openweather.description : '—';
+    const agendaText = agenda.length
+      ? agenda.map((label) => toSentenceCase(toFrenchText(label))).join(', ')
+      : '—';
+    const contextCard = document.createElement('div');
+    contextCard.className = 'context-card';
+    contextCard.innerHTML = `
+      <p class="context-title">Contexte OpenWeather</p>
+      <p><strong>Localisation :</strong> ${ctx.location || '—'}</p>
+      <p><strong>Condition :</strong> ${conditionText === '—' ? '—' : toTitleCase(toFrenchText(conditionText))}</p>
+      <p><strong>Description :</strong> ${descriptionText === '—' ? '—' : toSentenceCase(toFrenchText(descriptionText))}</p>
+      <p><strong>Température :</strong> ${openweather && typeof openweather.temperature_c === 'number' ? openweather.temperature_c.toFixed(1) + ' °C' : '—'}</p>
+      <p><strong>Ressenti :</strong> ${openweather && typeof openweather.feels_like_c === 'number' ? openweather.feels_like_c.toFixed(1) + ' °C' : '—'}</p>
+      <p><strong>Humidité :</strong> ${openweather && Number.isFinite(openweather.humidity_percent) ? openweather.humidity_percent + ' %' : '—'}</p>
+      <p><strong>Vent :</strong> ${openweather && typeof openweather.wind_speed_m_s === 'number' ? openweather.wind_speed_m_s.toFixed(1) + ' m/s' : '—'}</p>
+      <p><strong>Agenda interprété :</strong> ${agendaText}</p>
+    `;
+    cards.appendChild(contextCard);
+  }
+
   if (!suggestions.length) {
     cards.innerHTML = '<div class="card"><p>Aucune suggestion retournée.</p></div>';
     return;
   }
+
+  const shapeSummary = document.createElement('p');
+  shapeSummary.className = 'muted';
+  shapeSummary.innerHTML = '<strong>Morphologie interprétée :</strong> ' + bodyShapeLabel(payload.inferred_body_shape);
+  cards.appendChild(shapeSummary);
+
   for (const item of suggestions) {
-    const reasons = Array.isArray(item.reasons) ? item.reasons.join(', ') : '';
+    const reasons = Array.isArray(item.reasons)
+      ? item.reasons.map((reason) => toSentenceCase(toFrenchText(reason))).join(', ')
+      : '';
+    const outfitItems = Array.isArray(item.outfit_items) ? item.outfit_items : [];
+    const outfitItemsHtml = outfitItems.length
+      ? `<ul class="outfit-items">${outfitItems.map(v => `<li>${v}</li>`).join('')}</ul>`
+      : '<p class="muted">Tenue détaillée non disponible</p>';
     const card = document.createElement('article');
     card.className = 'card';
     card.innerHTML = `
@@ -433,6 +591,8 @@ function renderSuggestions(payload) {
         <span class="score-pill">${Number(item.score).toFixed(4)}</span>
       </div>
       <p><strong>ID :</strong> ${item.outfit_id}</p>
+      <p><strong>Tenue proposée :</strong></p>
+      ${outfitItemsHtml}
       ${reasons ? '<p class="reasons">'+reasons+'</p>' : ''}
     `;
     cards.appendChild(card);
@@ -457,6 +617,7 @@ async function runRecommendation() {
       return;
     }
     setStatus('status','OK','ok');
+    syncContextFromResolved(data);
     renderSuggestions(data);
   } catch(e) {
     setStatus('status','Erreur réseau : '+e,'err');

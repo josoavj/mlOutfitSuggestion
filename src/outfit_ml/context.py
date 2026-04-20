@@ -7,6 +7,7 @@ from pathlib import Path
 from urllib.parse import urlencode
 from urllib.request import Request, urlopen
 
+from .features import classify_agenda_text
 from .schemas import AgendaEntry, OpenWeatherResponse, UserProfile, WeatherInput
 
 
@@ -36,18 +37,18 @@ def _normalize_body_shape(value: object) -> str:
 
 
 def _data_source() -> str:
-    # Supported values: "api" (default), "file" or "supabase".
-    return os.getenv("MAGICMIRROR_DATA_SOURCE", "api").strip().lower()
+    # Supported values: "api", "file" (default) or "supabase".
+    return os.getenv("MAGICMIRROR_DATA_SOURCE", "file").strip().lower()
 
 
 def _load_json_file(path: Path) -> dict | list:
     if not path.exists():
-        raise AppIntegrationError(f"Fichier introuvable: {path}")
+        raise AppIntegrationError(f"Fichier introuvable : {path}")
     try:
         with path.open("r", encoding="utf-8") as file:
             return json.load(file)
     except Exception as exc:  # noqa: BLE001
-        raise AppIntegrationError(f"JSON invalide: {path}") from exc
+        raise AppIntegrationError(f"JSON invalide : {path}") from exc
 
 
 def _app_base_url() -> str:
@@ -60,6 +61,8 @@ def _app_base_url() -> str:
 def _http_get_json(url: str, headers_override: dict[str, str] | None = None) -> dict | list:
     token = os.getenv("MAGICMIRROR_API_TOKEN", "").strip()
     headers = {"Accept": "application/json"}
+    if headers_override:
+        headers.update(headers_override)
     if token:
         headers["Authorization"] = f"Bearer {token}"
     if headers_override:
@@ -71,10 +74,10 @@ def _http_get_json(url: str, headers_override: dict[str, str] | None = None) -> 
             status = response.status
             payload = response.read().decode("utf-8")
     except Exception as exc:  # noqa: BLE001
-        raise AppIntegrationError("Echec de connexion a l'API application") from exc
+        raise AppIntegrationError("Échec de connexion à l'API application") from exc
 
     if status >= 400:
-        raise AppIntegrationError(f"API application a retourne un statut {status}")
+        raise AppIntegrationError(f"L'API application a retourné un statut {status}")
     return json.loads(payload)
 
 
@@ -157,7 +160,7 @@ def _fetch_supabase_agenda(user_id: str) -> list[dict]:
     return rows
 
 
-def fetch_openweather(location: str) -> WeatherInput:
+def fetch_openweather_detailed(location: str) -> tuple[WeatherInput, OpenWeatherResponse]:
     api_key = os.getenv("OPENWEATHER_API_KEY", "").strip()
     if not api_key:
         raise OpenWeatherError("OPENWEATHER_API_KEY manquante")
@@ -170,14 +173,20 @@ def fetch_openweather(location: str) -> WeatherInput:
             status = response.status
             payload = response.read().decode("utf-8")
     except Exception as exc:  # noqa: BLE001
-        raise OpenWeatherError("Echec de connexion a OpenWeather") from exc
+        raise OpenWeatherError("Échec de connexion à OpenWeather") from exc
 
     if status >= 400:
-        raise OpenWeatherError(f"OpenWeather a retourne un statut {status}")
+        raise OpenWeatherError(f"OpenWeather a retourné un statut {status}")
 
     data = OpenWeatherResponse.model_validate(json.loads(payload))
     condition = data.weather[0].main if data.weather else "clear"
-    return WeatherInput(temperature_c=data.main.temp, condition=condition)
+    weather = WeatherInput(temperature_c=data.main.temp, condition=condition)
+    return weather, data
+
+
+def fetch_openweather(location: str) -> WeatherInput:
+    weather, _ = fetch_openweather_detailed(location)
+    return weather
 
 
 def agenda_to_labels(entries: list[AgendaEntry]) -> list[str]:
@@ -186,19 +195,7 @@ def agenda_to_labels(entries: list[AgendaEntry]) -> list[str]:
         text = " ".join([entry.title, entry.category, " ".join(entry.tags)]).lower().strip()
         if not text:
             continue
-
-        if any(key in text for key in ["meeting", "bureau", "travail", "work"]):
-            labels.append("work")
-        elif any(key in text for key in ["sport", "gym", "running", "yoga"]):
-            labels.append("sport")
-        elif any(key in text for key in ["date", "diner", "dinner"]):
-            labels.append("date")
-        elif any(key in text for key in ["event", "soir", "party", "mariage"]):
-            labels.append("event")
-        elif any(key in text for key in ["trip", "voyage", "outdoor", "randonnee"]):
-            labels.append("outdoor")
-        else:
-            labels.append("casual")
+        labels.append(classify_agenda_text(text))
 
     return labels
 
@@ -223,7 +220,7 @@ def fetch_user_profile(user_id: str) -> UserProfile:
     elif source == "supabase":
         raw = _fetch_supabase_profile(user_id)
     else:
-        raise AppIntegrationError("MAGICMIRROR_DATA_SOURCE doit etre 'api', 'file' ou 'supabase'")
+        raise AppIntegrationError("MAGICMIRROR_DATA_SOURCE doit être 'api', 'file' ou 'supabase'")
 
     if not isinstance(raw, dict):
         raise AppIntegrationError("Profil utilisateur invalide")
@@ -257,15 +254,15 @@ def fetch_user_profile(user_id: str) -> UserProfile:
 
     return UserProfile(
         user_id=str(raw.get("user_id") or user_id),
-        gender=str(raw.get(gender_col) or raw.get("gender") or "unknown"),
-        age=int(raw.get(age_col) or raw.get("age") or 25),
-        height_cm=int(raw.get(height_col) or raw.get("height_cm") or 170),
-        clothing_size=str(raw.get(clothing_size_col) or raw.get("clothing_size") or "unknown").lower(),
-        top_size=str(raw.get(top_size_col) or raw.get("top_size") or "unknown").lower(),
-        bottom_size=str(raw.get(bottom_size_col) or raw.get("bottom_size") or "unknown").lower(),
-        shoe_size=str(raw.get(shoe_size_col) or raw.get("shoe_size") or "unknown").lower(),
-        style_preferences=style_preferences,
-        body_shape=_normalize_body_shape(raw.get(body_shape_col) or raw.get("body_shape")),
+        gender=str(raw.get("gender") or "unknown"),
+        age=int(raw.get("age")),
+        height_cm=int(raw.get("height_cm")),
+        clothing_size=str(raw.get("clothing_size") or "unknown"),
+        top_size=str(raw.get("top_size") or "unknown"),
+        bottom_size=str(raw.get("bottom_size") or "unknown"),
+        shoe_size=str(raw.get("shoe_size") or "unknown"),
+        style_preferences=list(raw.get("style_preferences") or []),
+        body_shape=raw.get("body_shape"),
         body_measurements=measurements or None,
         location=str(location),
     )
@@ -291,7 +288,7 @@ def fetch_today_agenda_entries(user_id: str) -> list[AgendaEntry]:
     elif source == "supabase":
         raw = _fetch_supabase_agenda(user_id)
     else:
-        raise AppIntegrationError("MAGICMIRROR_DATA_SOURCE doit etre 'api', 'file' ou 'supabase'")
+        raise AppIntegrationError("MAGICMIRROR_DATA_SOURCE doit être 'api', 'file' ou 'supabase'")
 
     entries_raw: list[dict]
     if isinstance(raw, list):

@@ -1,11 +1,11 @@
 {
   "best_model": "extra_trees",
   "metrics": {
-    "roc_auc": 0.9689503205128206,
-    "average_precision": 0.9667124627733754,
-    "precision": 0.8990825688073395,
-    "recall": 0.9423076923076923,
-    "f1": 0.92018779342723
+    "roc_auc": 0.9866108734033263,
+    "average_precision": 0.9886517954929646,
+    "precision": 0.9032258064516129,
+    "recall": 0.9790209790209791,
+    "f1": 0.9395973154362416
   },
   "samples": 1000,
   "data_source": "synthetic",

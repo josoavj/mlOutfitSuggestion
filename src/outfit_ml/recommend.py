@@ -6,7 +6,16 @@ import joblib
 import pandas as pd
 
 from .data import OutfitItem, load_catalog
-from .features import dominant_occasion, encode_style_flags, infer_body_shape, weather_bucket
+from .features import (
+    dominant_occasion,
+    encode_style_flags,
+    infer_body_shape,
+    normalize_size,
+    preferred_shoe_bucket_for_item,
+    preferred_size_for_item,
+    shoe_size_bucket,
+    weather_bucket,
+)
 from .schemas import OutfitSuggestion, RecommendationRequest, RecommendationResponse
 
 
@@ -18,6 +27,15 @@ class OutfitRecommender:
     ) -> None:
         self.model = joblib.load(model_path)
         self.catalog: list[OutfitItem] = load_catalog(catalog_path)
+
+    @staticmethod
+    def _items_for_gender(item: OutfitItem, gender: str) -> list[str]:
+        normalized_gender = str(gender or "").strip().lower()
+        if normalized_gender in item.items_by_gender and item.items_by_gender[normalized_gender]:
+            return item.items_by_gender[normalized_gender]
+        if "unisex" in item.items_by_gender and item.items_by_gender["unisex"]:
+            return item.items_by_gender["unisex"]
+        return item.items
 
     def _row_for_item(
         self,
@@ -40,12 +58,28 @@ class OutfitRecommender:
             "body_shape": inferred_shape,
             "occasion": occasion,
             "weather": weather,
+            "clothing_size": normalize_size(request.clothing_size),
+            "top_size": normalize_size(request.top_size),
+            "bottom_size": normalize_size(request.bottom_size),
+            "shoe_bucket": shoe_size_bucket(request.shoe_size),
             "outfit_id": item.id,
             "style_match": int(any(s in item.styles for s in request.style_preferences)),
             "occasion_match": int(occasion in item.occasions),
             "weather_match": int(weather in item.weather),
             "shape_match": int(inferred_shape in item.body_shapes or inferred_shape == "unknown"),
             "gender_match": int(request.gender in item.genders or "unisex" in item.genders),
+            "clothing_size_match": int(
+                normalize_size(request.clothing_size) == preferred_size_for_item(item.id, "clothing")
+            ),
+            "top_size_match": int(
+                normalize_size(request.top_size) == preferred_size_for_item(item.id, "top")
+            ),
+            "bottom_size_match": int(
+                normalize_size(request.bottom_size) == preferred_size_for_item(item.id, "bottom")
+            ),
+            "shoe_size_match": int(
+                shoe_size_bucket(request.shoe_size) == preferred_shoe_bucket_for_item(item.id)
+            ),
             **pref_flags,
         }
 
@@ -81,19 +115,19 @@ class OutfitRecommender:
         for item, score in ranked[: request.top_k]:
             reasons = []
             if any(style in item.styles for style in request.style_preferences):
-                reasons.append("correspond aux preferences de style")
+                reasons.append("correspond aux préférences de style")
             if weather in item.weather:
-                reasons.append("adapte a la meteo")
+                reasons.append("adapté à la météo")
             if occasion in item.occasions:
-                reasons.append("coherent avec l'agenda")
+                reasons.append("cohérent avec l'agenda")
             if not reasons:
-                reasons.append("bonne compatibilite globale")
+                reasons.append("bonne compatibilité globale")
 
             suggestions.append(
                 OutfitSuggestion(
                     outfit_id=item.id,
                     outfit_label=item.label,
-                    outfit_items=item.items,
+                    outfit_items=self._items_for_gender(item, request.gender),
                     score=float(round(score, 4)),
                     reasons=reasons,
                 )

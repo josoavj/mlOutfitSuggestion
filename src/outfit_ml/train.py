@@ -19,13 +19,13 @@ from .data import load_catalog, real_training_pairs_from_feedback, synthetic_tra
 
 CATEGORICAL = [
     "gender",
-    "clothing_size",
-    "top_size",
-    "bottom_size",
-    "shoe_size",
     "body_shape",
     "occasion",
     "weather",
+    "clothing_size",
+    "top_size",
+    "bottom_size",
+    "shoe_bucket",
     "outfit_id",
 ]
 NUMERIC = [
@@ -36,6 +36,10 @@ NUMERIC = [
     "weather_match",
     "shape_match",
     "gender_match",
+    "clothing_size_match",
+    "top_size_match",
+    "bottom_size_match",
+    "shoe_size_match",
     "pref_classic",
     "pref_minimalist",
     "pref_casual",
@@ -81,7 +85,7 @@ def build_pipeline(model_name: str) -> Pipeline:
     }
 
     if model_name not in candidates:
-        raise ValueError(f"Modele inconnu: {model_name}")
+        raise ValueError(f"Modèle inconnu : {model_name}")
 
     model = candidates[model_name]
 
@@ -240,7 +244,7 @@ def main() -> None:
             best_metrics = metrics
 
     if best_pipeline is None or best_name is None or best_metrics is None:
-        raise RuntimeError("Aucun modele n'a pu etre entraine")
+        raise RuntimeError("Aucun modèle n'a pu être entraîné")
 
     args.output.parent.mkdir(parents=True, exist_ok=True)
     joblib.dump(best_pipeline, args.output)
@@ -255,9 +259,9 @@ def main() -> None:
     with args.metrics_output.open("w", encoding="utf-8") as file:
         json.dump(metadata, file, indent=2)
 
-    print(f"Modele entraine ({best_name}) et sauvegarde dans {args.output}")
-    print(f"Metriques sauvegardees dans {args.metrics_output}")
-    print(f"Source des donnees: {data_source} ({len(data)} lignes)")
+    print(f"Modèle entraîné ({best_name}) et sauvegardé dans {args.output}")
+    print(f"Métriques sauvegardées dans {args.metrics_output}")
+    print(f"Lignes d'entraînement : {len(data)}")
     print(f"ROC-AUC={best_metrics['roc_auc']:.4f} AP={best_metrics['average_precision']:.4f}")
 
 
