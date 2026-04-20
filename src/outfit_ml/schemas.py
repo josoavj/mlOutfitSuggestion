@@ -1,11 +1,13 @@
 from __future__ import annotations
 
+from datetime import datetime
 from typing import Literal
 
 from pydantic import BaseModel, Field
 
 
 Gender = Literal["female", "male", "non_binary", "unknown"]
+ClothingSize = Literal["xs", "s", "m", "l", "xl", "xxl", "unknown"]
 BodyShape = Literal[
     "hourglass",
     "rectangle",

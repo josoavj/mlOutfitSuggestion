@@ -329,3 +329,25 @@ Compilation de verification:
 Lancement API:
 
 uvicorn src.outfit_ml.api:app --reload
+
+## 16. Pipeline feedback reel
+
+Collecte des interactions:
+- `POST /feedback/event` pour loguer impression/click/selected/dismissed
+- `GET /feedback/stats` pour verifier le volume et la repartition
+
+Format de stockage:
+- JSON Lines dans `data/feedback/events.jsonl` (configurable via `FEEDBACK_LOG_PATH`)
+
+Transformation en dataset d'entrainement:
+- Groupe par `session_id`
+- Positif: `selected` (et `click`)
+- Negatif: tenues en `impression` non selectionnees
+- Recalcule des features de matching depuis le catalogue
+
+Activation entrainement reel:
+
+python -m src.outfit_ml.train --prefer-real-data --real-feedback-log data/feedback/events.jsonl --split-mode time
+
+Fallback:
+- si volume reel insuffisant (< `--min-real-samples`) ou classes non exploitables, fallback automatique sur synthetique

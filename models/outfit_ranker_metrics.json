@@ -1,5 +1,5 @@
 {
-  "best_model": "random_forest",
+  "best_model": "extra_trees",
   "metrics": {
     "roc_auc": 0.9866108734033263,
     "average_precision": 0.9886517954929646,
@@ -7,5 +7,7 @@
     "recall": 0.9790209790209791,
     "f1": 0.9395973154362416
   },
-  "samples": 4000
+  "samples": 1000,
+  "data_source": "synthetic",
+  "split_mode": "random"
 }

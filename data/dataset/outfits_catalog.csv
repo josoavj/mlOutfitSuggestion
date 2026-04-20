@@ -1,0 +1,3 @@
+outfit_id,label,styles,occasions,weather_compatibility,fit_profiles,formality_level,season
+smart_casual,Smart Casual,casual|minimalist,work|casual,mild|hot,hourglass|rectangle|pear,business,spring
+office_chic,Office Chic,classic|minimalist,work|meeting,mild|cold,hourglass|rectangle|inverted_triangle,formal,all

@@ -19,6 +19,7 @@ from .context import (
     fetch_today_agenda_entries,
     fetch_user_profile,
 )
+from .feedback import append_feedback_event, append_feedback_events, feedback_stats
 from .recommend import OutfitRecommender
 from .schemas import (
     AutoRecommendationRequest,
@@ -114,6 +115,19 @@ def require_api_key(x_api_key: str | None = Header(default=None, alias="X-API-Ke
 
 
 app = FastAPI(title="Outfit Suggestion API", version="0.1.0")
+
+WEB_DIR = Path(__file__).resolve().parents[2] / "web"
+MODEL_METRICS_PATH = Path(__file__).resolve().parents[2] / "models" / "outfit_ranker_metrics.json"
+if WEB_DIR.exists():
+    app.mount("/ui-assets", StaticFiles(directory=str(WEB_DIR)), name="ui-assets")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=_allowed_origins(),
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 @app.post("/feedback/event", response_model=FeedbackEventResponse)
@@ -240,7 +254,10 @@ def technical_dashboard(_: None = Depends(require_api_key)) -> dict:
 
 
 @app.post("/recommend", response_model=RecommendationResponse)
-def recommend(request: RecommendationRequest) -> RecommendationResponse:
+def recommend(
+    request: RecommendationRequest,
+    _: None = Depends(require_api_key),
+) -> RecommendationResponse:
     try:
         recommender = get_recommender()
         response = recommender.recommend(request)
@@ -259,7 +276,10 @@ def recommend(request: RecommendationRequest) -> RecommendationResponse:
 
 
 @app.post("/recommend/context", response_model=RecommendationResponse)
-def recommend_from_context(request: ContextRecommendationRequest) -> RecommendationResponse:
+def recommend_from_context(
+    request: ContextRecommendationRequest,
+    _: None = Depends(require_api_key),
+) -> RecommendationResponse:
     try:
         weather, openweather = fetch_openweather_detailed(request.location)
     except OpenWeatherError as exc:
@@ -296,7 +316,10 @@ def recommend_from_context(request: ContextRecommendationRequest) -> Recommendat
 
 
 @app.post("/recommend/auto", response_model=RecommendationResponse)
-def recommend_auto(request: AutoRecommendationRequest) -> RecommendationResponse:
+def recommend_auto(
+    request: AutoRecommendationRequest,
+    _: None = Depends(require_api_key),
+) -> RecommendationResponse:
     try:
         profile = fetch_user_profile(request.user_id)
         agenda_entries = fetch_today_agenda_entries(request.user_id)
@@ -364,7 +387,10 @@ def recommend_auto(request: AutoRecommendationRequest) -> RecommendationResponse
 
 
 @app.post("/vision/enroll", response_model=FaceEnrollResponse)
-def vision_enroll(request: FaceEnrollRequest) -> FaceEnrollResponse:
+def vision_enroll(
+    request: FaceEnrollRequest,
+    _: None = Depends(require_api_key),
+) -> FaceEnrollResponse:
     try:
         registry = get_face_registry()
         registry.enroll(request.user_id, request.image_base64)
@@ -377,7 +403,10 @@ def vision_enroll(request: FaceEnrollRequest) -> FaceEnrollResponse:
 
 
 @app.post("/vision/identify", response_model=FaceIdentifyResponse)
-def vision_identify(request: FaceIdentifyRequest) -> FaceIdentifyResponse:
+def vision_identify(
+    request: FaceIdentifyRequest,
+    _: None = Depends(require_api_key),
+) -> FaceIdentifyResponse:
     try:
         registry = get_face_registry()
         matches = registry.identify(
@@ -394,7 +423,10 @@ def vision_identify(request: FaceIdentifyRequest) -> FaceIdentifyResponse:
 
 
 @app.post("/mirror/recommend-from-camera", response_model=CameraRecommendationResponse)
-def recommend_from_camera(request: CameraRecommendationRequest) -> CameraRecommendationResponse:
+def recommend_from_camera(
+    request: CameraRecommendationRequest,
+    _: None = Depends(require_api_key),
+) -> CameraRecommendationResponse:
     try:
         registry = get_face_registry()
         matches = registry.identify(
@@ -427,3 +459,30 @@ def recommend_from_camera(request: CameraRecommendationRequest) -> CameraRecomme
         face_match=best_match,
         recommendation=recommendation,
     )
+
+
+@app.post("/feedback/event", response_model=FeedbackEventResponse)
+def create_feedback_event(
+    request: FeedbackEventRequest,
+    _: None = Depends(require_api_key),
+) -> FeedbackEventResponse:
+    event_id = append_feedback_event(request)
+    return FeedbackEventResponse(status="ok", event_id=event_id)
+
+
+@app.post("/feedback/events", response_model=FeedbackBatchResponse)
+def create_feedback_events(
+    request: FeedbackBatchRequest,
+    _: None = Depends(require_api_key),
+) -> FeedbackBatchResponse:
+    event_ids = append_feedback_events(request.events)
+    return FeedbackBatchResponse(
+        status="ok",
+        created_count=len(event_ids),
+        event_ids=event_ids,
+    )
+
+
+@app.get("/feedback/stats", response_model=FeedbackStatsResponse)
+def get_feedback_stats(_: None = Depends(require_api_key)) -> FeedbackStatsResponse:
+    return feedback_stats()

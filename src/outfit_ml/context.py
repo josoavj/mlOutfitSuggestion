@@ -19,6 +19,23 @@ class AppIntegrationError(RuntimeError):
     pass
 
 
+def _normalize_body_shape(value: object) -> str:
+    text = str(value or "").strip().lower()
+    mapping = {
+        "hourglass": "hourglass",
+        "sablier": "hourglass",
+        "rectangle": "rectangle",
+        "rectangulaire": "rectangle",
+        "pear": "pear",
+        "poire": "pear",
+        "inverted_triangle": "inverted_triangle",
+        "triangle inverse": "inverted_triangle",
+        "oval": "oval",
+        "ovale": "oval",
+    }
+    return mapping.get(text, "unknown")
+
+
 def _data_source() -> str:
     # Supported values: "api", "file" (default) or "supabase".
     return os.getenv("MAGICMIRROR_DATA_SOURCE", "file").strip().lower()
@@ -48,6 +65,8 @@ def _http_get_json(url: str, headers_override: dict[str, str] | None = None) -> 
         headers.update(headers_override)
     if token:
         headers["Authorization"] = f"Bearer {token}"
+    if headers_override:
+        headers.update(headers_override)
 
     request = Request(url, headers=headers, method="GET")
     try:
@@ -206,8 +225,33 @@ def fetch_user_profile(user_id: str) -> UserProfile:
     if not isinstance(raw, dict):
         raise AppIntegrationError("Profil utilisateur invalide")
 
-    measurements = raw.get("body_measurements") or {}
-    location = raw.get("location") or raw.get("city") or ""
+    gender_col = os.getenv("SUPABASE_PROFILE_GENDER_COLUMN", "gender").strip()
+    age_col = os.getenv("SUPABASE_PROFILE_AGE_COLUMN", "age").strip()
+    height_col = os.getenv("SUPABASE_PROFILE_HEIGHT_COLUMN", "height_cm").strip()
+    body_shape_col = os.getenv("SUPABASE_PROFILE_BODY_SHAPE_COLUMN", "body_shape").strip()
+    style_pref_col = os.getenv(
+        "SUPABASE_PROFILE_STYLE_PREFERENCES_COLUMN", "style_preferences"
+    ).strip()
+    location_col = os.getenv("SUPABASE_PROFILE_LOCATION_COLUMN", "location").strip()
+    clothing_size_col = os.getenv("SUPABASE_PROFILE_CLOTHING_SIZE_COLUMN", "clothing_size").strip()
+    top_size_col = os.getenv("SUPABASE_PROFILE_TOP_SIZE_COLUMN", "top_size").strip()
+    bottom_size_col = os.getenv("SUPABASE_PROFILE_BOTTOM_SIZE_COLUMN", "bottom_size").strip()
+    shoe_size_col = os.getenv("SUPABASE_PROFILE_SHOE_SIZE_COLUMN", "shoe_size").strip()
+    measurements_col = os.getenv(
+        "SUPABASE_PROFILE_BODY_MEASUREMENTS_COLUMN", "body_measurements"
+    ).strip()
+
+    measurements = raw.get(measurements_col) or raw.get("body_measurements") or {}
+    location = raw.get(location_col) or raw.get("location") or raw.get("city") or ""
+
+    style_pref_raw = raw.get(style_pref_col) or raw.get("style_preferences") or []
+    if isinstance(style_pref_raw, str):
+        style_preferences = [v.strip() for v in style_pref_raw.split("|") if v.strip()]
+    elif isinstance(style_pref_raw, list):
+        style_preferences = [str(v).strip() for v in style_pref_raw if str(v).strip()]
+    else:
+        style_preferences = []
+
     return UserProfile(
         user_id=str(raw.get("user_id") or user_id),
         gender=str(raw.get("gender") or "unknown"),
@@ -256,12 +300,26 @@ def fetch_today_agenda_entries(user_id: str) -> list[AgendaEntry]:
         raise AppIntegrationError("Agenda invalide")
 
     entries: list[AgendaEntry] = []
+    title_col = os.getenv("SUPABASE_AGENDA_TITLE_COLUMN", "title").strip()
+    category_col = os.getenv("SUPABASE_AGENDA_CATEGORY_COLUMN", "event_type").strip()
+    tags_col = os.getenv("SUPABASE_AGENDA_TAGS_COLUMN", "tags").strip()
+
     for item in entries_raw:
-        title = item.get("title") or item.get("name") or ""
-        category = item.get("category") or item.get("type") or ""
-        tags = item.get("tags") or []
+        title = item.get(title_col) or item.get("name") or item.get("title") or ""
+        category = (
+            item.get(category_col)
+            or item.get("event_type")
+            or item.get("type")
+            or item.get("category")
+            or ""
+        )
+        tags = item.get(tags_col) or item.get("tags") or []
         if isinstance(tags, str):
             tags = [tags]
+        if not tags:
+            description = item.get("description")
+            if isinstance(description, str) and description.strip():
+                tags = [description.strip()]
 
         entries.append(
             AgendaEntry(

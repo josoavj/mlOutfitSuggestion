@@ -50,6 +50,10 @@ class OutfitRecommender:
         row: dict[str, int | str] = {
             "age": request.age,
             "height_cm": request.height_cm,
+            "clothing_size": request.clothing_size,
+            "top_size": request.top_size,
+            "bottom_size": request.bottom_size,
+            "shoe_size": request.shoe_size,
             "gender": request.gender,
             "body_shape": inferred_shape,
             "occasion": occasion,

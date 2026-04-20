@@ -1,13 +1,13 @@
 # ML Outfit Suggestion
 
-Base de projet ML pour proposer des tenues personnalisees pour MagicMirror selon:
-- sexe
-- age
-- taille
-- planning du jour
-- preferences vestimentaires
-- morphologie (detectee automatiquement si mesures disponibles)
-- meteo et lieu
+Base de projet ML pour proposer des tenues personnalisées pour MagicMirror selon les critères suivants:
+- Sexe
+- Âge
+- Taille
+- Planning du jour
+- Preférences vestimentaires
+- Morphologie (Detectée automatiquement si mesures disponibles)
+- Météo et lieu
 
 ## Architecture
 
@@ -45,6 +45,18 @@ Le modele est sauvegarde dans:
 - models/outfit_ranker.joblib
 - models/outfit_ranker_metrics.json
 
+Validation du dataset structure (option recommandee avant entrainement):
+
+```bash
+python -m src.outfit_ml.validate_dataset --dataset-root data/dataset
+```
+
+Conversion du dataset CSV vers Parquet partitionne par date:
+
+```bash
+python -m src.outfit_ml.export_parquet --dataset-root data/dataset --output-root data/parquet
+```
+
 ## Lancer l'API
 
 Option rapide recommandee avec `.env`:
@@ -57,12 +69,50 @@ uvicorn src.outfit_ml.api:app --reload
 
 L'API charge automatiquement les variables depuis `.env`.
 
+## Interface Web de test
+
+Une mini interface web est disponible pour tester rapidement les endpoints de recommandation:
+
+- URL: `http://127.0.0.1:8000/ui`
+- Mode manuel: appelle `POST /recommend`
+- Mode auto: appelle `POST /recommend/auto`
+
+L'interface permet de:
+- saisir les champs du profil et du contexte
+- envoyer une cle API via `X-API-Key` si `API_AUTH_ENABLED=true`
+- visualiser les suggestions et la reponse JSON brute
+- consulter un dashboard technique via `GET /dashboard/technical`
+  (etat service, source de donnees, presence des metriques modele, stats feedback)
+
 Option via export shell:
 
 ```bash
 export OPENWEATHER_API_KEY="ta_cle_openweather"
 uvicorn src.outfit_ml.api:app --reload
 ```
+
+## Liaison API avec l'application (MagicMirror/Flutter)
+
+Le service expose une API FastAPI consommee directement par l'application.
+
+Configuration minimale recommandee:
+
+```env
+API_AUTH_ENABLED=true
+API_AUTH_KEY=replace_with_strong_shared_secret
+ALLOWED_ORIGINS=https://your-magicmirror-app.example.com
+```
+
+L'application doit envoyer l'entete HTTP suivant:
+
+```text
+X-API-Key: replace_with_strong_shared_secret
+```
+
+Endpoint principal recommande cote app:
+- `POST /mirror/recommend-from-camera`
+
+Ce endpoint couvre le flux complet (identification + contexte + recommandations).
 
 ## Mode integration automatique (direct application)
 
@@ -208,6 +258,10 @@ curl -X POST "http://127.0.0.1:8000/recommend/context" \
     "gender": "female",
     "age": 29,
     "height_cm": 168,
+    "clothing_size": "m",
+    "top_size": "m",
+    "bottom_size": "m",
+    "shoe_size": "40",
     "style_preferences": ["minimalist", "elegant"],
     "body_measurements": {
       "shoulders_cm": 95,
@@ -233,6 +287,10 @@ curl -X POST "http://127.0.0.1:8000/recommend" \
     "gender": "female",
     "age": 29,
     "height_cm": 168,
+    "clothing_size": "m",
+    "top_size": "m",
+    "bottom_size": "m",
+    "shoe_size": "40",
     "style_preferences": ["minimalist", "elegant"],
     "body_measurements": {
       "shoulders_cm": 95,
@@ -254,3 +312,91 @@ curl -X POST "http://127.0.0.1:8000/recommend" \
 - Le jeu de donnees d'entrainement est synthetique (bootstrapping).
 - Pour la production, remplacer par de vraies interactions utilisateurs et feedback implicite/explicite.
 - Integrer une source meteo reelle et agenda reel pour MagicMirror.
+
+## Collecte feedback (donnees reelles)
+
+Endpoints:
+- `POST /feedback/event`
+- `POST /feedback/events`
+- `GET /feedback/stats`
+
+Exemple d'evenement:
+
+```json
+{
+  "session_id": "s-001",
+  "user_id": "u-001",
+  "outfit_id": "smart_casual",
+  "event_type": "impression",
+  "position": 0,
+  "gender": "female",
+  "age": 29,
+  "height_cm": 168,
+  "clothing_size": "m",
+  "top_size": "m",
+  "bottom_size": "m",
+  "shoe_size": "40",
+  "body_shape": "hourglass",
+  "style_preferences": ["minimalist", "elegant"],
+  "dominant_occasion": "work",
+  "weather_bucket": "rainy"
+}
+```
+
+## Entrainement avec donnees reelles
+
+Le trainer peut utiliser les feedbacks reels et fallback sur le synthetique.
+
+```bash
+python -m src.outfit_ml.train \
+  --prefer-real-data \
+  --real-feedback-log data/feedback/events.jsonl \
+  --min-real-samples 200 \
+  --split-mode time
+```
+
+Metriques ajoutees si `session_id` est present:
+- `precision_at_3`
+- `recall_at_3`
+- `ndcg_at_3`
+
+Exemple batch (session complete en un appel):
+
+```json
+{
+  "events": [
+    {
+      "session_id": "s-001",
+      "user_id": "u-001",
+      "outfit_id": "smart_casual",
+      "event_type": "impression",
+      "position": 0,
+      "gender": "female",
+      "age": 29,
+      "height_cm": 168,
+      "clothing_size": "m",
+      "top_size": "m",
+      "bottom_size": "m",
+      "shoe_size": "40",
+      "body_shape": "hourglass",
+      "style_preferences": ["minimalist", "elegant"],
+      "dominant_occasion": "work",
+      "weather_bucket": "rainy"
+    },
+    {
+      "session_id": "s-001",
+      "user_id": "u-001",
+      "outfit_id": "smart_casual",
+      "event_type": "selected",
+      "position": 0,
+      "gender": "female",
+      "age": 29,
+      "height_cm": 168,
+      "body_shape": "hourglass",
+      "style_preferences": ["minimalist", "elegant"],
+      "dominant_occasion": "work",
+      "weather_bucket": "rainy"
+    }
+  ]
+}
+```

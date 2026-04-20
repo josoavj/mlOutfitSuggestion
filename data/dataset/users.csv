@@ -1,0 +1,3 @@
+user_id,gender,age,height_cm,body_shape,clothing_size,top_size,bottom_size,shoe_size,style_preferences,location_home,updated_at
+u-001,female,29,168,hourglass,m,m,m,40,minimalist|elegant,Lyon,2026-04-09T08:10:00Z
+u-002,male,34,181,rectangle,l,l,m,43,classic|practical,Paris,2026-04-09T08:10:00Z
