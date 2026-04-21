@@ -11,6 +11,9 @@ from fastapi import Depends, FastAPI, Header, HTTPException
 from dotenv import load_dotenv
 from fastapi.responses import FileResponse
 
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+
 from .context import (
     AppIntegrationError,
     OpenWeatherError,
