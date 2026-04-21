@@ -9,6 +9,14 @@ Base de projet ML pour proposer des tenues personnalisées pour MagicMirror selo
 - Morphologie (Detectée automatiquement si mesures disponibles)
 - Météo et lieu
 
+## Mises a jour recentes (avril 2026)
+
+- Les endpoints `POST /recommend`, `POST /recommend/context` et `POST /recommend/auto` retournent desormais un champ `resolved_context` (source, location, meteo resolue, labels agenda, details OpenWeather quand disponibles).
+- Le mode `auto` accepte des overrides de profil dans la requete (genre, age, tailles, style, morphologie, agenda) pour que les ajustements UI soient pris en compte sans modifier la source profil distante.
+- Le pipeline ML exploite maintenant les tailles (`top_size`, `bottom_size`, `shoe_size`) pendant l'entrainement et l'inference.
+- L'interpretation agenda est etendue (travail, sport, date, evenement, outdoor, casual) avec normalisation accents/ponctuation.
+- L'UI de test (`/ui`) affiche les details OpenWeather en mode auto et masque les champs meteo manuels quand le mode auto est actif.
+
 ## Architecture
 
 Le systeme est compose de 3 parties:
@@ -114,6 +122,43 @@ Endpoint principal recommande cote app:
 
 Ce endpoint couvre le flux complet (identification + contexte + recommandations).
 
+## Contrat de reponse (recommandation)
+
+Les reponses de recommandation incluent:
+
+- `suggestions`: top-k des tenues avec score et raisons
+- `inferred_body_shape`, `dominant_occasion`, `weather_bucket`
+- `resolved_context`:
+  - `source`: `manual` | `context` | `auto`
+  - `location`
+  - `weather` (temperature + condition utilisees par le modele)
+  - `agenda_labels` (labels interpretes)
+  - `openweather` (ville, pays, ressenti, humidite, vent) pour les flux `context` et `auto`
+
+Exemple minimal de `resolved_context`:
+
+```json
+{
+  "source": "auto",
+  "location": "Lyon",
+  "weather": {
+    "temperature_c": 18.3,
+    "condition": "clear"
+  },
+  "agenda_labels": ["work", "meeting"],
+  "openweather": {
+    "city": "Lyon",
+    "country": "FR",
+    "temperature_c": 18.3,
+    "feels_like_c": 17.8,
+    "humidity_percent": 52,
+    "condition": "Clear",
+    "description": "clear sky",
+    "wind_speed_m_s": 2.7
+  }
+}
+```
+
 ## Mode integration automatique (direct application)
 
 Pour une integration directe, configure l'API de ton application:
@@ -133,6 +178,25 @@ curl -X POST "http://127.0.0.1:8000/recommend/auto" \
   -d '{
     "user_id": "u-001",
     "location": "Lyon",
+    "top_k": 3
+  }'
+```
+
+Exemple avec overrides auto (prioritaires sur le profil recupere):
+
+```bash
+curl -X POST "http://127.0.0.1:8000/recommend/auto" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "user_id": "u-001",
+    "location": "Lyon",
+    "gender": "female",
+    "age": 29,
+    "top_size": "m",
+    "bottom_size": "m",
+    "shoe_size": "40",
+    "style_preferences": ["minimalist", "elegant"],
+    "agenda": ["work", "meeting"],
     "top_k": 3
   }'
 ```
@@ -317,6 +381,7 @@ curl -X POST "http://127.0.0.1:8000/recommend" \
 
 Endpoints:
 - `POST /feedback/event`
+- `POST /feedback/batch`
 - `POST /feedback/events`
 - `GET /feedback/stats`
 
