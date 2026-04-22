@@ -13,6 +13,7 @@ cp .env.magicmirror.example .env
 ```
 
 2. Renseigner les variables backend:
+
 - MAGICMIRROR_API_BASE_URL
 - MAGICMIRROR_API_TOKEN (si securise)
 - MAGICMIRROR_PROFILE_PATH_TEMPLATE
@@ -27,7 +28,7 @@ cp .env.magicmirror.example .env
 uvicorn src.outfit_ml.api:app --reload
 ```
 
-## Endpoints recommandes
+## Endpoints recommandés
 
 - POST /recommend/auto
 - POST /mirror/recommend-from-camera
@@ -42,21 +43,21 @@ curl -X POST "http://127.0.0.1:8000/recommend/auto" \
   -d '{"user_id":"u-001","top_k":3}'
 ```
 
-## Liaison application (recommande)
+## Liaison application (recommandé)
 
-1. Activer la securite API (`API_AUTH_ENABLED=true`).
+1. Activer la securité API (`API_AUTH_ENABLED=true`).
 2. Configurer le client Flutter/MagicMirror pour envoyer `X-API-Key`.
-3. Appeler en priorite `POST /mirror/recommend-from-camera`.
+3. Appeler en priorité `POST /mirror/recommend-from-camera`.
 4. Envoyer les interactions en batch vers `POST /feedback/events`.
 
 ## Avantages
 
-- Donnees profil/agenda temps reel
-- Architecture prete production
-- Integration naturelle avec app Android/Web
+- Donnees profil/agenda temps réel
+- Architecture prête pour la production
+- Intégration naturelle avec app Android/Web
 
 ## Points d'attention
 
-- Gerer timeout/retry reseau vers backend et meteo
-- Securiser les endpoints (token/JWT)
+- Gérer timeout/retry reseau vers backend et météo
+- Sécuriser les endpoints (token/JWT)
 - Mettre en place monitoring des latences et erreurs
