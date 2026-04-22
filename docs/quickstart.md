@@ -3,10 +3,10 @@
 Cette version couvre le flux complet avec:
 
 - recommandations manual/context/auto
-- contexte meteo enrichi (`resolved_context`)
+- contexte météo enrichi (`resolved_context`)
 - prise en compte des tailles et overrides utilisateur en mode auto
 
-## 1. Installer et entrainer
+## 1. Installer et entraîner
 
 ```bash
 ~/.pyenv/bin/python -m pip install -r requirements.txt

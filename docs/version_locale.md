@@ -13,7 +13,8 @@ Le profil et l'agenda sont lus depuis des fichiers JSON locaux.
 cp .env.local.example .env
 ```
 
-2. Verifier les fichiers de donnees locales:
+2. Vérifier les fichiers de données locales:
+
 - data/users/{user_id}/profile.json
 - data/users/{user_id}/agenda_today.json
 
@@ -23,7 +24,7 @@ cp .env.local.example .env
 uvicorn src.outfit_ml.api:app --reload
 ```
 
-## Endpoints recommandes
+## Endpoints recommandés
 
 - POST /recommend/auto
 - POST /mirror/recommend-from-camera
@@ -40,10 +41,10 @@ curl -X POST "http://127.0.0.1:8000/recommend/auto" \
 ## Avantages
 
 - Setup rapide
-- Pas de dependance backend externe
+- Pas de dépendance backend externe
 - Ideal dev, test, demo
 
 ## Limites
 
-- Donnees statiques si fichiers non synchronises
-- Pas de source profil/agenda temps reel
+- Données statiques si fichiers non synchronisés
+- Pas de source profil/agenda temps réel
