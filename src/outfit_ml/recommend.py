@@ -115,13 +115,13 @@ class OutfitRecommender:
         for item, score in ranked[: request.top_k]:
             reasons = []
             if any(style in item.styles for style in request.style_preferences):
-                reasons.append("correspond aux préférences de style")
+                reasons.append("Correspond aux préférences de style")
             if weather in item.weather:
-                reasons.append("adapté à la météo")
+                reasons.append("Adapté à la météo")
             if occasion in item.occasions:
-                reasons.append("cohérent avec l'agenda")
+                reasons.append("Cohérent avec l'agenda")
             if not reasons:
-                reasons.append("bonne compatibilité globale")
+                reasons.append("Bonne compatibilité globale")
 
             suggestions.append(
                 OutfitSuggestion(
