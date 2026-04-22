@@ -1,14 +1,17 @@
 # Informations Utiles (Guide Operationnel)
 
-## Demarrage rapide
+## Démarrage rapide
 
-1. Installer les dependances:
+1. Installer les dépendances:
+
 - ~/.pyenv/bin/python -m pip install -r requirements.txt
 
-2. Entrainer le modele:
+2. Entraîner le modèle:
+
 - ~/.pyenv/bin/python -m src.outfit_ml.train --samples 4000
 
 3. Lancer l'API:
+
 - uvicorn src.outfit_ml.api:app --reload
 
 ## Variables d'environnement essentielles
@@ -26,6 +29,7 @@
 - ALLOWED_ORIGINS: whitelist CORS des clients
 
 Variables Supabase (si mode supabase):
+
 - SUPABASE_URL
 - SUPABASE_SERVICE_ROLE_KEY ou SUPABASE_ANON_KEY
 - SUPABASE_PROFILE_TABLE / SUPABASE_PROFILE_USER_ID_COLUMN
@@ -40,11 +44,13 @@ Variables Supabase (si mode supabase):
 - POST /recommend/auto
 - POST /mirror/recommend-from-camera
 
-Vision:
+**Vision:**
+
 - POST /vision/enroll
 - POST /vision/identify
 
-Feedback:
+**Feedback:**
+
 - POST /feedback/event
 - POST /feedback/events
 - GET /feedback/stats
@@ -55,33 +61,37 @@ Feedback:
 2. Identification utilisateur (camera) via /mirror/recommend-from-camera.
 3. Affichage top-k tenues.
 4. Journaliser les impressions et actions avec /feedback/events.
-5. Verifier la qualite de donnees avant re-entrainement.
+5. Vérifier la qualité de données avant ré-entraînement.
 6. Re-entrainer avec prefer-real-data.
-7. Exporter en Parquet pour stockage analytique.
+7. Exporter en Parquet pour un stockage analytique.
 
 ## Commandes utiles
 
-Validation dataset:
-- ~/.pyenv/bin/python -m src.outfit_ml.validate_dataset --dataset-root data/dataset
+**Validation dataset:**
 
-Entrainement sur donnees reelles (fallback auto):
-- ~/.pyenv/bin/python -m src.outfit_ml.train --prefer-real-data --real-feedback-log data/feedback/events.jsonl --min-real-samples 200 --split-mode time
+- `~/.pyenv/bin/python -m src.outfit_ml.validate_dataset --dataset-root data/dataset`
 
-Export Parquet partitionne:
-- ~/.pyenv/bin/python -m src.outfit_ml.export_parquet --dataset-root data/dataset --output-root data/parquet
+**Entraînement sur données réelles (fallback auto):**
 
-## Critiques qualite de donnees
+- `~/.pyenv/bin/python -m src.outfit_ml.train --prefer-real-data --real-feedback-log data/feedback/events.jsonl --min-real-samples 200 --split-mode time`
 
-- Colonnes obligatoires presentes dans les 5 tables.
+**Export Parquet partitionné:**
+
+- `~/.pyenv/bin/python -m src.outfit_ml.export_parquet --dataset-root data/dataset --output-root data/parquet`
+
+## Critiques qualite de données
+
+- Colonnes obligatoires présentes dans les 5 tables.
 - Null rate <= 5% sur colonnes obligatoires.
-- Doublons = 0 sur cles indicatives.
+- Doublons = 0 sur clés indicatives.
 - event_type dans impression/click/selected/dismissed.
 - weather_bucket dans cold/mild/hot/rainy.
-- tailles normalisees: xs/s/m/l/xl/xxl/unknown.
+- tailles normalisées: xs/s/m/l/xl/xxl/unknown.
 
-## Metriques a surveiller
+## Métriques à surveiller
 
-Offline:
+**Offline:**
+
 - roc_auc
 - average_precision
 - precision
@@ -91,24 +101,28 @@ Offline:
 - recall_at_3
 - ndcg_at_3
 
-Online:
-- taux selection top-3
+**Online:**
+
+- taux sélection top-3
 - CTR recommandations
 - taux de non-reconnaissance camera
 - latence API p95
 
-## Depannage rapide
+## Dépannage rapide
 
-Erreur pyarrow manquant:
-- ~/.pyenv/bin/python -m pip install "pyarrow>=19.0.1,<20.0.0"
+**Erreur pyarrow manquant:**
 
-Erreur vision non active:
-- ~/.pyenv/bin/python -m pip install face-recognition
+- `~/.pyenv/bin/python -m pip install "pyarrow>=19.0.1,<20.0.0"`
 
-Pas assez de donnees reelles:
-- le trainer bascule automatiquement sur le dataset synthetique.
+**Erreur vision non activé:**
 
-## Liens docs a lire ensuite
+- `~/.pyenv/bin/python -m pip install face-recognition`
+
+**Pas assez de données réelles:**
+
+- le trainer bascule automatiquement sur le dataset synthétique.
+
+## Liens docs à consulter aussi
 
 - docs/quickstart.md
 - docs/flutter_android_integration.md
