@@ -2,21 +2,22 @@
 
 ## Objectif
 
-Ce blueprint definit un dataset structure pour entrainer un modele fiable et precis de recommandation de tenues.
+Ce blueprint définit un dataset structuré pour entraîner un modèle fiable et précis de recommandation de tenues.
 
-Le schema est decoupe en 5 tables:
+Le schéma est decoupé en 5 tables:
+
 - users
 - outfits_catalog
 - context_sessions
 - recommendation_impressions
 - interactions
 
-## Format recommande
+## Format recommandé
 
 - Format de travail: CSV (simple et interoperable)
-- Format production: Parquet partitionne par date
+- Format production: Parquet partitionné par date
 - Encodage: UTF-8
-- Delimiteur multi-valeurs: `|` (ex: `casual|minimalist`)
+- Délimiteur multi-valeurs: `|` (ex: `casual|minimalist`)
 
 ## 1. users.csv
 
@@ -98,10 +99,12 @@ python -m src.outfit_ml.validate_dataset --dataset-root data/dataset
 ```
 
 Sortie:
+
 - `data/quality/validation_report.json`
 - statut PASS/FAIL
 
-Controles realises:
+Contrôles réalisés:
+
 - colonnes obligatoires
 - taux de null par colonne
 - doublons sur cles primaires indicatives
@@ -129,7 +132,8 @@ Script fourni:
 python -m src.outfit_ml.export_parquet --dataset-root data/dataset --output-root data/parquet
 ```
 
-Regles de partition:
+Règles de partition:
+
 - users: partition par `updated_at`
 - context_sessions: partition par `timestamp`
 - recommendation_impressions: partition par `shown_at`
