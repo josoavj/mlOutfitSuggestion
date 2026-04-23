@@ -1,35 +1,53 @@
 # ML Outfit Suggestion
 
-Base de projet ML pour proposer des tenues personnalisées pour [MagicMirror](https://github.com/josoavj/magicmirror) selon les critères suivants:
+> Base de projet ML pour proposer des tenues personnalisées pour [MagicMirror](https://github.com/josoavj/magicmirror) selon le profil utilisateur et le contexte du jour.
 
-- Sexe
-- Âge
-- Taille
-- Planning du jour
-- Preférences vestimentaires
-- Morphologie (Detectée automatiquement si mesures disponibles)
-- Météo et lieu
+**Critères pris en compte :** sexe · âge · taille · planning du jour · préférences vestimentaires · morphologie · météo et lieu
+
+---
+
+## Table des matières
+
+1. [Architecture](#architecture)
+2. [Prérequis](#prérequis)
+3. [Installation](#installation)
+4. [Entraînement du modèle](#entraînement-du-modèle)
+5. [Lancer l'API](#lancer-lapi)
+6. [Interface Web de test](#interface-web-de-test)
+7. [Liaison API avec l'application](#liaison-api-avec-lapplication-magicmirrorflutter)
+8. [Contrat de réponse](#contrat-de-réponse-recommandation)
+9. [Mode intégration automatique](#mode-intégration-automatique-direct-application)
+10. [Mode fichier local](#si-tu-nas-pas-encore-dapi-magicmirror)
+11. [Identification faciale](#identification-faciale-caméra-pour-miroir-intelligent)
+12. [Recommandation depuis contexte réel](#recommandation-depuis-contexte-réel-agenda--météo)
+13. [Exemple d'appel manuel](#exemple-dappel-manuel)
+14. [Collecte feedback](#collecte-feedback-données-réelles)
+15. [Entraînement avec données réelles](#entraînement-avec-données-réelles)
+16. [Limites et suite](#limites-et-suite)
+17. [À propos](#à-propos)
+
+---
 
 ## Architecture
 
-Le système est composé de 3 parties:
+Le système est composé de 3 parties :
 
-1. Détection de morphologie:
+### 1. Détection de morphologie
+Si l'utilisateur fournit ses mesures (épaules, taille, hanches), la morphologie est déduite automatiquement.
 
-- Si l'utilisateur fournit ses mesures (epaules, taille, hanches), la morphologie est déduite automatiquement.
+### 2. Scoring ML de tenue
+Un modèle de classification binaire évalue la compatibilité utilisateur / contexte / tenue. Les tenues sont triées par probabilité de pertinence.
 
-2. Scoring ML de tenue:
+### 3. API de recommandation
+Endpoint FastAPI qui retourne un top-k de tenues.
 
-- Un modele de classification binaire evalue la compatibilité utilisateur/contexte/tenue.
-- Les tenues sont triées par probabilité de pertinence.
-
-3. API de recommandation:
-
-- Endpoint FastAPI qui retourne un top-k de tenues.
+---
 
 ## Prérequis
 
 - Python 3.11+
+
+---
 
 ## Installation
 
@@ -39,69 +57,84 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
+---
+
 ## Entraînement du modèle
 
 ```bash
 python -m src.outfit_ml.train --samples 4000
 ```
 
-Le modèle est sauvegardé dans:
+**Fichiers produits :**
 
-- models/outfit_ranker.joblib
-- models/outfit_ranker_metrics.json
+```
+models/
+├── outfit_ranker.joblib
+└── outfit_ranker_metrics.json
+```
 
-Validation du dataset structuré (option recommandée avant entraînement):
+**Validation du dataset avant entraînement** *(recommandé)* :
 
 ```bash
 python -m src.outfit_ml.validate_dataset --dataset-root data/dataset
 ```
 
-Conversion du dataset CSV vers Parquet partitionné par date:
+**Conversion CSV → Parquet partitionné par date :**
 
 ```bash
-python -m src.outfit_ml.export_parquet --dataset-root data/dataset --output-root data/parquet
+python -m src.outfit_ml.export_parquet \
+  --dataset-root data/dataset \
+  --output-root data/parquet
 ```
+
+---
 
 ## Lancer l'API
 
-Option rapide recommandee avec `.env`:
+**Option recommandée avec `.env` :**
 
 ```bash
 cp .env.example .env
-# edite .env puis renseigne tes vraies valeurs
+# Édite .env et renseigne tes vraies valeurs
 uvicorn src.outfit_ml.api:app --reload
 ```
 
 L'API charge automatiquement les variables depuis `.env`.
 
-## Interface Web de test
-
-Une mini interface web est disponible pour tester rapidement les endpoints de recommandation:
-
-- URL: `http://127.0.0.1:8000/ui`
-- Mode manuel: appelle `POST /recommend`
-- Mode auto: appelle `POST /recommend/auto`
-
-L'interface permet de:
-
-- saisir les champs du profil et du contexte
-- envoyer une cle API via `X-API-Key` si `API_AUTH_ENABLED=true`
-- visualiser les suggestions et la réponse JSON brute
-- consulter un dashboard technique via `GET /dashboard/technical`
-  (etat service, source de données, présence des métriques modèle, stats feedback)
-
-Option via export shell:
+**Option via export shell :**
 
 ```bash
 export OPENWEATHER_API_KEY="ta_cle_openweather"
 uvicorn src.outfit_ml.api:app --reload
 ```
 
+---
+
+## Interface Web de test
+
+URL : `http://127.0.0.1:8000/ui`
+
+| Mode | Endpoint appelé |
+|---|---|
+| Manuel | `POST /recommend` |
+| Auto | `POST /recommend/auto` |
+
+L'interface permet de :
+
+- saisir les champs du profil et du contexte
+- envoyer une clé API via `X-API-Key` si `API_AUTH_ENABLED=true`
+- visualiser les suggestions et la réponse JSON brute
+- consulter un dashboard technique via `GET /dashboard/technical` *(état service, source de données, métriques modèle, stats feedback)*
+
+> En mode auto, les champs météo manuels sont masqués et les détails OpenWeather sont affichés dans les résultats.
+
+---
+
 ## Liaison API avec l'application (MagicMirror/Flutter)
 
 Le service expose une API FastAPI consommée directement par l'application.
 
-Configuration minimale recommandée:
+**Configuration minimale recommandée dans `.env` :**
 
 ```env
 API_AUTH_ENABLED=true
@@ -109,32 +142,39 @@ API_AUTH_KEY=replace_with_strong_shared_secret
 ALLOWED_ORIGINS=https://your-magicmirror-app.example.com
 ```
 
-L'application doit envoyer l'entête HTTP suivant:
+L'application doit envoyer l'en-tête HTTP suivant :
 
-```text
+```
 X-API-Key: replace_with_strong_shared_secret
 ```
 
-Endpoint principal recommandé côté application:
+**Endpoint principal recommandé côté application :**
 
-- `POST /mirror/recommend-from-camera`
+```
+POST /mirror/recommend-from-camera
+```
 
-Ce endpoint couvre le flux complet (identification + contexte + recommandations).
+Ce endpoint couvre le flux complet : identification + contexte + recommandations.
+
+---
 
 ## Contrat de réponse (recommandation)
 
-Les réponses de recommandation incluent:
+Les réponses de recommandation incluent :
 
-- `suggestions`: top-k des tenues avec score et raisons
-- `inferred_body_shape`, `dominant_occasion`, `weather_bucket`
-- `resolved_context`:
-  - `source`: `manual` | `context` | `auto`
-  - `location`
-  - `weather` (température + condition utilisées par le modèle)
-  - `agenda_labels` (labels interpretés)
-  - `openweather` (ville, pays, ressenti, humidite, vent) pour les flux `context` et `auto`
+| Champ | Description |
+|---|---|
+| `suggestions` | Top-k tenues avec score et raisons |
+| `inferred_body_shape` | Morphologie déduite |
+| `dominant_occasion` | Occasion principale détectée |
+| `weather_bucket` | Bucket météo utilisé |
+| `resolved_context.source` | `manual` · `context` · `auto` |
+| `resolved_context.location` | Lieu effectif |
+| `resolved_context.weather` | Température + condition utilisées |
+| `resolved_context.agenda_labels` | Labels agenda interprétés |
+| `resolved_context.openweather` | Ville, pays, ressenti, humidité, vent *(flux `context` et `auto`)* |
 
-Exemple minimal de `resolved_context`:
+**Exemple minimal de `resolved_context` :**
 
 ```json
 {
@@ -158,18 +198,20 @@ Exemple minimal de `resolved_context`:
 }
 ```
 
+---
+
 ## Mode intégration automatique (direct application)
 
-Pour une intégration directe, configure l'API de ton application:
+Configure les variables de ton API backend :
 
-```bash
-export MAGICMIRROR_API_BASE_URL="https://ton-app.example.com"
-export MAGICMIRROR_API_TOKEN="token_optionnel"
-export MAGICMIRROR_PROFILE_PATH_TEMPLATE="/api/users/{user_id}/profile"
-export MAGICMIRROR_AGENDA_PATH_TEMPLATE="/api/users/{user_id}/agenda/today"
+```env
+MAGICMIRROR_API_BASE_URL=https://ton-app.example.com
+MAGICMIRROR_API_TOKEN=token_optionnel
+MAGICMIRROR_PROFILE_PATH_TEMPLATE=/api/users/{user_id}/profile
+MAGICMIRROR_AGENDA_PATH_TEMPLATE=/api/users/{user_id}/agenda/today
 ```
 
-Puis appelle:
+**Appel minimal :**
 
 ```bash
 curl -X POST "http://127.0.0.1:8000/recommend/auto" \
@@ -181,7 +223,7 @@ curl -X POST "http://127.0.0.1:8000/recommend/auto" \
   }'
 ```
 
-Exemple avec overrides auto (prioritaires sur le profil récupéré):
+**Avec overrides** *(prioritaires sur le profil récupéré)* :
 
 ```bash
 curl -X POST "http://127.0.0.1:8000/recommend/auto" \
@@ -200,65 +242,64 @@ curl -X POST "http://127.0.0.1:8000/recommend/auto" \
   }'
 ```
 
-Dans ce mode, le service fait automatiquement:
+Dans ce mode, le service effectue automatiquement :
 
-- lecture du profil utilisateur (sexe, âge, taille, préférences, morphologie)
-- lecture de l'agenda du jour depuis l'application
-- récuperation de la météo via OpenWeather
-- recommandation top-k sans payload manuel complexe
+1. Lecture du profil utilisateur (sexe, âge, taille, préférences, morphologie)
+2. Lecture de l'agenda du jour depuis l'application
+3. Récupération de la météo via OpenWeather
+4. Recommandation top-k sans payload manuel complexe
+
+---
 
 ## Si tu n'as pas encore d'API MagicMirror
 
-Tu peux fonctionner en mode fichier local tout de suite:
+Tu peux fonctionner en **mode fichier local** immédiatement.
 
-1. Utiliser les fichiers JSON locaux:
+**1. Utiliser les fichiers JSON locaux :**
 
-- `data/users/u-001/profile.json`
-- `data/users/u-001/agenda_today.json`
+```
+data/users/u-001/
+├── profile.json
+└── agenda_today.json
+```
 
-2. Configurer `.env`:
+**2. Configurer `.env` :**
 
-```bash
+```env
 MAGICMIRROR_DATA_SOURCE=file
 OPENWEATHER_API_KEY=ta_cle_openweather
 MAGICMIRROR_PROFILE_FILE_TEMPLATE=data/users/{user_id}/profile.json
 MAGICMIRROR_AGENDA_FILE_TEMPLATE=data/users/{user_id}/agenda_today.json
 ```
 
-3. Appeler le endpoint auto:
+**3. Appeler le endpoint auto :**
 
 ```bash
 curl -X POST "http://127.0.0.1:8000/recommend/auto" \
   -H "Content-Type: application/json" \
-  -d '{
-    "user_id": "u-001",
-    "top_k": 3
-  }'
+  -d '{"user_id": "u-001", "top_k": 3}'
 ```
 
-Ensuite, quand ton API backend sera disponible, il suffira de passer `MAGICMIRROR_DATA_SOURCE=api`.
+> Quand ton API backend sera disponible, il suffira de passer `MAGICMIRROR_DATA_SOURCE=api`.
 
-## Identification faciale (camera) pour miroir intelligent
+---
 
-Le projet inclut un module local d'identification faciale:
+## Identification faciale (caméra pour miroir intelligent)
 
-- enrôlement d'un visage pour un utilisateur
-- identification d'une personne depuis une image camera
+Le projet inclut un module local d'identification faciale : enrôlement d'un visage et identification depuis une image caméra.
 
-**Configuration:**
+**Configuration :**
 
 ```bash
 pip install face-recognition
 export FACE_REGISTRY_PATH=data/vision/face_registry.json
 ```
 
-Endpoints:
+> ⚠️ **Recommandations production :** utiliser uniquement sur consentement explicite, conserver les données en local (pas d'envoi cloud), ajouter un anti-spoofing (liveness) avant de valider l'identité.
 
-1. Enrôler un utilisateur
+### Endpoints vision
 
-`POST /vision/enroll`
-
-Payload:
+**`POST /vision/enroll`** — Enrôler un utilisateur :
 
 ```json
 {
@@ -267,11 +308,7 @@ Payload:
 }
 ```
 
-2. Identifier un visage
-
-`POST /vision/identify`
-
-Payload:
+**`POST /vision/identify`** — Identifier un visage :
 
 ```json
 {
@@ -281,19 +318,9 @@ Payload:
 }
 ```
 
-Recommandations production:
+### Endpoint unique Android / Web / Webcam
 
-- utiliser uniquement sur consentement explicite utilisateur
-- conserver les données en local (pas d'envoi cloud)
-- ajouter un anti-spoofing (liveness) avant de valider l'identité
-
-### Endpoint unique Android/Web/Webcam
-
-Pour un flux simple côté application (camera integrée), utilise:
-
-`POST /mirror/recommend-from-camera`
-
-Payload:
+**`POST /mirror/recommend-from-camera`** — Flux complet en une seule requête après capture caméra :
 
 ```json
 {
@@ -304,19 +331,18 @@ Payload:
 }
 ```
 
-Ce endpoint fait automatiquement:
+Ce endpoint enchaîne automatiquement :
 
-1. identification faciale
-2. recuperation du profil + agenda du jour
-3. recuperation météo OpenWeather
-4. retour des suggestions de tenue
+1. Identification faciale
+2. Récupération du profil + agenda du jour
+3. Récupération météo OpenWeather
+4. Retour des suggestions de tenue
 
-Donc cote Android/Web/Webcam: une seule requête à envoyer après capture camera.
+---
 
-## Recommandation depuis contexte réel (agenda + méteo)
+## Recommandation depuis contexte réel (agenda + météo)
 
-Utilise cet endpoint quand l'application a dejà les données agenda integrées.
-La météo est recuperée automatiquement via OpenWeather à partir de `location`.
+Utilise cet endpoint quand l'application dispose déjà des données agenda. La météo est récupérée automatiquement via OpenWeather à partir de `location`.
 
 ```bash
 curl -X POST "http://127.0.0.1:8000/recommend/context" \
@@ -345,7 +371,11 @@ curl -X POST "http://127.0.0.1:8000/recommend/context" \
   }'
 ```
 
-## Exemple d'appel
+---
+
+## Exemple d'appel manuel
+
+**`POST /recommend`** — avec profil et contexte complets :
 
 ```bash
 curl -X POST "http://127.0.0.1:8000/recommend" \
@@ -375,22 +405,22 @@ curl -X POST "http://127.0.0.1:8000/recommend" \
   }'
 ```
 
-## Limites et suite
+---
 
-- Le jeu de données d'entraînement est synthétique (bootstrapping).
-- Pour la production, remplacer par de vraies interactions utilisateurs et feedback implicite/explicite.
-- Intégrer une source météo réelle et agenda réel pour MagicMirror.
+## Collecte feedback (données réelles)
 
-## Collecte feedback (donnees reelles)
+**Endpoints disponibles :**
 
-Endpoints:
+| Endpoint | Description |
+|---|---|
+| `POST /feedback/event` | Loguer un événement unique |
+| `POST /feedback/batch` | Loguer une session complète |
+| `POST /feedback/events` | Variante batch |
+| `GET /feedback/stats` | Consulter le volume et la répartition |
 
-- `POST /feedback/event`
-- `POST /feedback/batch`
-- `POST /feedback/events`
-- `GET /feedback/stats`
+**Types d'événements :** `impression` · `click` · `selected` · `dismissed`
 
-Exemple d'evenement:
+**Exemple d'événement unitaire :**
 
 ```json
 {
@@ -413,25 +443,7 @@ Exemple d'evenement:
 }
 ```
 
-## Entraînement avec données réelles
-
-Le trainer peut utiliser les feedbacks reels et fallback sur le synthétique.
-
-```bash
-python -m src.outfit_ml.train \
-  --prefer-real-data \
-  --real-feedback-log data/feedback/events.jsonl \
-  --min-real-samples 200 \
-  --split-mode time
-```
-
-Métriques ajoutées si `session_id` est présent:
-
-- `precision_at_3`
-- `recall_at_3`
-- `ndcg_at_3`
-
-Exemple batch (session complete en un appel):
+**Exemple batch (session complète en un appel) :**
 
 ```json
 {
@@ -472,6 +484,35 @@ Exemple batch (session complete en un appel):
 }
 ```
 
-## A propos
+---
 
-- Développeur : [josoavj](https://github.com/josoavj)
+## Entraînement avec données réelles
+
+Le trainer utilise les feedbacks réels et bascule automatiquement sur le synthétique si le volume est insuffisant.
+
+```bash
+python -m src.outfit_ml.train \
+  --prefer-real-data \
+  --real-feedback-log data/feedback/events.jsonl \
+  --min-real-samples 200 \
+  --split-mode time
+```
+
+**Métriques supplémentaires** si `session_id` est présent :
+
+`precision_at_3` · `recall_at_3` · `ndcg_at_3`
+
+---
+
+## Limites et suite
+
+| Limite | Action recommandée |
+|---|---|
+| Dataset d'entraînement synthétique | Remplacer par de vraies interactions utilisateurs (feedback implicite/explicite) |
+| Météo et agenda simulés | Intégrer une source météo réelle et l'agenda MagicMirror |
+
+---
+
+## À propos
+
+Développeur : [josoavj](https://github.com/josoavj)

@@ -1,10 +1,21 @@
-# Quick Start (Complet)
+# Quick Start — Guide complet
 
-Cette version couvre le flux complet avec:
+> Ce guide couvre le flux complet avec recommandations `manual` / `context` / `auto`, contexte météo enrichi (`resolved_context`) et prise en compte des tailles et overrides utilisateur en mode auto.
 
-- recommandations manual/context/auto
-- contexte météo enrichi (`resolved_context`)
-- prise en compte des tailles et overrides utilisateur en mode auto
+---
+
+## Table des matières
+
+1. [Installer et entraîner](#1-installer-et-entraîner)
+2. [Configurer l'environnement](#2-configurer-lenvironnement)
+3. [Lancer l'API](#3-lancer-lapi)
+4. [Enrôler un utilisateur](#4-enrôler-un-utilisateur-visage)
+5. [Tester le flux miroir intelligent](#5-tester-le-flux-complet-miroir-intelligent)
+6. [Tester le mode auto avec overrides](#5-bis-tester-le-mode-auto-avec-overrides)
+7. [Intégration Flutter Android](#6-intégration-flutter-android)
+8. [Dépannage rapide](#dépannage-rapide)
+
+---
 
 ## 1. Installer et entraîner
 
@@ -14,23 +25,25 @@ Cette version couvre le flux complet avec:
 ~/.pyenv/bin/python -m pip install face-recognition
 ```
 
+---
+
 ## 2. Configurer l'environnement
 
 ```bash
 cp .env.example .env
 ```
 
-Valeurs minimales dans `.env` (mode local sans API backend):
+Valeurs minimales dans `.env` pour un fonctionnement **local sans API backend** :
 
 ```env
 OPENWEATHER_API_KEY=ta_cle_openweather
-
 MAGICMIRROR_DATA_SOURCE=file
 MAGICMIRROR_PROFILE_FILE_TEMPLATE=data/users/{user_id}/profile.json
 MAGICMIRROR_AGENDA_FILE_TEMPLATE=data/users/{user_id}/agenda_today.json
-
 FACE_REGISTRY_PATH=data/vision/face_registry.json
 ```
+
+---
 
 ## 3. Lancer l'API
 
@@ -38,14 +51,15 @@ FACE_REGISTRY_PATH=data/vision/face_registry.json
 uvicorn src.outfit_ml.api:app --reload
 ```
 
-Interface de test rapide:
+Interface de test rapide : `http://127.0.0.1:8000/ui`
 
-- `http://127.0.0.1:8000/ui`
-- En mode auto, les champs meteo manuels sont masques et les details OpenWeather sont affiches dans les resultats.
+> En mode auto, les champs météo manuels sont masqués et les détails OpenWeather sont affichés dans les résultats.
 
-## 4. Enroler un utilisateur (visage)
+---
 
-Appel `POST /vision/enroll` avec un visage net:
+## 4. Enrôler un utilisateur (visage)
+
+**`POST /vision/enroll`** — fournir un visage net :
 
 ```json
 {
@@ -54,9 +68,11 @@ Appel `POST /vision/enroll` avec un visage net:
 }
 ```
 
+---
+
 ## 5. Tester le flux complet miroir intelligent
 
-Appel unique `POST /mirror/recommend-from-camera`:
+**`POST /mirror/recommend-from-camera`**
 
 ```json
 {
@@ -67,15 +83,19 @@ Appel unique `POST /mirror/recommend-from-camera`:
 }
 ```
 
-Retour attendu:
+**Retour attendu :**
 
-- utilisateur reconnu (`matched_user_id`)
-- score visage (`face_match`)
-- recommandations (`recommendation.suggestions`)
+| Champ | Description |
+|---|---|
+| `matched_user_id` | Utilisateur reconnu |
+| `face_match` | Score de correspondance visage |
+| `recommendation.suggestions` | Liste des tenues recommandées |
+
+---
 
 ## 5 bis. Tester le mode auto avec overrides
 
-Appel `POST /recommend/auto` (les champs fournis ecrasent les valeurs du profil):
+**`POST /recommend/auto`** — les champs fournis écrasent les valeurs du profil :
 
 ```json
 {
@@ -92,25 +112,33 @@ Appel `POST /recommend/auto` (les champs fournis ecrasent les valeurs du profil)
 }
 ```
 
-Verifier dans la reponse:
+**Vérifier dans la réponse :**
 
-- `resolved_context.source = "auto"`
-- `resolved_context.agenda_labels` present
-- `resolved_context.openweather` present (ville, ressenti, humidite, vent)
+| Champ | Valeur attendue |
+|---|---|
+| `resolved_context.source` | `"auto"` |
+| `resolved_context.agenda_labels` | Présent |
+| `resolved_context.openweather` | Présent (ville, ressenti, humidité, vent) |
 
-## 6. Integration Flutter Android
+---
 
-- Utiliser `camera` pour capturer une image.
-- Encoder en base64 (`data:image/jpeg;base64,...`).
-- Envoyer vers `/mirror/recommend-from-camera`.
-- Sur emulation Android: backend `http://10.0.2.2:8000`.
+## 6. Intégration Flutter Android
 
-Pour le guide complet Flutter, voir `docs/flutter_android_integration.md`.
+1. Utiliser le package `camera` pour capturer une image.
+2. Encoder en base64 (`data:image/jpeg;base64,...`).
+3. Envoyer vers `POST /mirror/recommend-from-camera`.
+4. Sur émulateur Android, utiliser l'adresse backend : `http://10.0.2.2:8000`.
 
-## Depannage rapide
+Pour le guide complet, voir [`docs/flutter_android_integration.md`](docs/flutter_android_integration.md).
 
-- `501` sur vision: installer `face-recognition`.
-- `404` sur endpoint camera: utilisateur non reconnu, refaire enrollement.
-- `502` meteo: verifier `OPENWEATHER_API_KEY`.
-- `400` image: verifier format base64 et qu'un seul visage est visible.
-- recommandations incoherentes en mode auto: verifier les overrides envoyes (`gender`, `age`, `top_size`, `bottom_size`, `shoe_size`, `agenda`).
+---
+
+## Dépannage rapide
+
+| Erreur | Cause probable | Solution |
+|---|---|---|
+| `501` sur vision | `face-recognition` absent | `pip install face-recognition` |
+| `404` sur endpoint caméra | Utilisateur non reconnu | Refaire l'enrôlement |
+| `502` météo | Clé API invalide ou absente | Vérifier `OPENWEATHER_API_KEY` |
+| `400` image | Format incorrect ou plusieurs visages | Vérifier le format base64 et qu'un seul visage est visible |
+| Recommandations incohérentes (mode auto) | Overrides incorrects | Vérifier `gender`, `age`, `top_size`, `bottom_size`, `shoe_size`, `agenda` |

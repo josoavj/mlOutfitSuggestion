@@ -1,130 +1,205 @@
-# Informations Utiles (Guide Operationnel)
+# Guide opérationnel
+
+> Référence rapide pour déployer, configurer et maintenir le pipeline ML de recommandation de tenues.
+
+---
+
+## Table des matières
+
+1. [Démarrage rapide](#démarrage-rapide)
+2. [Variables d'environnement](#variables-denvironnement-essentielles)
+3. [Endpoints principaux](#endpoints-principaux)
+4. [Workflow recommandé en production](#workflow-recommandé-en-production)
+5. [Commandes utiles](#commandes-utiles)
+6. [Critères qualité des données](#critères-qualité-des-données)
+7. [Métriques à surveiller](#métriques-à-surveiller)
+8. [Dépannage rapide](#dépannage-rapide)
+9. [Documentation associée](#documentation-associée)
+
+---
 
 ## Démarrage rapide
 
-1. Installer les dépendances:
+```bash
+# 1. Installer les dépendances
+~/.pyenv/bin/python -m pip install -r requirements.txt
 
-- ~/.pyenv/bin/python -m pip install -r requirements.txt
+# 2. Entraîner le modèle
+~/.pyenv/bin/python -m src.outfit_ml.train --samples 4000
 
-2. Entraîner le modèle:
+# 3. Lancer l'API
+uvicorn src.outfit_ml.api:app --reload
+```
 
-- ~/.pyenv/bin/python -m src.outfit_ml.train --samples 4000
-
-3. Lancer l'API:
-
-- uvicorn src.outfit_ml.api:app --reload
+---
 
 ## Variables d'environnement essentielles
 
-- OPENWEATHER_API_KEY: cle OpenWeather
-- MAGICMIRROR_DATA_SOURCE: api, file ou supabase
-- MAGICMIRROR_API_BASE_URL: base URL backend app (si mode api)
-- MAGICMIRROR_PROFILE_PATH_TEMPLATE: route profil user
-- MAGICMIRROR_AGENDA_PATH_TEMPLATE: route agenda user
-- MAGICMIRROR_PROFILE_FILE_TEMPLATE: fichier profil (si mode file)
-- MAGICMIRROR_AGENDA_FILE_TEMPLATE: fichier agenda (si mode file)
-- FACE_REGISTRY_PATH: registre local embeddings visage
-- FEEDBACK_LOG_PATH: journal JSONL des interactions
-- API_AUTH_ENABLED / API_AUTH_KEY: protection des endpoints ML
-- ALLOWED_ORIGINS: whitelist CORS des clients
+### Générales
 
-Variables Supabase (si mode supabase):
+| Variable | Description |
+|---|---|
+| `OPENWEATHER_API_KEY` | Clé OpenWeather |
+| `MAGICMIRROR_DATA_SOURCE` | Source de données : `api` · `file` · `supabase` |
+| `FACE_REGISTRY_PATH` | Registre local des embeddings visage |
+| `FEEDBACK_LOG_PATH` | Journal JSONL des interactions |
+| `API_AUTH_ENABLED` / `API_AUTH_KEY` | Protection des endpoints ML |
+| `ALLOWED_ORIGINS` | Liste blanche CORS des clients |
 
-- SUPABASE_URL
-- SUPABASE_SERVICE_ROLE_KEY ou SUPABASE_ANON_KEY
-- SUPABASE_PROFILE_TABLE / SUPABASE_PROFILE_USER_ID_COLUMN
-- SUPABASE_AGENDA_TABLE / SUPABASE_AGENDA_USER_ID_COLUMN / SUPABASE_AGENDA_DATE_COLUMN
-- SUPABASE_AGENDA_TITLE_COLUMN / SUPABASE_AGENDA_CATEGORY_COLUMN / SUPABASE_AGENDA_TAGS_COLUMN
+### Mode `api`
+
+| Variable | Description |
+|---|---|
+| `MAGICMIRROR_API_BASE_URL` | URL de base du backend applicatif |
+| `MAGICMIRROR_PROFILE_PATH_TEMPLATE` | Route profil utilisateur |
+| `MAGICMIRROR_AGENDA_PATH_TEMPLATE` | Route agenda utilisateur |
+
+### Mode `file`
+
+| Variable | Description |
+|---|---|
+| `MAGICMIRROR_PROFILE_FILE_TEMPLATE` | Chemin vers le fichier profil |
+| `MAGICMIRROR_AGENDA_FILE_TEMPLATE` | Chemin vers le fichier agenda |
+
+### Mode `supabase`
+
+| Variable | Description |
+|---|---|
+| `SUPABASE_URL` | URL du projet Supabase |
+| `SUPABASE_SERVICE_ROLE_KEY` ou `SUPABASE_ANON_KEY` | Clé d'accès |
+| `SUPABASE_PROFILE_TABLE` | Nom de la table profils |
+| `SUPABASE_PROFILE_USER_ID_COLUMN` | Colonne identifiant utilisateur |
+| `SUPABASE_AGENDA_TABLE` | Nom de la table agenda |
+| `SUPABASE_AGENDA_USER_ID_COLUMN` | Colonne identifiant utilisateur |
+| `SUPABASE_AGENDA_DATE_COLUMN` | Colonne date |
+| `SUPABASE_AGENDA_TITLE_COLUMN` | Colonne titre |
+| `SUPABASE_AGENDA_CATEGORY_COLUMN` | Colonne catégorie |
+| `SUPABASE_AGENDA_TAGS_COLUMN` | Colonne tags |
+
+---
 
 ## Endpoints principaux
 
-- GET /health
-- POST /recommend
-- POST /recommend/context
-- POST /recommend/auto
-- POST /mirror/recommend-from-camera
+### Santé & recommandation
 
-**Vision:**
+| Méthode | Endpoint | Description |
+|---|---|---|
+| `GET` | `/health` | État du service |
+| `POST` | `/recommend` | Recommandation manuelle (profil + contexte complets) |
+| `POST` | `/recommend/context` | Recommandation avec agenda intégré + météo auto |
+| `POST` | `/recommend/auto` | Recommandation entièrement automatique |
+| `POST` | `/mirror/recommend-from-camera` | Flux complet : identification + contexte + recommandations |
 
-- POST /vision/enroll
-- POST /vision/identify
+### Vision
 
-**Feedback:**
+| Méthode | Endpoint | Description |
+|---|---|---|
+| `POST` | `/vision/enroll` | Enrôler un visage utilisateur |
+| `POST` | `/vision/identify` | Identifier un visage depuis une image |
 
-- POST /feedback/event
-- POST /feedback/events
-- GET /feedback/stats
+### Feedback
 
-## Workflow recommande en production
+| Méthode | Endpoint | Description |
+|---|---|---|
+| `POST` | `/feedback/event` | Loguer un événement unique |
+| `POST` | `/feedback/events` | Loguer une session complète (batch) |
+| `GET` | `/feedback/stats` | Consulter le volume et la répartition |
 
-1. Auth API activee (entete X-API-Key).
-2. Identification utilisateur (camera) via /mirror/recommend-from-camera.
-3. Affichage top-k tenues.
-4. Journaliser les impressions et actions avec /feedback/events.
-5. Vérifier la qualité de données avant ré-entraînement.
-6. Re-entrainer avec prefer-real-data.
-7. Exporter en Parquet pour un stockage analytique.
+---
+
+## Workflow recommandé en production
+
+1. Activer l'authentification API (en-tête `X-API-Key`).
+2. Identifier l'utilisateur via caméra : `POST /mirror/recommend-from-camera`.
+3. Afficher le top-k de tenues recommandées.
+4. Journaliser les impressions et actions via `POST /feedback/events`.
+5. Vérifier la qualité des données avant tout ré-entraînement.
+6. Ré-entraîner avec `--prefer-real-data`.
+7. Exporter en Parquet pour le stockage analytique.
+
+---
 
 ## Commandes utiles
 
-**Validation dataset:**
+**Validation du dataset :**
 
-- `~/.pyenv/bin/python -m src.outfit_ml.validate_dataset --dataset-root data/dataset`
+```bash
+~/.pyenv/bin/python -m src.outfit_ml.validate_dataset \
+  --dataset-root data/dataset
+```
 
-**Entraînement sur données réelles (fallback auto):**
+**Entraînement sur données réelles** *(fallback automatique sur synthétique si volume insuffisant)* :
 
-- `~/.pyenv/bin/python -m src.outfit_ml.train --prefer-real-data --real-feedback-log data/feedback/events.jsonl --min-real-samples 200 --split-mode time`
+```bash
+~/.pyenv/bin/python -m src.outfit_ml.train \
+  --prefer-real-data \
+  --real-feedback-log data/feedback/events.jsonl \
+  --min-real-samples 200 \
+  --split-mode time
+```
 
-**Export Parquet partitionné:**
+**Export Parquet partitionné par date :**
 
-- `~/.pyenv/bin/python -m src.outfit_ml.export_parquet --dataset-root data/dataset --output-root data/parquet`
+```bash
+~/.pyenv/bin/python -m src.outfit_ml.export_parquet \
+  --dataset-root data/dataset \
+  --output-root data/parquet
+```
 
-## Critiques qualite de données
+---
 
-- Colonnes obligatoires présentes dans les 5 tables.
-- Null rate <= 5% sur colonnes obligatoires.
-- Doublons = 0 sur clés indicatives.
-- event_type dans impression/click/selected/dismissed.
-- weather_bucket dans cold/mild/hot/rainy.
-- tailles normalisées: xs/s/m/l/xl/xxl/unknown.
+## Critères qualité des données
+
+| Critère | Règle |
+|---|---|
+| Colonnes obligatoires | Présentes dans les 5 tables |
+| Taux de valeurs nulles | ≤ 5 % sur les colonnes obligatoires |
+| Doublons | 0 sur les clés indicatives |
+| `event_type` | `impression` · `click` · `selected` · `dismissed` |
+| `weather_bucket` | `cold` · `mild` · `hot` · `rainy` |
+| Tailles | Normalisées : `xs` · `s` · `m` · `l` · `xl` · `xxl` · `unknown` |
+
+---
 
 ## Métriques à surveiller
 
-**Offline:**
+### Métriques offline
 
-- roc_auc
-- average_precision
-- precision
-- recall
-- f1
-- precision_at_3
-- recall_at_3
-- ndcg_at_3
+| Métrique | Description |
+|---|---|
+| `roc_auc` | Qualité de séparation globale |
+| `average_precision` | Précision moyenne sur toutes les seuils |
+| `precision` / `recall` / `f1` | Métriques de classification standard |
+| `precision_at_3` | Précision dans les 3 premières suggestions |
+| `recall_at_3` | Rappel dans les 3 premières suggestions |
+| `ndcg_at_3` | Qualité du classement top-3 |
 
-**Online:**
+### Métriques online
 
-- taux sélection top-3
-- CTR recommandations
-- taux de non-reconnaissance camera
-- latence API p95
+| Métrique | Description |
+|---|---|
+| Taux de sélection top-3 | Part des sessions avec une tenue choisie |
+| CTR recommandations | Taux de clic sur les suggestions |
+| Taux de non-reconnaissance caméra | Échecs d'identification faciale |
+| Latence API p95 | Temps de réponse au 95e percentile |
+
+---
 
 ## Dépannage rapide
 
-**Erreur pyarrow manquant:**
+| Erreur | Solution |
+|---|---|
+| `pyarrow` manquant | `~/.pyenv/bin/python -m pip install "pyarrow>=19.0.1,<20.0.0"` |
+| Vision non activée (`501`) | `~/.pyenv/bin/python -m pip install face-recognition` |
+| Pas assez de données réelles | Le trainer bascule automatiquement sur le dataset synthétique |
 
-- `~/.pyenv/bin/python -m pip install "pyarrow>=19.0.1,<20.0.0"`
+---
 
-**Erreur vision non activé:**
+## Documentation associée
 
-- `~/.pyenv/bin/python -m pip install face-recognition`
-
-**Pas assez de données réelles:**
-
-- le trainer bascule automatiquement sur le dataset synthétique.
-
-## Liens docs à consulter aussi
-
-- docs/quickstart.md
-- docs/flutter_android_integration.md
-- docs/model_complete_documentation.md
-- docs/dataset_blueprint.md
+| Fichier | Contenu |
+|---|---|
+| [`docs/quickstart.md`](docs/quickstart.md) | Guide de démarrage complet |
+| [`docs/flutter_android_integration.md`](docs/flutter_android_integration.md) | Intégration Flutter Android |
+| [`docs/model_complete_documentation.md`](docs/model_complete_documentation.md) | Documentation complète du modèle ML |
+| [`docs/dataset_blueprint.md`](docs/dataset_blueprint.md) | Structure et schéma du dataset |
