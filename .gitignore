@@ -11,3 +11,10 @@ __pycache__/
 
 # Runtime feedback logs
 data/feedback/
+.idea/vcs.xml
+.idea/misc.xml
+.idea/mlOutfitSuggestion.iml
+.idea/modules.xml
+.idea/misc.xml
+.idea/inspectionProfiles/profiles_settings.xml
+.idea/misc.xml
