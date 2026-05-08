@@ -272,10 +272,78 @@
   .run-row { display: flex; align-items: flex-end; gap: 14px; }
   .muted { font-size: 12px; color: var(--ink2); }
 
+  .summary-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 7px;
+    margin-bottom: 10px;
+  }
+  .insight {
+    background: rgba(10,26,48,0.64);
+    border: 1px solid rgba(154,201,255,0.30);
+    border-radius: var(--radius-lg);
+    padding: 0.7rem 0.8rem;
+    box-shadow: 0 2px 10px rgba(5,14,26,0.32);
+    display: grid;
+    gap: 4px;
+  }
+  .insight-label {
+    font-size: 9.5px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--ink2);
+  }
+  .insight h3 {
+    font-size: 14px;
+    font-weight: 700;
+    color: #b9e3ff;
+  }
+  .insight-sub {
+    font-size: 11.5px;
+    color: var(--ink2);
+  }
+  .chip-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 8px;
+  }
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    border-radius: var(--radius-pill);
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--ink);
+    background: rgba(28,62,106,0.55);
+    border: 1px solid rgba(155,203,255,0.36);
+  }
+  .metric-table {
+    display: grid;
+    gap: 6px;
+    margin-bottom: 10px;
+  }
+  .metric-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 10px;
+    background: rgba(12,30,52,0.60);
+    border: 1px solid rgba(150,201,255,0.30);
+    border-radius: 12px;
+    padding: 6px 10px;
+  }
+  .metric-label { font-size: 11.5px; color: var(--ink2); }
+  .metric-value { font-size: 12px; font-weight: 600; color: var(--ink); }
+
   @media (max-width: 580px) {
     .g2, .g3 { grid-template-columns: 1fr; }
     .dash-grid { grid-template-columns: repeat(2,1fr); }
     .bar-row { grid-template-columns: 70px 1fr 28px; }
+    .summary-grid { grid-template-columns: repeat(2,1fr); }
   }
 </style>
 
@@ -360,6 +428,32 @@
       <p class="section-title" style="margin:0;">Résultats</p>
       <span class="status-pill" id="status"><span class="pulse"></span>Prêt</span>
     </div>
+    <div class="summary-grid" id="summaryGrid">
+      <div class="insight">
+        <p class="insight-label">Suggestions</p>
+        <h3 id="sumCount">—</h3>
+        <span class="insight-sub" id="sumOutfits">—</span>
+      </div>
+      <div class="insight">
+        <p class="insight-label">Score max</p>
+        <h3 id="sumTopScore">—</h3>
+        <span class="insight-sub" id="sumAvgScore">—</span>
+      </div>
+      <div class="insight">
+        <p class="insight-label">Qualite globale</p>
+        <h3 id="sumQuality">—</h3>
+        <span class="insight-sub" id="sumLatency">—</span>
+      </div>
+      <div class="insight">
+        <p class="insight-label">Diversite</p>
+        <h3 id="sumDiversity">—</h3>
+        <span class="insight-sub" id="sumBody">—</span>
+      </div>
+    </div>
+    <p class="section-label">Contexte resolu</p>
+    <div id="contextChips" class="chip-row"></div>
+    <p class="section-label">Top raisons</p>
+    <div id="reasonChips" class="chip-row"></div>
     <div id="cards" class="cards"></div>
     <p class="section-label">Payload envoyé</p>
     <pre id="requestBox">—</pre>
@@ -383,6 +477,8 @@
       <div class="kpi"><p class="kpi-label">Feedback</p><h3 id="kpiFeedback">—</h3></div>
       <div class="kpi"><p class="kpi-label">Fraîcheur</p><h3 id="kpiFreshness">—</h3></div>
     </div>
+    <p class="section-label">Metriques modele</p>
+    <div id="modelMetrics" class="metric-table"></div>
     <p class="section-label">Feedback par type</p>
     <div id="feedbackBars" class="bars"></div>
     <p class="section-label">Dashboard JSON</p>
@@ -539,6 +635,8 @@ function renderSuggestions(payload) {
   const ctx = payload && payload.resolved_context;
   const suggestions = (payload&&payload.suggestions)||[];
 
+  renderSummary(payload, suggestions, ctx);
+
   if (ctx && currentMode === 'auto') {
     const openweather = ctx.openweather || null;
     const agenda = Array.isArray(ctx.agenda_labels) ? ctx.agenda_labels : [];
@@ -599,21 +697,106 @@ function renderSuggestions(payload) {
   }
 }
 
+function renderSummary(payload, suggestions, ctx) {
+  const scoreList = suggestions.map((item) => Number(item.score)).filter((v) => Number.isFinite(v));
+  const total = suggestions.length;
+  const maxScore = scoreList.length ? Math.max(...scoreList) : null;
+  const avgScore = scoreList.length
+    ? scoreList.reduce((acc, v) => acc + v, 0) / scoreList.length
+    : null;
+
+  const outfitsWithItems = suggestions.filter((item) => Array.isArray(item.outfit_items) && item.outfit_items.length);
+  const distinctItems = new Set();
+  outfitsWithItems.forEach((item) => item.outfit_items.forEach((v) => distinctItems.add(String(v))));
+
+  const quality = maxScore === null ? '—' : (maxScore >= 0.8 ? 'Fort' : maxScore >= 0.55 ? 'Moyen' : 'Faible');
+  const bodyText = payload && payload.inferred_body_shape ? bodyShapeLabel(payload.inferred_body_shape) : 'Non précisée';
+
+  byId('sumCount').textContent = total ? String(total) : '—';
+  byId('sumOutfits').textContent = total ? total + ' tenues' : '—';
+  byId('sumTopScore').textContent = maxScore === null ? '—' : maxScore.toFixed(4);
+  byId('sumAvgScore').textContent = avgScore === null ? '—' : 'Moyenne ' + avgScore.toFixed(4);
+  byId('sumQuality').textContent = quality;
+  byId('sumLatency').textContent = payload && payload.client_latency_ms ? payload.client_latency_ms + ' ms' : 'Latence —';
+  byId('sumDiversity').textContent = distinctItems.size ? String(distinctItems.size) : '—';
+  byId('sumBody').textContent = bodyText;
+
+  const chipHost = byId('contextChips');
+  chipHost.innerHTML = '';
+  const chips = [];
+  if (ctx) {
+    if (ctx.location) chips.push('Lieu: ' + ctx.location);
+    if (ctx.weather && typeof ctx.weather.temperature_c === 'number') chips.push('Temp: ' + ctx.weather.temperature_c.toFixed(1) + ' °C');
+    if (ctx.weather && ctx.weather.condition) chips.push('Meteo: ' + toTitleCase(toFrenchText(ctx.weather.condition)));
+    const agendaLabels = Array.isArray(ctx.agenda_labels) ? ctx.agenda_labels : [];
+    if (agendaLabels.length) chips.push('Agenda: ' + agendaLabels.map((label) => toSentenceCase(toFrenchText(label))).join(', '));
+  }
+  if (!chips.length) chips.push('Contexte indisponible');
+  chips.forEach((label) => {
+    const chip = document.createElement('span');
+    chip.className = 'chip';
+    chip.textContent = label;
+    chipHost.appendChild(chip);
+  });
+
+  const reasonHost = byId('reasonChips');
+  reasonHost.innerHTML = '';
+  const reasonCounts = {};
+  suggestions.forEach((item) => {
+    if (!Array.isArray(item.reasons)) return;
+    item.reasons.forEach((reason) => {
+      const key = String(reason || '').trim();
+      if (!key) return;
+      reasonCounts[key] = (reasonCounts[key] || 0) + 1;
+    });
+  });
+  const topReasons = Object.entries(reasonCounts)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 6);
+  if (!topReasons.length) {
+    const chip = document.createElement('span');
+    chip.className = 'chip';
+    chip.textContent = 'Aucune raison fournie';
+    reasonHost.appendChild(chip);
+  } else {
+    topReasons.forEach(([reason, count]) => {
+      const chip = document.createElement('span');
+      chip.className = 'chip';
+      chip.textContent = toSentenceCase(toFrenchText(reason)) + ' · ' + count;
+      reasonHost.appendChild(chip);
+    });
+  }
+}
+
+function resetSummary() {
+  ['sumCount','sumTopScore','sumAvgScore','sumQuality','sumLatency','sumDiversity','sumOutfits','sumBody']
+    .forEach((id) => { const el = byId(id); if (el) el.textContent = '—'; });
+  byId('contextChips').innerHTML = '';
+  byId('reasonChips').innerHTML = '';
+}
+
 async function runRecommendation() {
   const mode = currentMode;
   const endpoint = mode==='auto'?'/recommend/auto':'/recommend';
   const payload = mode==='auto'?buildAutoPayload():buildManualPayload();
   setStatus('status','Chargement…','loading');
+  resetSummary();
   byId('requestBox').textContent = JSON.stringify(payload, null, 2);
   byId('responseBox').textContent = '';
   try {
+    const start = performance.now();
     const r = await fetch(endpoint,{method:'POST',headers:getHeaders(),body:JSON.stringify(payload)});
     const data = await r.json();
+    const elapsed = Math.round(performance.now() - start);
+    if (data && typeof data === 'object') {
+      data.client_latency_ms = elapsed;
+    }
     byId('responseBox').textContent = JSON.stringify(data, null, 2);
     if (!r.ok) {
       const msg = data&&(data.detail||data.message)?data.detail||data.message:'Erreur API';
       setStatus('status','Erreur '+r.status+': '+msg,'err');
       byId('cards').innerHTML = '';
+      resetSummary();
       return;
     }
     setStatus('status','OK','ok');
@@ -622,6 +805,7 @@ async function runRecommendation() {
   } catch(e) {
     setStatus('status','Erreur réseau : '+e,'err');
     byId('cards').innerHTML = '';
+    resetSummary();
   }
 }
 
@@ -649,6 +833,25 @@ function renderDashboard(data) {
   byId('kpiFeedback').textContent = String(feedback.total_events||0);
   byId('kpiFreshness').textContent = model.metrics_present?formatAge(model.metrics_age_seconds):'—';
   renderFeedbackBars(feedback.event_type_counts||{});
+  renderModelMetrics(model);
+}
+
+function renderModelMetrics(model) {
+  const host = byId('modelMetrics');
+  host.innerHTML = '';
+  const metrics = model && (model.metrics || model.metrics_summary || model.metrics_snapshot || {});
+  const entries = Object.entries(metrics || {}).filter(([, value]) => value !== null && value !== undefined);
+  if (!entries.length) {
+    host.innerHTML = '<p class="muted">Aucune metrique detaillee disponible.</p>';
+    return;
+  }
+  entries.slice(0, 6).forEach(([key, value]) => {
+    const row = document.createElement('div');
+    row.className = 'metric-row';
+    row.innerHTML = '<span class="metric-label">' + toSentenceCase(key.replace(/_/g, ' ')) + '</span>' +
+      '<span class="metric-value">' + String(value) + '</span>';
+    host.appendChild(row);
+  });
 }
 
 async function refreshDashboard() {
