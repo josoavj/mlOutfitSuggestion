@@ -28,7 +28,7 @@ body {
   font-size: 14px;
   line-height: 1.5;
   color: var(--ink);
-  background: transparent;
+  background: #050f1f;
 }
 
 .scene {
@@ -37,9 +37,9 @@ body {
     radial-gradient(ellipse at 86% 12%, rgba(58,113,193,0.30) 0%, transparent 44%),
     radial-gradient(ellipse at 50% 88%, rgba(25,63,116,0.54) 0%, transparent 52%),
     linear-gradient(155deg, #050f1f 0%, #0b1b32 52%, #10284a 100%);
-  border-radius: 24px;
-  padding: 20px;
-  min-height: 100px;
+  border-radius: 0;
+  padding: 24px clamp(16px, 3vw, 32px);
+  min-height: 100vh;
 }
 
 .shell { display: grid; gap: 10px; }
@@ -69,6 +69,9 @@ body {
   justify-content: space-between;
   gap: 12px;
   padding: 0.6rem 1rem;
+  border: 1px solid rgba(160,203,255,0.28);
+  background: rgba(9,22,40,0.55);
+  box-shadow: 0 8px 20px rgba(3,12,24,0.35);
 }
 
 .brand {
@@ -93,6 +96,10 @@ body {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
+  padding: 4px;
+  border-radius: var(--radius-pill);
+  background: rgba(8,20,36,0.52);
+  border: 1px solid rgba(140,190,255,0.24);
 }
 
 .nav-link {
@@ -105,13 +112,20 @@ body {
   font-size: 11.5px;
   font-weight: 600;
   color: var(--ink);
-  background: rgba(33,76,132,0.52);
-  border: 1px solid rgba(156,204,255,0.38);
-  transition: transform 0.12s, background 0.15s;
+  background: rgba(24,60,104,0.58);
+  border: 1px solid rgba(156,204,255,0.34);
+  transition: transform 0.12s, background 0.15s, box-shadow 0.15s;
 }
 
-.nav-link:hover { background: rgba(52,106,173,0.60); }
+.nav-link:hover { background: rgba(52,106,173,0.60); box-shadow: 0 6px 14px rgba(7,22,44,0.35); }
 .nav-link:active { transform: scale(0.97); }
+.nav-link.active,
+.nav-link[aria-current="page"] {
+  background: linear-gradient(135deg, rgba(110,176,255,0.55), rgba(57,118,204,0.65));
+  border-color: rgba(191,222,255,0.65);
+  color: #ffffff;
+  box-shadow: 0 6px 16px rgba(10,32,62,0.42), 0 0 0 1px rgba(210,232,255,0.2) inset;
+}
 
 .hero {
   padding: 1.4rem 1.6rem;
