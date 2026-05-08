@@ -25,7 +25,7 @@
         <div class="hero-orb orb1"></div>
         <div class="hero-orb orb2"></div>
         <div class="hero-orb orb3"></div>
-        <p class="eyebrow">Suivi modele</p>
+        <p class="eyebrow">Suivi modèle</p>
         <h1>Dashboard technique</h1>
         <p class="subtitle">Surveille la fraîcheur des métriques, l'activité feedback et les informations critiques côté service.</p>
       </div>
@@ -46,6 +46,20 @@
           <div class="kpi"><p class="kpi-label">Feedback</p><h3 id="kpiFeedback">—</h3></div>
           <div class="kpi"><p class="kpi-label">Fraîcheur</p><h3 id="kpiFreshness">—</h3></div>
         </div>
+        <p class="section-label">Synthèse modèle</p>
+        <div class="info-grid">
+          <div class="info-box">
+            <p class="info-title">Résumé</p>
+            <p class="info-text" id="modelSummaryText">—</p>
+            <div id="modelPills" class="chip-row"></div>
+          </div>
+          <div class="info-box">
+            <p class="info-title">Apprentissage</p>
+            <div id="learningDetails" class="metric-table"></div>
+          </div>
+        </div>
+        <p class="section-label">Configuration modèle</p>
+        <div id="modelDetails" class="metric-table"></div>
         <p class="section-label">Métriques modèle</p>
         <div id="modelMetrics" class="metric-table"></div>
         <p class="section-label">Feedback par type</p>
@@ -101,22 +115,208 @@
       }
     }
 
+    function formatNumber(value) {
+      if (!Number.isFinite(value)) return '—';
+      return new Intl.NumberFormat('fr-FR').format(value);
+    }
+
+    function humanizeModelName(value) {
+      const text = String(value || '').toLowerCase();
+      const map = {
+        random_forest: 'Random forest',
+        xgboost: 'XGBoost',
+        lightgbm: 'LightGBM',
+        catboost: 'CatBoost',
+        logistic_regression: 'Régression logistique',
+        linear_regression: 'Régression linéaire',
+        gradient_boosting: 'Gradient boosting',
+        svm: 'SVM',
+        knn: 'K-NN',
+        naive_bayes: 'Naive Bayes',
+      };
+      return map[text] || value;
+    }
+
+    function normalizeDataSource(value) {
+      const text = String(value || '').toLowerCase();
+      const map = {
+        synthetic: 'synthétique',
+        real: 'réel',
+        file: 'fichier local',
+      };
+      return map[text] || value;
+    }
+
+    function normalizeSplitMode(value) {
+      const text = String(value || '').toLowerCase();
+      const map = {
+        random: 'aléatoire',
+        time: 'chronologique',
+        temporal: 'chronologique',
+      };
+      return map[text] || value;
+    }
+
+    function formatMetricValue(key, value) {
+      if (!Number.isFinite(value)) return '—';
+      const isRate = ['roc_auc','average_precision','precision','recall','f1','precision_at_3','recall_at_3','ndcg_at_3'].includes(key);
+      if (!isRate) return String(value);
+      return (value * 100).toFixed(2) + ' %';
+    }
+
     function renderModelMetrics(model) {
       const host = byId('modelMetrics');
       host.innerHTML = '';
-      const metrics = model && (model.metrics || model.metrics_summary || model.metrics_snapshot || {});
+      const payload = model && (model.metrics || model.metrics_summary || model.metrics_snapshot || {});
+      const metrics = payload && payload.metrics ? payload.metrics : payload;
       const entries = Object.entries(metrics || {}).filter(([, value]) => value !== null && value !== undefined);
       if (!entries.length) {
         host.innerHTML = '<p class="muted">Aucune métrique détaillée disponible.</p>';
         return;
       }
-      entries.slice(0, 6).forEach(([key, value]) => {
+      const labelMap = {
+        roc_auc: 'ROC-AUC',
+        average_precision: 'Average precision',
+        precision: 'Précision',
+        recall: 'Rappel',
+        f1: 'Score F1',
+        precision_at_3: 'Précision @3',
+        recall_at_3: 'Rappel @3',
+        ndcg_at_3: 'NDCG @3',
+      };
+      const order = Object.keys(labelMap);
+      const ordered = entries.sort((a, b) => {
+        const ia = order.indexOf(a[0]);
+        const ib = order.indexOf(b[0]);
+        if (ia === -1 && ib === -1) return a[0].localeCompare(b[0]);
+        if (ia === -1) return 1;
+        if (ib === -1) return -1;
+        return ia - ib;
+      });
+      ordered.slice(0, 8).forEach(([key, value]) => {
         const row = document.createElement('div');
         row.className = 'metric-row';
-        row.innerHTML = '<span class="metric-label">' + toSentenceCase(key.replace(/_/g, ' ')) + '</span>' +
-          '<span class="metric-value">' + String(value) + '</span>';
+        row.innerHTML = '<span class="metric-label">' + (labelMap[key] || toSentenceCase(key.replace(/_/g, ' '))) + '</span>' +
+          '<span class="metric-value">' + formatMetricValue(key, Number(value)) + '</span>';
         host.appendChild(row);
       });
+    }
+
+    function formatValue(value) {
+      if (value === null || value === undefined || value === '') return '—';
+      if (Array.isArray(value)) return value.join(', ');
+      if (typeof value === 'object') return JSON.stringify(value);
+      return String(value);
+    }
+
+    function resolvePath(obj, path) {
+      if (!obj || !path) return undefined;
+      const parts = path.split('.');
+      let curr = obj;
+      for (const part of parts) {
+        if (!curr || typeof curr !== 'object') return undefined;
+        curr = curr[part];
+      }
+      return curr;
+    }
+
+    function readField(model, candidates) {
+      for (const key of candidates) {
+        const value = resolvePath(model, key);
+        if (value !== undefined && value !== null && value !== '') return value;
+      }
+      return null;
+    }
+
+    function normalizeMethod(value) {
+      const text = String(value || '').toLowerCase();
+      const map = {
+        supervised: 'supervisé',
+        unsupervised: 'non supervisé',
+        semi_supervised: 'semi-supervisé',
+        reinforcement: 'renforcement',
+        learning_to_rank: 'apprentissage par ranking',
+        ranking: 'ranking',
+        classification: 'classification',
+        regression: 'régression',
+        hybrid: 'hybride',
+      };
+      return map[text] || value;
+    }
+
+    function fillMetricTable(hostId, entries) {
+      const host = byId(hostId);
+      host.innerHTML = '';
+      if (!entries.length) {
+        host.innerHTML = '<p class="muted">Aucune information disponible.</p>';
+        return;
+      }
+      entries.forEach((entry) => {
+        const row = document.createElement('div');
+        row.className = 'metric-row';
+        row.innerHTML = '<span class="metric-label">' + entry.label + '</span>' +
+          '<span class="metric-value">' + formatValue(entry.value) + '</span>';
+        host.appendChild(row);
+      });
+    }
+
+    function renderModelOverview(model) {
+      const payload = model && (model.metrics || {});
+      const bestModel = payload.best_model || readField(model, ['algorithm', 'training.algorithm', 'metadata.algorithm']);
+      const samples = payload.samples || readField(model, ['samples', 'training.samples', 'metadata.samples']);
+      const dataSource = payload.data_source || readField(model, ['data_source', 'training.data_source', 'metadata.data_source']);
+      const splitMode = payload.split_mode || readField(model, ['split_mode', 'training.split_mode', 'metadata.split_mode']);
+      const metricsUpdated = readField(model, ['metrics_last_modified_utc', 'metadata.metrics_last_modified_utc']);
+
+      const learningMode = readField(model, ['training.mode', 'training_mode', 'metadata.training_mode']);
+      const learningType = readField(model, ['training.type', 'learning_type', 'metadata.learning_type']);
+      const objective = readField(model, ['objective', 'training.objective', 'metadata.objective']);
+      const featureCount = readField(model, ['feature_count', 'features_count', 'training.feature_count', 'metadata.feature_count']);
+      const featureList = readField(model, ['feature_list', 'features', 'training.features', 'metadata.features']);
+
+      const summaryParts = [];
+      if (bestModel) summaryParts.push('Modèle retenu : ' + humanizeModelName(bestModel));
+      if (metricsUpdated) summaryParts.push('mis à jour le ' + metricsUpdated);
+      if (samples) summaryParts.push(formatNumber(Number(samples)) + ' échantillons');
+      if (summaryParts.length === 0) summaryParts.push('Résumé non disponible');
+      byId('modelSummaryText').textContent = summaryParts.join(' · ');
+
+      const pills = [];
+      if (bestModel) pills.push('Algorithme: ' + humanizeModelName(bestModel));
+      if (dataSource) pills.push('Source: ' + normalizeDataSource(dataSource));
+      if (splitMode) pills.push('Découpage: ' + normalizeSplitMode(splitMode));
+      if (samples) pills.push('Échantillons: ' + formatNumber(Number(samples)));
+      const pillHost = byId('modelPills');
+      pillHost.innerHTML = '';
+      if (!pills.length) {
+        const chip = document.createElement('span');
+        chip.className = 'chip';
+        chip.textContent = 'Métadonnées modèle non fournies';
+        pillHost.appendChild(chip);
+      } else {
+        pills.forEach((label) => {
+          const chip = document.createElement('span');
+          chip.className = 'chip';
+          chip.textContent = label;
+          pillHost.appendChild(chip);
+        });
+      }
+
+      const learningEntries = [];
+      if (learningType) learningEntries.push({ label: 'Type d\'apprentissage', value: normalizeMethod(learningType) });
+      if (learningMode) learningEntries.push({ label: 'Mode d\'entraînement', value: normalizeMethod(learningMode) });
+      if (objective) learningEntries.push({ label: 'Objectif', value: objective });
+      if (bestModel) learningEntries.push({ label: 'Algorithme retenu', value: humanizeModelName(bestModel) });
+      if (splitMode) learningEntries.push({ label: 'Découpage des données', value: normalizeSplitMode(splitMode) });
+      if (dataSource) learningEntries.push({ label: 'Source des données', value: normalizeDataSource(dataSource) });
+      fillMetricTable('learningDetails', learningEntries);
+
+      const detailsEntries = [];
+      if (featureCount) detailsEntries.push({ label: 'Nombre de variables', value: featureCount });
+      if (featureList) detailsEntries.push({ label: 'Variables clés', value: featureList });
+      if (payload && payload.data_source) detailsEntries.push({ label: 'Type de données', value: normalizeDataSource(payload.data_source) });
+      if (payload && payload.split_mode) detailsEntries.push({ label: 'Mode de split', value: normalizeSplitMode(payload.split_mode) });
+      fillMetricTable('modelDetails', detailsEntries);
     }
 
     function renderDashboard(data) {
@@ -127,6 +327,7 @@
       byId('kpiFeedback').textContent = String(feedback.total_events||0);
       byId('kpiFreshness').textContent = model.metrics_present?formatAge(model.metrics_age_seconds):'—';
       renderFeedbackBars(feedback.event_type_counts||{});
+      renderModelOverview(model);
       renderModelMetrics(model);
     }
 
@@ -143,6 +344,10 @@
           ['kpiService','kpiDataSource','kpiModel','kpiFeedback','kpiFreshness'].forEach(id=>byId(id).textContent='—');
           byId('feedbackBars').innerHTML='';
           byId('modelMetrics').innerHTML='';
+          byId('modelSummaryText').textContent = '—';
+          byId('modelPills').innerHTML = '';
+          byId('learningDetails').innerHTML = '';
+          byId('modelDetails').innerHTML = '';
           return;
         }
         setStatus('dashStatus','OK','ok');
