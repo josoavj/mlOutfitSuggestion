@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Outfit Suggestion · Metriques</title>
+  <title>Outfit Suggestion · Métriques</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
@@ -12,12 +12,12 @@
       <div class="glass top-nav">
         <div class="brand">
           <span class="brand-title">Outfit Suggestion</span>
-          <span class="brand-sub">Observabilite et metriques</span>
+          <span class="brand-sub">Observabilité et métriques</span>
         </div>
         <div class="nav-links">
-          <a class="nav-link" href="index.html">Presentation</a>
+          <a class="nav-link" href="index.html">Présentation</a>
           <a class="nav-link" href="test.html">Test</a>
-          <a class="nav-link" href="metrics.html">Metriques</a>
+          <a class="nav-link" href="metrics.html" aria-current="page">Métriques</a>
         </div>
       </div>
 
@@ -27,7 +27,7 @@
         <div class="hero-orb orb3"></div>
         <p class="eyebrow">Suivi modele</p>
         <h1>Dashboard technique</h1>
-        <p class="subtitle">Surveille la fraicheur des metriques, l activite feedback et les informations critiques cote service.</p>
+        <p class="subtitle">Surveille la fraîcheur des métriques, l'activité feedback et les informations critiques côté service.</p>
       </div>
 
       <div class="panel">
@@ -38,15 +38,15 @@
             Actualiser
           </button>
         </div>
-        <span class="status-pill" id="dashStatus" style="display:inline-flex;"><span class="pulse"></span>Pret</span>
+        <span class="status-pill" id="dashStatus" style="display:inline-flex;"><span class="pulse"></span>Prêt</span>
         <div class="dash-grid">
           <div class="kpi"><p class="kpi-label">Service</p><h3 id="kpiService">—</h3></div>
           <div class="kpi"><p class="kpi-label">Data source</p><h3 id="kpiDataSource">—</h3></div>
-          <div class="kpi"><p class="kpi-label">Model</p><h3 id="kpiModel">—</h3></div>
+          <div class="kpi"><p class="kpi-label">Modèle</p><h3 id="kpiModel">—</h3></div>
           <div class="kpi"><p class="kpi-label">Feedback</p><h3 id="kpiFeedback">—</h3></div>
-          <div class="kpi"><p class="kpi-label">Fraicheur</p><h3 id="kpiFreshness">—</h3></div>
+          <div class="kpi"><p class="kpi-label">Fraîcheur</p><h3 id="kpiFreshness">—</h3></div>
         </div>
-        <p class="section-label">Metriques modele</p>
+        <p class="section-label">Métriques modèle</p>
         <div id="modelMetrics" class="metric-table"></div>
         <p class="section-label">Feedback par type</p>
         <div id="feedbackBars" class="bars"></div>
@@ -89,7 +89,7 @@
       const host = byId('feedbackBars');
       host.innerHTML = '';
       const entries = Object.entries(counts||{});
-      if (!entries.length) { host.innerHTML = '<p class="muted">Aucun evenement feedback disponible.</p>'; return; }
+      if (!entries.length) { host.innerHTML = '<p class="muted">Aucun événement feedback disponible.</p>'; return; }
       const maxVal = Math.max(...entries.map(([,v])=>Number(v)||0),1);
       for (const [label,rawVal] of entries.sort((a,b)=>Number(b[1])-Number(a[1]))) {
         const value = Number(rawVal)||0;
@@ -107,7 +107,7 @@
       const metrics = model && (model.metrics || model.metrics_summary || model.metrics_snapshot || {});
       const entries = Object.entries(metrics || {}).filter(([, value]) => value !== null && value !== undefined);
       if (!entries.length) {
-        host.innerHTML = '<p class="muted">Aucune metrique detaillee disponible.</p>';
+        host.innerHTML = '<p class="muted">Aucune métrique détaillée disponible.</p>';
         return;
       }
       entries.slice(0, 6).forEach(([key, value]) => {
@@ -123,7 +123,7 @@
       const service=(data&&data.service)||{}, model=(data&&data.model)||{}, feedback=(data&&data.feedback)||{};
       byId('kpiService').textContent = service.status||'—';
       byId('kpiDataSource').textContent = service.data_source||'—';
-      byId('kpiModel').textContent = model.metrics_present?'present':'absent';
+      byId('kpiModel').textContent = model.metrics_present?'présent':'absent';
       byId('kpiFeedback').textContent = String(feedback.total_events||0);
       byId('kpiFreshness').textContent = model.metrics_present?formatAge(model.metrics_age_seconds):'—';
       renderFeedbackBars(feedback.event_type_counts||{});
@@ -148,7 +148,7 @@
         setStatus('dashStatus','OK','ok');
         renderDashboard(data);
       } catch(e) {
-        setStatus('dashStatus','Erreur reseau : '+e,'err');
+        setStatus('dashStatus','Erreur réseau : '+e,'err');
       }
     }
 
