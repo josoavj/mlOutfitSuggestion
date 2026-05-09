@@ -42,7 +42,7 @@
         <span class="status-pill" id="dashStatus" style="display:inline-flex;"><span class="pulse"></span>Prêt</span>
         <div class="dash-grid">
           <div class="kpi"><p class="kpi-label">Service</p><h3 id="kpiService">—</h3></div>
-          <div class="kpi"><p class="kpi-label">Data source</p><h3 id="kpiDataSource">—</h3></div>
+          <div class="kpi"><p class="kpi-label">Source de données</p><h3 id="kpiDataSource">—</h3></div>
           <div class="kpi"><p class="kpi-label">Modèle</p><h3 id="kpiModel">—</h3></div>
           <div class="kpi"><p class="kpi-label">Feedback</p><h3 id="kpiFeedback">—</h3></div>
           <div class="kpi"><p class="kpi-label">Fraîcheur</p><h3 id="kpiFreshness">—</h3></div>
@@ -78,6 +78,10 @@
       const text = String(value || '').trim();
       if (!text) return '';
       return text.charAt(0).toUpperCase() + text.slice(1);
+    }
+
+    function humanizeKey(value) {
+      return String(value || '').replace(/_/g, ' ').trim();
     }
 
     function setStatus(elId, text, type) {
@@ -197,7 +201,7 @@
       ordered.slice(0, 8).forEach(([key, value]) => {
         const row = document.createElement('div');
         row.className = 'metric-row';
-        row.innerHTML = '<span class="metric-label">' + (labelMap[key] || toSentenceCase(key.replace(/_/g, ' '))) + '</span>' +
+        row.innerHTML = '<span class="metric-label">' + (labelMap[key] || humanizeKey(key)) + '</span>' +
           '<span class="metric-value">' + formatMetricValue(key, Number(value)) + '</span>';
         host.appendChild(row);
       });
