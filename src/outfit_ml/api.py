@@ -9,7 +9,7 @@ from pathlib import Path
 
 from fastapi import Depends, FastAPI, Header, HTTPException
 from dotenv import load_dotenv
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, Response
 
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
@@ -220,6 +220,48 @@ def ui_page() -> FileResponse:
     if not WEB_DIR.exists():
         raise HTTPException(status_code=404, detail="UI non disponible")
     return FileResponse(WEB_DIR / "index.html")
+
+
+@app.get("/test.html")
+def ui_test_page() -> FileResponse:
+    if not WEB_DIR.exists():
+        raise HTTPException(status_code=404, detail="UI non disponible")
+    test_path = WEB_DIR / "test.html"
+    if not test_path.exists():
+        raise HTTPException(status_code=404, detail="Page test introuvable")
+    return FileResponse(test_path)
+
+
+@app.get("/metrics.html")
+def ui_metrics_page() -> FileResponse:
+    if not WEB_DIR.exists():
+        raise HTTPException(status_code=404, detail="UI non disponible")
+    metrics_path = WEB_DIR / "metrics.html"
+    if not metrics_path.exists():
+        raise HTTPException(status_code=404, detail="Page métriques introuvable")
+    return FileResponse(metrics_path)
+
+
+@app.get("/styles.css")
+def ui_styles() -> FileResponse:
+    if not WEB_DIR.exists():
+        raise HTTPException(status_code=404, detail="UI non disponible")
+    css_path = WEB_DIR / "styles.css"
+    if not css_path.exists():
+        raise HTTPException(status_code=404, detail="Feuille de style introuvable")
+    return FileResponse(css_path)
+
+
+@app.get("/favicon.ico")
+def ui_favicon() -> Response:
+    icon_svg = (
+        "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'>"
+        "<rect width='64' height='64' rx='14' fill='#102149'/>"
+        "<path d='M16 40c6-8 14-14 24-18 4-2 8 2 8 6 0 12-10 20-22 20-6 0-10-4-10-8z' fill='#72b0ff'/>"
+        "<path d='M20 24c2-6 6-10 12-12 2-1 4 0 4 2 0 4-4 10-10 12-4 2-6 0-6-2z' fill='#9bc7ff'/>"
+        "</svg>"
+    )
+    return Response(content=icon_svg, media_type="image/svg+xml")
 
 
 @app.get("/dashboard/technical")
