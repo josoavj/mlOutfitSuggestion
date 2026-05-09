@@ -7,12 +7,16 @@ from datetime import UTC, datetime
 from functools import lru_cache
 from pathlib import Path
 
-from fastapi import Depends, FastAPI, Header, HTTPException
+from fastapi import Depends, FastAPI, Header, HTTPException, Request
 from dotenv import load_dotenv
 from fastapi.responses import FileResponse, Response
 
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.errors import RateLimitExceeded
+from slowapi.util import get_remote_address
+from slowapi.middleware import SlowAPIMiddleware
 
 from .context import (
     AppIntegrationError,
@@ -119,6 +123,11 @@ def require_api_key(x_api_key: str | None = Header(default=None, alias="X-API-Ke
 
 app = FastAPI(title="Outfit Suggestion API", version="0.1.0")
 
+limiter = Limiter(key_func=get_remote_address)
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+app.add_middleware(SlowAPIMiddleware)
+
 WEB_DIR = Path(__file__).resolve().parents[2] / "web"
 MODEL_METRICS_PATH = Path(__file__).resolve().parents[2] / "models" / "outfit_ranker_metrics.json"
 if WEB_DIR.exists():
@@ -134,22 +143,25 @@ app.add_middleware(
 
 
 @app.post("/feedback/event", response_model=FeedbackEventResponse)
-def feedback_event(request: FeedbackEventRequest, _: None = Depends(require_api_key)) -> FeedbackEventResponse:
-    _append_feedback_event(request)
+@limiter.limit(os.getenv("RATE_LIMIT_FEEDBACK", "30/minute"))
+def feedback_event(request: Request, payload: FeedbackEventRequest, _: None = Depends(require_api_key)) -> FeedbackEventResponse:
+    _append_feedback_event(payload)
     return FeedbackEventResponse()
 
 
 @app.post("/feedback/batch", response_model=FeedbackBatchResponse)
-def feedback_batch(request: FeedbackBatchRequest, _: None = Depends(require_api_key)) -> FeedbackBatchResponse:
+@limiter.limit(os.getenv("RATE_LIMIT_FEEDBACK", "30/minute"))
+def feedback_batch(request: Request, payload: FeedbackBatchRequest, _: None = Depends(require_api_key)) -> FeedbackBatchResponse:
     accepted = 0
-    for event in request.events:
+    for event in payload.events:
         _append_feedback_event(event)
         accepted += 1
     return FeedbackBatchResponse(accepted=accepted)
 
 
 @app.get("/feedback/stats", response_model=FeedbackStatsResponse)
-def feedback_stats(_: None = Depends(require_api_key)) -> FeedbackStatsResponse:
+@limiter.limit(os.getenv("RATE_LIMIT_FEEDBACK", "30/minute"))
+def feedback_stats(request: Request, _: None = Depends(require_api_key)) -> FeedbackStatsResponse:
     events = _iter_feedback_events()
     type_counts = Counter(str(item.get("event_type") or "unknown") for item in events)
     unique_users = {
@@ -265,9 +277,10 @@ def ui_favicon() -> Response:
 
 
 @app.get("/dashboard/technical")
-def technical_dashboard(_: None = Depends(require_api_key)) -> dict:
+@limiter.limit(os.getenv("RATE_LIMIT_TECHNICAL", "60/minute"))
+def technical_dashboard(request: Request, _: None = Depends(require_api_key)) -> dict:
     model_present, model_metrics = _load_model_metrics()
-    feedback = feedback_stats().model_dump()
+    feedback = feedback_stats(request).model_dump()
     now_utc = datetime.now(UTC)
     metrics_modified_iso: str | None = None
     metrics_age_seconds: float | None = None
@@ -299,18 +312,20 @@ def technical_dashboard(_: None = Depends(require_api_key)) -> dict:
 
 
 @app.post("/recommend", response_model=RecommendationResponse)
+@limiter.limit(os.getenv("RATE_LIMIT_RECOMMEND", "30/minute"))
 def recommend(
-    request: RecommendationRequest,
+    request: Request,
+    payload: RecommendationRequest,
     _: None = Depends(require_api_key),
 ) -> RecommendationResponse:
     try:
         recommender = get_recommender()
-        response = recommender.recommend(request)
+        response = recommender.recommend(payload)
         response.resolved_context = RecommendationResolvedContext(
             source="manual",
-            location=request.location,
-            weather=request.weather,
-            agenda_labels=request.agenda,
+            location=payload.location,
+            weather=payload.weather,
+            agenda_labels=payload.agenda,
         )
         return response
     except FileNotFoundError as exc:
@@ -321,38 +336,40 @@ def recommend(
 
 
 @app.post("/recommend/context", response_model=RecommendationResponse)
+@limiter.limit(os.getenv("RATE_LIMIT_RECOMMEND", "30/minute"))
 def recommend_from_context(
-    request: ContextRecommendationRequest,
+    request: Request,
+    payload: ContextRecommendationRequest,
     _: None = Depends(require_api_key),
 ) -> RecommendationResponse:
     try:
-        weather, openweather = fetch_openweather_detailed(request.location)
+        weather, openweather = fetch_openweather_detailed(payload.location)
     except OpenWeatherError as exc:
         raise HTTPException(status_code=502, detail=str(exc)) from exc
 
-    agenda_labels = agenda_to_labels(request.agenda_entries)
+    agenda_labels = agenda_to_labels(payload.agenda_entries)
 
     base_request = RecommendationRequest(
-        user_id=request.user_id,
-        gender=request.gender,
-        age=request.age,
-        height_cm=request.height_cm,
-        clothing_size=request.clothing_size,
-        top_size=request.top_size,
-        bottom_size=request.bottom_size,
-        shoe_size=request.shoe_size,
-        style_preferences=request.style_preferences,
-        body_shape=request.body_shape,
-        body_measurements=request.body_measurements,
+        user_id=payload.user_id,
+        gender=payload.gender,
+        age=payload.age,
+        height_cm=payload.height_cm,
+        clothing_size=payload.clothing_size,
+        top_size=payload.top_size,
+        bottom_size=payload.bottom_size,
+        shoe_size=payload.shoe_size,
+        style_preferences=payload.style_preferences,
+        body_shape=payload.body_shape,
+        body_measurements=payload.body_measurements,
         agenda=agenda_labels,
-        location=request.location,
+        location=payload.location,
         weather=weather,
-        top_k=request.top_k,
+        top_k=payload.top_k,
     )
     response = recommend(base_request)
     response.resolved_context = RecommendationResolvedContext(
         source="context",
-        location=request.location,
+        location=payload.location,
         weather=weather,
         openweather=_resolve_openweather_payload(openweather),
         agenda_labels=agenda_labels,
@@ -361,17 +378,19 @@ def recommend_from_context(
 
 
 @app.post("/recommend/auto", response_model=RecommendationResponse)
+@limiter.limit(os.getenv("RATE_LIMIT_RECOMMEND", "30/minute"))
 def recommend_auto(
-    request: AutoRecommendationRequest,
+    request: Request,
+    payload: AutoRecommendationRequest,
     _: None = Depends(require_api_key),
 ) -> RecommendationResponse:
     try:
-        profile = fetch_user_profile(request.user_id)
-        agenda_entries = fetch_today_agenda_entries(request.user_id)
+        profile = fetch_user_profile(payload.user_id)
+        agenda_entries = fetch_today_agenda_entries(payload.user_id)
     except AppIntegrationError as exc:
         raise HTTPException(status_code=502, detail=str(exc)) from exc
 
-    resolved_location = (request.location or profile.location or "").strip()
+    resolved_location = (payload.location or profile.location or "").strip()
     if not resolved_location:
         raise HTTPException(
             status_code=400,
@@ -383,23 +402,23 @@ def recommend_auto(
     except OpenWeatherError as exc:
         raise HTTPException(status_code=502, detail=str(exc)) from exc
 
-    agenda_labels = request.agenda if request.agenda else agenda_to_labels(agenda_entries)
-    resolved_gender = request.gender or profile.gender
-    resolved_age = request.age if request.age is not None else profile.age
-    resolved_height_cm = request.height_cm if request.height_cm is not None else profile.height_cm
-    resolved_clothing_size = request.clothing_size if request.clothing_size is not None else profile.clothing_size
-    resolved_top_size = request.top_size if request.top_size is not None else profile.top_size
-    resolved_bottom_size = request.bottom_size if request.bottom_size is not None else profile.bottom_size
-    resolved_shoe_size = request.shoe_size if request.shoe_size is not None else profile.shoe_size
+    agenda_labels = payload.agenda if payload.agenda else agenda_to_labels(agenda_entries)
+    resolved_gender = payload.gender or profile.gender
+    resolved_age = payload.age if payload.age is not None else profile.age
+    resolved_height_cm = payload.height_cm if payload.height_cm is not None else profile.height_cm
+    resolved_clothing_size = payload.clothing_size if payload.clothing_size is not None else profile.clothing_size
+    resolved_top_size = payload.top_size if payload.top_size is not None else profile.top_size
+    resolved_bottom_size = payload.bottom_size if payload.bottom_size is not None else profile.bottom_size
+    resolved_shoe_size = payload.shoe_size if payload.shoe_size is not None else profile.shoe_size
     resolved_style_preferences = (
-        request.style_preferences
-        if request.style_preferences is not None
+        payload.style_preferences
+        if payload.style_preferences is not None
         else profile.style_preferences
     )
-    resolved_body_shape = request.body_shape if request.body_shape is not None else profile.body_shape
+    resolved_body_shape = payload.body_shape if payload.body_shape is not None else profile.body_shape
     resolved_body_measurements = (
-        request.body_measurements
-        if request.body_measurements is not None
+        payload.body_measurements
+        if payload.body_measurements is not None
         else profile.body_measurements
     )
 
@@ -418,7 +437,7 @@ def recommend_auto(
         agenda=agenda_labels,
         location=resolved_location,
         weather=weather,
-        top_k=request.top_k,
+        top_k=payload.top_k,
     )
     response = recommend(base_request)
     response.resolved_context = RecommendationResolvedContext(
@@ -432,13 +451,15 @@ def recommend_auto(
 
 
 @app.post("/vision/enroll", response_model=FaceEnrollResponse)
+@limiter.limit(os.getenv("RATE_LIMIT_VISION", "15/minute"))
 def vision_enroll(
-    request: FaceEnrollRequest,
+    request: Request,
+    payload: FaceEnrollRequest,
     _: None = Depends(require_api_key),
 ) -> FaceEnrollResponse:
     try:
         registry = get_face_registry()
-        registry.enroll(request.user_id, request.image_base64)
+        registry.enroll(payload.user_id, payload.image_base64)
     except VisionUnavailableError as exc:
         raise HTTPException(status_code=501, detail=str(exc)) from exc
     except VisionError as exc:
@@ -448,16 +469,18 @@ def vision_enroll(
 
 
 @app.post("/vision/identify", response_model=FaceIdentifyResponse)
+@limiter.limit(os.getenv("RATE_LIMIT_VISION", "30/minute"))
 def vision_identify(
-    request: FaceIdentifyRequest,
+    request: Request,
+    payload: FaceIdentifyRequest,
     _: None = Depends(require_api_key),
 ) -> FaceIdentifyResponse:
     try:
         registry = get_face_registry()
         matches = registry.identify(
-            request.image_base64,
-            threshold=request.threshold,
-            max_results=request.max_results,
+            payload.image_base64,
+            threshold=payload.threshold,
+            max_results=payload.max_results,
         )
     except VisionUnavailableError as exc:
         raise HTTPException(status_code=501, detail=str(exc)) from exc
@@ -468,15 +491,17 @@ def vision_identify(
 
 
 @app.post("/mirror/recommend-from-camera", response_model=CameraRecommendationResponse)
+@limiter.limit(os.getenv("RATE_LIMIT_VISION", "15/minute"))
 def recommend_from_camera(
-    request: CameraRecommendationRequest,
+    request: Request,
+    payload: CameraRecommendationRequest,
     _: None = Depends(require_api_key),
 ) -> CameraRecommendationResponse:
     try:
         registry = get_face_registry()
         matches = registry.identify(
-            request.image_base64,
-            threshold=request.threshold,
+            payload.image_base64,
+            threshold=payload.threshold,
             max_results=1,
         )
     except VisionUnavailableError as exc:
@@ -494,8 +519,8 @@ def recommend_from_camera(
     recommendation = recommend_auto(
         AutoRecommendationRequest(
             user_id=best_match.user_id,
-            location=request.location,
-            top_k=request.top_k,
+            location=payload.location,
+            top_k=payload.top_k,
         )
     )
 
@@ -507,20 +532,24 @@ def recommend_from_camera(
 
 
 @app.post("/feedback/event", response_model=FeedbackEventResponse)
+@limiter.limit(os.getenv("RATE_LIMIT_FEEDBACK", "30/minute"))
 def create_feedback_event(
-    request: FeedbackEventRequest,
+    request: Request,
+    payload: FeedbackEventRequest,
     _: None = Depends(require_api_key),
 ) -> FeedbackEventResponse:
-    event_id = append_feedback_event(request)
+    event_id = append_feedback_event(payload)
     return FeedbackEventResponse(status="ok", event_id=event_id)
 
 
 @app.post("/feedback/events", response_model=FeedbackBatchResponse)
+@limiter.limit(os.getenv("RATE_LIMIT_FEEDBACK", "30/minute"))
 def create_feedback_events(
-    request: FeedbackBatchRequest,
+    request: Request,
+    payload: FeedbackBatchRequest,
     _: None = Depends(require_api_key),
 ) -> FeedbackBatchResponse:
-    event_ids = append_feedback_events(request.events)
+    event_ids = append_feedback_events(payload.events)
     return FeedbackBatchResponse(
         status="ok",
         created_count=len(event_ids),
@@ -529,5 +558,6 @@ def create_feedback_events(
 
 
 @app.get("/feedback/stats", response_model=FeedbackStatsResponse)
-def get_feedback_stats(_: None = Depends(require_api_key)) -> FeedbackStatsResponse:
-    return feedback_stats()
+@limiter.limit(os.getenv("RATE_LIMIT_FEEDBACK", "30/minute"))
+def get_feedback_stats(request: Request, _: None = Depends(require_api_key)) -> FeedbackStatsResponse:
+    return feedback_stats(request)
