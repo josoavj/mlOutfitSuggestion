@@ -33,12 +33,15 @@
 Le système est composé de 3 parties :
 
 ### 1. Détection de morphologie
+
 Si l'utilisateur fournit ses mesures (épaules, taille, hanches), la morphologie est déduite automatiquement.
 
 ### 2. Scoring ML de tenue
+
 Un modèle de classification binaire évalue la compatibilité utilisateur / contexte / tenue. Les tenues sont triées par probabilité de pertinence.
 
 ### 3. API de recommandation
+
 Endpoint FastAPI qui retourne un top-k de tenues.
 
 ---

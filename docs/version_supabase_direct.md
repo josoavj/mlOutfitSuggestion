@@ -50,15 +50,18 @@ uvicorn src.outfit_ml.api:app --reload
 ### profiles
 
 Colonnes minimales:
+
 - user_id
 
 Colonnes recommandees:
+
 - gender
 - age
 - height_cm
 - preferred_styles (json/array ou texte parseable)
 
 Colonnes optionnelles (fallback automatique si absentes):
+
 - morphology
 - clothing_size
 - top_size
@@ -70,6 +73,7 @@ Colonnes optionnelles (fallback automatique si absentes):
 ### agenda_events
 
 Colonnes minimales:
+
 - user_id
 - start_time
 - title (ou mapping via SUPABASE_AGENDA_TITLE_COLUMN)
@@ -113,6 +117,7 @@ SUPABASE_AGENDA_TAGS_COLUMN=description
 ```
 
 Notes:
+
 - `morphology` est normalise automatiquement vers `hourglass|rectangle|pear|inverted_triangle|oval|unknown`.
 - `preferred_styles` peut etre un tableau Supabase et sera converti en liste de styles.
 - `description` est acceptee comme tags source (si texte simple, il est transforme en une entree).
