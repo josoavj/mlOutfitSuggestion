@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import json
 import os
 from collections import Counter
@@ -7,7 +5,7 @@ from datetime import UTC, datetime
 from functools import lru_cache
 from pathlib import Path
 
-from fastapi import Depends, FastAPI, Header, HTTPException, Request
+from fastapi import Body, Depends, FastAPI, Header, HTTPException, Request
 from dotenv import load_dotenv
 from fastapi.responses import FileResponse, Response
 
@@ -144,14 +142,22 @@ app.add_middleware(
 
 @app.post("/feedback/event", response_model=FeedbackEventResponse)
 @limiter.limit(os.getenv("RATE_LIMIT_FEEDBACK", "30/minute"))
-def feedback_event(request: Request, payload: FeedbackEventRequest, _: None = Depends(require_api_key)) -> FeedbackEventResponse:
+def feedback_event(
+    request: Request,
+    payload: FeedbackEventRequest = Body(...),
+    _: None = Depends(require_api_key),
+) -> FeedbackEventResponse:
     _append_feedback_event(payload)
     return FeedbackEventResponse()
 
 
 @app.post("/feedback/batch", response_model=FeedbackBatchResponse)
 @limiter.limit(os.getenv("RATE_LIMIT_FEEDBACK", "30/minute"))
-def feedback_batch(request: Request, payload: FeedbackBatchRequest, _: None = Depends(require_api_key)) -> FeedbackBatchResponse:
+def feedback_batch(
+    request: Request,
+    payload: FeedbackBatchRequest = Body(...),
+    _: None = Depends(require_api_key),
+) -> FeedbackBatchResponse:
     accepted = 0
     for event in payload.events:
         _append_feedback_event(event)
@@ -315,7 +321,7 @@ def technical_dashboard(request: Request, _: None = Depends(require_api_key)) ->
 @limiter.limit(os.getenv("RATE_LIMIT_RECOMMEND", "30/minute"))
 def recommend(
     request: Request,
-    payload: RecommendationRequest,
+    payload: RecommendationRequest = Body(...),
     _: None = Depends(require_api_key),
 ) -> RecommendationResponse:
     try:
@@ -339,7 +345,7 @@ def recommend(
 @limiter.limit(os.getenv("RATE_LIMIT_RECOMMEND", "30/minute"))
 def recommend_from_context(
     request: Request,
-    payload: ContextRecommendationRequest,
+    payload: ContextRecommendationRequest = Body(...),
     _: None = Depends(require_api_key),
 ) -> RecommendationResponse:
     try:
@@ -381,7 +387,7 @@ def recommend_from_context(
 @limiter.limit(os.getenv("RATE_LIMIT_RECOMMEND", "30/minute"))
 def recommend_auto(
     request: Request,
-    payload: AutoRecommendationRequest,
+    payload: AutoRecommendationRequest = Body(...),
     _: None = Depends(require_api_key),
 ) -> RecommendationResponse:
     try:
@@ -454,7 +460,7 @@ def recommend_auto(
 @limiter.limit(os.getenv("RATE_LIMIT_VISION", "15/minute"))
 def vision_enroll(
     request: Request,
-    payload: FaceEnrollRequest,
+    payload: FaceEnrollRequest = Body(...),
     _: None = Depends(require_api_key),
 ) -> FaceEnrollResponse:
     try:
@@ -472,7 +478,7 @@ def vision_enroll(
 @limiter.limit(os.getenv("RATE_LIMIT_VISION", "30/minute"))
 def vision_identify(
     request: Request,
-    payload: FaceIdentifyRequest,
+    payload: FaceIdentifyRequest = Body(...),
     _: None = Depends(require_api_key),
 ) -> FaceIdentifyResponse:
     try:
@@ -494,7 +500,7 @@ def vision_identify(
 @limiter.limit(os.getenv("RATE_LIMIT_VISION", "15/minute"))
 def recommend_from_camera(
     request: Request,
-    payload: CameraRecommendationRequest,
+    payload: CameraRecommendationRequest = Body(...),
     _: None = Depends(require_api_key),
 ) -> CameraRecommendationResponse:
     try:
@@ -535,7 +541,7 @@ def recommend_from_camera(
 @limiter.limit(os.getenv("RATE_LIMIT_FEEDBACK", "30/minute"))
 def create_feedback_event(
     request: Request,
-    payload: FeedbackEventRequest,
+    payload: FeedbackEventRequest = Body(...),
     _: None = Depends(require_api_key),
 ) -> FeedbackEventResponse:
     event_id = append_feedback_event(payload)
@@ -546,7 +552,7 @@ def create_feedback_event(
 @limiter.limit(os.getenv("RATE_LIMIT_FEEDBACK", "30/minute"))
 def create_feedback_events(
     request: Request,
-    payload: FeedbackBatchRequest,
+    payload: FeedbackBatchRequest = Body(...),
     _: None = Depends(require_api_key),
 ) -> FeedbackBatchResponse:
     event_ids = append_feedback_events(payload.events)
