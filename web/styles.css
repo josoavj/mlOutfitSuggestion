@@ -467,6 +467,28 @@ pre {
   border: 1px solid rgba(155,203,255,0.36);
 }
 
+.chip-agenda {
+  background: rgba(34,74,124,0.62);
+  border-color: rgba(170,214,255,0.55);
+}
+
+.chip-has-detail {
+  gap: 8px;
+}
+
+.chip-main {
+  font-weight: 600;
+}
+
+.chip-sub {
+  font-size: 11px;
+  padding: 2px 6px;
+  border-radius: var(--radius-pill);
+  color: var(--accent2);
+  background: rgba(8,20,36,0.5);
+  border: 1px solid rgba(155,203,255,0.4);
+}
+
 .metric-table {
   display: grid;
   gap: 6px;
