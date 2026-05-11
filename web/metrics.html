@@ -91,6 +91,29 @@
       el.innerHTML = '<span class="pulse'+anim+'"></span>' + text;
     }
 
+    function renderPill(label) {
+      const raw = String(label || '').trim();
+      if (!raw) return null;
+      const parts = raw.split(':');
+      const main = parts[0] ? parts[0].trim() : raw;
+      const detail = parts.slice(1).join(':').trim();
+      const chip = document.createElement('span');
+      chip.className = 'chip' + (detail ? ' chip-has-detail' : '');
+      if (detail) {
+        const mainEl = document.createElement('span');
+        mainEl.className = 'chip-main';
+        mainEl.textContent = main;
+        const detailEl = document.createElement('span');
+        detailEl.className = 'chip-sub';
+        detailEl.textContent = detail;
+        chip.appendChild(mainEl);
+        chip.appendChild(detailEl);
+      } else {
+        chip.textContent = raw;
+      }
+      return chip;
+    }
+
     function formatAge(s) {
       if (s===null||s===undefined||isNaN(Number(s))) return '—';
       const v = Math.max(0, Math.floor(Number(s)));
@@ -300,10 +323,8 @@
         pillHost.appendChild(chip);
       } else {
         pills.forEach((label) => {
-          const chip = document.createElement('span');
-          chip.className = 'chip';
-          chip.textContent = label;
-          pillHost.appendChild(chip);
+          const chip = renderPill(label);
+          if (chip) pillHost.appendChild(chip);
         });
       }
 
