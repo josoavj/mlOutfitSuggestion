@@ -73,9 +73,21 @@
         </div>
         <div class="divider"></div>
         <div class="grid g2">
-          <label>Styles (séparés par virgule) <input id="styles" value="minimalist,elegant" /></label>
+          <label>Styles recommandés</label>
           <label>Agenda (mode manuel) <input id="agenda" value="work,meeting" /></label>
         </div>
+        <p class="muted" style="margin-top:-2px;">Tous les styles disponibles sont listés. Survole un style pour voir un exemple.</p>
+        <div class="style-grid">
+          <label class="style-option" data-tooltip="Couleurs sobres, lignes classiques"><input type="checkbox" name="styleOption" value="classic" /> <span>Classique</span></label>
+          <label class="style-option" data-tooltip="Silhouettes nettes, peu d'accessoires"><input type="checkbox" name="styleOption" value="minimalist" checked /> <span>Minimaliste</span></label>
+          <label class="style-option" data-tooltip="Confort, quotidien, polyvalent"><input type="checkbox" name="styleOption" value="casual" /> <span>Décontracté</span></label>
+          <label class="style-option" data-tooltip="Inspiré sport, matières techniques"><input type="checkbox" name="styleOption" value="sport" /> <span>Sport</span></label>
+          <label class="style-option" data-tooltip="Coupe soignée, détails raffinés"><input type="checkbox" name="styleOption" value="elegant" checked /> <span>Élégant</span></label>
+          <label class="style-option" data-tooltip="Pragmatique, utile, adapté météo"><input type="checkbox" name="styleOption" value="practical" /> <span>Pratique</span></label>
+        </div>
+        <label>Autres styles (optionnel)
+          <input id="stylesCustom" placeholder="ex: streetwear, vintage" />
+        </label>
       </div>
 
       <div class="panel">
@@ -158,6 +170,14 @@
     function byId(id) { return document.getElementById(id); }
     function parseCsv(s) { return s.split(',').map(v=>v.trim()).filter(Boolean); }
 
+    function getStyleSelections() {
+      const checked = Array.from(document.querySelectorAll('input[name="styleOption"]:checked'))
+        .map((el) => el.value.trim())
+        .filter(Boolean);
+      const extra = parseCsv(byId('stylesCustom').value);
+      return Array.from(new Set([...checked, ...extra]));
+    }
+
     function toFrenchText(value) {
       const text = String(value || '');
       return text
@@ -232,7 +252,7 @@
         top_size: byId('topSize').value,
         bottom_size: byId('bottomSize').value,
         shoe_size: byId('shoeSize').value.trim()||'unknown',
-        style_preferences: parseCsv(byId('styles').value),
+        style_preferences: getStyleSelections(),
         body_shape: byId('bodyShape').value,
         agenda: parseCsv(byId('agenda').value),
         location: byId('location').value.trim(),
@@ -252,7 +272,7 @@
         top_size: byId('topSize').value,
         bottom_size: byId('bottomSize').value,
         shoe_size: byId('shoeSize').value.trim() || 'unknown',
-        style_preferences: parseCsv(byId('styles').value),
+        style_preferences: getStyleSelections(),
         body_shape: byId('bodyShape').value,
         agenda: parseCsv(byId('agenda').value),
         top_k: Number(byId('topK').value),
