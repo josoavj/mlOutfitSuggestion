@@ -72,22 +72,26 @@
           </label>
         </div>
         <div class="divider"></div>
-        <div class="grid g2">
-          <label>Styles recommandés</label>
-          <label>Agenda (mode manuel) <input id="agenda" value="work,meeting" /></label>
+        <div class="style-layout">
+          <div class="style-column">
+            <label>Styles recommandés</label>
+            <p class="muted" style="margin-top:-2px;">Tous les styles disponibles sont listés. Survole un style pour voir un exemple.</p>
+            <div class="style-grid">
+              <label class="style-option" data-tooltip="Couleurs sobres, lignes classiques"><input type="checkbox" name="styleOption" value="classic" /> <span>Classique</span></label>
+              <label class="style-option" data-tooltip="Silhouettes nettes, peu d'accessoires"><input type="checkbox" name="styleOption" value="minimalist" checked /> <span>Minimaliste</span></label>
+              <label class="style-option" data-tooltip="Confort, quotidien, polyvalent"><input type="checkbox" name="styleOption" value="casual" /> <span>Décontracté</span></label>
+              <label class="style-option" data-tooltip="Inspiré sport, matières techniques"><input type="checkbox" name="styleOption" value="sport" /> <span>Sport</span></label>
+              <label class="style-option" data-tooltip="Coupe soignée, détails raffinés"><input type="checkbox" name="styleOption" value="elegant" checked /> <span>Élégant</span></label>
+              <label class="style-option" data-tooltip="Pragmatique, utile, adapté météo"><input type="checkbox" name="styleOption" value="practical" /> <span>Pratique</span></label>
+            </div>
+          </div>
+          <div class="style-column">
+            <label>Agenda (mode manuel) <input id="agenda" value="work,meeting" /></label>
+            <label>Autres styles (optionnel)
+              <input id="stylesCustom" placeholder="ex: streetwear, vintage" />
+            </label>
+          </div>
         </div>
-        <p class="muted" style="margin-top:-2px;">Tous les styles disponibles sont listés. Survole un style pour voir un exemple.</p>
-        <div class="style-grid">
-          <label class="style-option" data-tooltip="Couleurs sobres, lignes classiques"><input type="checkbox" name="styleOption" value="classic" /> <span>Classique</span></label>
-          <label class="style-option" data-tooltip="Silhouettes nettes, peu d'accessoires"><input type="checkbox" name="styleOption" value="minimalist" checked /> <span>Minimaliste</span></label>
-          <label class="style-option" data-tooltip="Confort, quotidien, polyvalent"><input type="checkbox" name="styleOption" value="casual" /> <span>Décontracté</span></label>
-          <label class="style-option" data-tooltip="Inspiré sport, matières techniques"><input type="checkbox" name="styleOption" value="sport" /> <span>Sport</span></label>
-          <label class="style-option" data-tooltip="Coupe soignée, détails raffinés"><input type="checkbox" name="styleOption" value="elegant" checked /> <span>Élégant</span></label>
-          <label class="style-option" data-tooltip="Pragmatique, utile, adapté météo"><input type="checkbox" name="styleOption" value="practical" /> <span>Pratique</span></label>
-        </div>
-        <label>Autres styles (optionnel)
-          <input id="stylesCustom" placeholder="ex: streetwear, vintage" />
-        </label>
       </div>
 
       <div class="panel">
