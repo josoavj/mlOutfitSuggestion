@@ -1,12 +1,14 @@
 from __future__ import annotations
 
 from pathlib import Path
+from typing import Callable
 
 import joblib
 import pandas as pd
 
 from .data import OutfitItem, load_catalog
 from .features import (
+    classify_agenda_text,
     dominant_occasion,
     encode_style_flags,
     infer_body_shape,
@@ -93,10 +95,37 @@ class OutfitRecommender:
 
         return row
 
+    @staticmethod
+    def _agenda_labels(agenda: list[str]) -> list[str]:
+        labels: list[str] = []
+        seen: set[str] = set()
+        for entry in agenda:
+            label = classify_agenda_text(str(entry))
+            primary = label.split(" - ", 1)[0].strip().lower()
+            if primary and primary not in seen:
+                labels.append(primary)
+                seen.add(primary)
+        return labels
+
+    @staticmethod
+    def _select_best(
+        ranked: list[tuple[OutfitItem, float]],
+        selected_ids: set[str],
+        predicate: Callable[[OutfitItem], bool],
+    ) -> tuple[OutfitItem, float] | None:
+        for item, score in ranked:
+            if item.id in selected_ids:
+                continue
+            if predicate(item):
+                selected_ids.add(item.id)
+                return item, score
+        return None
+
     def recommend(self, request: RecommendationRequest) -> RecommendationResponse:
         inferred_shape = request.body_shape or infer_body_shape(request.body_measurements)
         occasion = dominant_occasion(request.agenda)
         weather = weather_bucket(request.weather.temperature_c, request.weather.condition)
+        agenda_labels = self._agenda_labels(request.agenda)
 
         rows: list[dict[str, int | str]] = []
         for item in self.catalog:
@@ -111,15 +140,56 @@ class OutfitRecommender:
             reverse=True,
         )
 
+        selected: list[tuple[OutfitItem, float]] = []
+        selected_ids: set[str] = set()
+        for label in agenda_labels:
+            if len(selected) >= request.top_k:
+                break
+            match_both = self._select_best(
+                ranked,
+                selected_ids,
+                lambda item, lbl=label: lbl in item.occasions and weather in item.weather,
+            )
+            if match_both:
+                selected.append(match_both)
+                continue
+            match_label = self._select_best(
+                ranked,
+                selected_ids,
+                lambda item, lbl=label: lbl in item.occasions,
+            )
+            if match_label:
+                selected.append(match_label)
+
+        if len(selected) < request.top_k and weather:
+            has_weather = any(weather in item.weather for item, _ in selected)
+            if not has_weather:
+                weather_pick = self._select_best(
+                    ranked,
+                    selected_ids,
+                    lambda item: weather in item.weather,
+                )
+                if weather_pick:
+                    selected.append(weather_pick)
+
+        for item, score in ranked:
+            if len(selected) >= request.top_k:
+                break
+            if item.id in selected_ids:
+                continue
+            selected_ids.add(item.id)
+            selected.append((item, score))
+
         suggestions: list[OutfitSuggestion] = []
-        for item, score in ranked[: request.top_k]:
+        for item, score in selected:
             reasons = []
             if any(style in item.styles for style in request.style_preferences):
                 reasons.append("Correspond aux préférences de style")
             if weather in item.weather:
                 reasons.append("Adapté à la météo")
-            if occasion in item.occasions:
-                reasons.append("Cohérent avec l'agenda")
+            agenda_matches = [label for label in agenda_labels if label in item.occasions]
+            if agenda_matches:
+                reasons.append("Cohérent avec l'agenda: " + ", ".join(agenda_matches))
             if not reasons:
                 reasons.append("Bonne compatibilité globale")
 

@@ -372,7 +372,8 @@ def recommend_from_context(
         weather=weather,
         top_k=payload.top_k,
     )
-    response = recommend(base_request)
+    recommender = get_recommender()
+    response = recommender.recommend(base_request)
     response.resolved_context = RecommendationResolvedContext(
         source="context",
         location=payload.location,
@@ -445,7 +446,8 @@ def recommend_auto(
         weather=weather,
         top_k=payload.top_k,
     )
-    response = recommend(base_request)
+    recommender = get_recommender()
+    response = recommender.recommend(base_request)
     response.resolved_context = RecommendationResolvedContext(
         source="auto",
         location=resolved_location,

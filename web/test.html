@@ -72,9 +72,25 @@
           </label>
         </div>
         <div class="divider"></div>
-        <div class="grid g2">
-          <label>Styles (séparés par virgule) <input id="styles" value="minimalist,elegant" /></label>
-          <label>Agenda (mode manuel) <input id="agenda" value="work,meeting" /></label>
+        <div class="style-layout">
+          <div class="style-column">
+            <label>Styles recommandés</label>
+            <p class="muted" style="margin-top:-2px;">Tous les styles disponibles sont listés. Survole un style pour voir un exemple.</p>
+            <div class="style-grid">
+              <label class="style-option" data-tooltip="Couleurs sobres, lignes classiques"><input type="checkbox" name="styleOption" value="classic" /> <span>Classique</span></label>
+              <label class="style-option" data-tooltip="Silhouettes nettes, peu d'accessoires"><input type="checkbox" name="styleOption" value="minimalist" checked /> <span>Minimaliste</span></label>
+              <label class="style-option" data-tooltip="Confort, quotidien, polyvalent"><input type="checkbox" name="styleOption" value="casual" /> <span>Décontracté</span></label>
+              <label class="style-option" data-tooltip="Inspiré sport, matières techniques"><input type="checkbox" name="styleOption" value="sport" /> <span>Sport</span></label>
+              <label class="style-option" data-tooltip="Coupe soignée, détails raffinés"><input type="checkbox" name="styleOption" value="elegant" checked /> <span>Élégant</span></label>
+              <label class="style-option" data-tooltip="Pragmatique, utile, adapté météo"><input type="checkbox" name="styleOption" value="practical" /> <span>Pratique</span></label>
+            </div>
+          </div>
+          <div class="style-column">
+            <label>Agenda (mode manuel) <input id="agenda" value="work,meeting" /></label>
+            <label>Autres styles (optionnel)
+              <input id="stylesCustom" placeholder="ex: streetwear, vintage" />
+            </label>
+          </div>
         </div>
       </div>
 
@@ -158,6 +174,14 @@
     function byId(id) { return document.getElementById(id); }
     function parseCsv(s) { return s.split(',').map(v=>v.trim()).filter(Boolean); }
 
+    function getStyleSelections() {
+      const checked = Array.from(document.querySelectorAll('input[name="styleOption"]:checked'))
+        .map((el) => el.value.trim())
+        .filter(Boolean);
+      const extra = parseCsv(byId('stylesCustom').value);
+      return Array.from(new Set([...checked, ...extra]));
+    }
+
     function toFrenchText(value) {
       const text = String(value || '');
       return text
@@ -185,6 +209,15 @@
         .split(/\s+/)
         .map((part) => part ? part.charAt(0).toUpperCase() + part.slice(1).toLowerCase() : '')
         .join(' ');
+    }
+
+    function splitAgendaLabel(value) {
+      const raw = toFrenchText(value);
+      const parts = String(raw || '').split(' - ');
+      const base = toSentenceCase(parts[0] || raw);
+      const detailRaw = parts.slice(1).join(' - ');
+      const detail = detailRaw ? toSentenceCase(detailRaw) : '';
+      return { base, detail };
     }
 
     function bodyShapeLabel(value) {
@@ -223,7 +256,7 @@
         top_size: byId('topSize').value,
         bottom_size: byId('bottomSize').value,
         shoe_size: byId('shoeSize').value.trim()||'unknown',
-        style_preferences: parseCsv(byId('styles').value),
+        style_preferences: getStyleSelections(),
         body_shape: byId('bodyShape').value,
         agenda: parseCsv(byId('agenda').value),
         location: byId('location').value.trim(),
@@ -243,7 +276,7 @@
         top_size: byId('topSize').value,
         bottom_size: byId('bottomSize').value,
         shoe_size: byId('shoeSize').value.trim() || 'unknown',
-        style_preferences: parseCsv(byId('styles').value),
+        style_preferences: getStyleSelections(),
         body_shape: byId('bodyShape').value,
         agenda: parseCsv(byId('agenda').value),
         top_k: Number(byId('topK').value),
@@ -367,13 +400,31 @@
         if (ctx.weather && typeof ctx.weather.temperature_c === 'number') chips.push('Temp: ' + ctx.weather.temperature_c.toFixed(1) + ' °C');
         if (ctx.weather && ctx.weather.condition) chips.push('Météo: ' + toTitleCase(toFrenchText(ctx.weather.condition)));
         const agendaLabels = Array.isArray(ctx.agenda_labels) ? ctx.agenda_labels : [];
-        if (agendaLabels.length) chips.push('Agenda: ' + agendaLabels.map((label) => toSentenceCase(toFrenchText(label))).join(', '));
+        if (agendaLabels.length) {
+          agendaLabels.forEach((label) => {
+            const parts = splitAgendaLabel(label);
+            chips.push({ text: 'Agenda: ' + parts.base, detail: parts.detail, type: 'agenda' });
+          });
+        }
       }
       if (!chips.length) chips.push('Contexte indisponible');
       chips.forEach((label) => {
         const chip = document.createElement('span');
-        chip.className = 'chip';
-        chip.textContent = label;
+        const isObject = typeof label === 'object' && label !== null;
+        chip.className = 'chip' + (isObject && label.type ? ' chip-' + label.type : '');
+        if (isObject && label.detail) {
+          chip.className += ' chip-has-detail';
+          const main = document.createElement('span');
+          main.className = 'chip-main';
+          main.textContent = label.text;
+          const detail = document.createElement('span');
+          detail.className = 'chip-sub';
+          detail.textContent = label.detail;
+          chip.appendChild(main);
+          chip.appendChild(detail);
+        } else {
+          chip.textContent = isObject ? label.text : label;
+        }
         chipHost.appendChild(chip);
       });
 

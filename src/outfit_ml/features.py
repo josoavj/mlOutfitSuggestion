@@ -27,6 +27,27 @@ OCCASION_KEYWORDS: dict[str, list[str]] = {
         "meeting",
         "bureau",
         "travail",
+        "presentation",
+        "reunion",
+        "brief",
+        "report",
+        "rapport",
+        "planning",
+        "sprint",
+        "standup",
+        "stand up",
+        "review",
+        "demo",
+        "client",
+        "interview",
+        "entretien",
+        "workshop",
+        "seminaire",
+        "seminar",
+        "webinar",
+        "pitch",
+        "negociation",
+        "audit",
         "rendez vous pro",
         "rdv pro",
         "rdv",
@@ -36,6 +57,10 @@ OCCASION_KEYWORDS: dict[str, list[str]] = {
         "business",
         "ecole",
         "universite",
+        "formation",
+        "cours",
+        "exam",
+        "examen",
     ],
     "sport": [
         "sport",
@@ -58,6 +83,19 @@ OCCASION_KEYWORDS: dict[str, list[str]] = {
         "boxe",
         "danse",
         "zumba",
+        "marche",
+        "trail",
+        "escalade",
+        "badminton",
+        "rugby",
+        "ski",
+        "surf",
+        "skate",
+        "snowboard",
+        "padel",
+        "handball",
+        "volley",
+        "golf",
     ],
     "date": [
         "date",
@@ -66,6 +104,13 @@ OCCASION_KEYWORDS: dict[str, list[str]] = {
         "dinner",
         "romantique",
         "couple",
+        "restaurant",
+        "cine",
+        "cinema",
+        "bar",
+        "verre",
+        "apero",
+        "aperitif",
     ],
     "event": [
         "event",
@@ -77,6 +122,14 @@ OCCASION_KEYWORDS: dict[str, list[str]] = {
         "anniversaire",
         "ceremonie",
         "reception",
+        "gala",
+        "conference",
+        "cocktail",
+        "afterwork",
+        "soiree",
+        "expo",
+        "exposition",
+        "vernissage",
     ],
     "outdoor": [
         "trip",
@@ -89,6 +142,13 @@ OCCASION_KEYWORDS: dict[str, list[str]] = {
         "beach",
         "balade",
         "promenade",
+        "roadtrip",
+        "weekend",
+        "week end",
+        "montagne",
+        "trek",
+        "trekking",
+        "vacances",
     ],
     "casual": [
         "peinture",
@@ -105,6 +165,91 @@ OCCASION_KEYWORDS: dict[str, list[str]] = {
         "detente",
         "famille",
         "maison",
+        "teletravail",
+        "courses",
+        "supermarche",
+        "brunch",
+        "cafe",
+        "home",
+        "netflix",
+        "serie",
+        "series",
+        "movie",
+        "chill",
+        "repos",
+        "cuisine",
+        "cooking",
+        "menage",
+    ],
+}
+
+SUBLABEL_KEYWORDS: dict[str, list[tuple[str, str]]] = {
+    "work": [
+        ("presentation", "presentation"),
+        ("brief", "brief"),
+        ("client", "client"),
+        ("review", "review"),
+        ("planning", "planning"),
+        ("reunion", "reunion"),
+        ("standup", "standup"),
+        ("webinar", "webinar"),
+        ("workshop", "workshop"),
+        ("seminaire", "seminaire"),
+        ("interview", "interview"),
+        ("formation", "formation"),
+        ("cours", "cours"),
+        ("examen", "examen"),
+    ],
+    "sport": [
+        ("running", "running"),
+        ("yoga", "yoga"),
+        ("fitness", "fitness"),
+        ("natation", "natation"),
+        ("tennis", "tennis"),
+        ("boxe", "boxe"),
+        ("danse", "danse"),
+        ("padel", "padel"),
+        ("ski", "ski"),
+        ("surf", "surf"),
+    ],
+    "event": [
+        ("mariage", "mariage"),
+        ("concert", "concert"),
+        ("festival", "festival"),
+        ("anniversaire", "anniversaire"),
+        ("gala", "gala"),
+        ("conference", "conference"),
+        ("cocktail", "cocktail"),
+        ("soiree", "soiree"),
+        ("exposition", "exposition"),
+    ],
+    "outdoor": [
+        ("randonnee", "randonnee"),
+        ("camping", "camping"),
+        ("hiking", "hiking"),
+        ("plage", "plage"),
+        ("roadtrip", "roadtrip"),
+        ("weekend", "weekend"),
+        ("trek", "trek"),
+        ("vacances", "vacances"),
+    ],
+    "date": [
+        ("diner", "diner"),
+        ("restaurant", "restaurant"),
+        ("cinema", "cinema"),
+        ("romantique", "romantique"),
+        ("bar", "bar"),
+        ("apero", "apero"),
+    ],
+    "casual": [
+        ("shopping", "shopping"),
+        ("famille", "famille"),
+        ("maison", "maison"),
+        ("courses", "courses"),
+        ("brunch", "brunch"),
+        ("cafe", "cafe"),
+        ("netflix", "netflix"),
+        ("cuisine", "cuisine"),
     ],
 }
 
@@ -124,11 +269,19 @@ def classify_agenda_text(value: str) -> str:
     if not text:
         return "casual"
 
+    primary = "casual"
     for label in ["work", "sport", "date", "event", "outdoor", "casual"]:
         for keyword in OCCASION_KEYWORDS[label]:
             if keyword in text:
-                return label
-    return "casual"
+                primary = label
+                break
+        if primary != "casual":
+            break
+
+    for keyword, sublabel in SUBLABEL_KEYWORDS.get(primary, []):
+        if keyword in text:
+            return f"{primary} - {sublabel}"
+    return primary
 
 
 def infer_body_shape(measurements: BodyMeasurements | None) -> str:
@@ -173,7 +326,8 @@ def dominant_occasion(agenda: list[str]) -> str:
 
     mapped = []
     for item in agenda:
-        mapped.append(classify_agenda_text(item))
+        label = classify_agenda_text(item)
+        mapped.append(label.split(" - ", 1)[0])
 
     return Counter(mapped).most_common(1)[0][0]
 

@@ -1,13 +1,13 @@
 {
-  "best_model": "random_forest",
+  "best_model": "extra_trees",
   "metrics": {
-    "roc_auc": 0.9879425111486,
-    "average_precision": 0.9898626652999813,
-    "precision": 0.910267471958585,
-    "recall": 0.9795728876508821,
-    "f1": 0.943649373881932
+    "roc_auc": 0.9871017743724165,
+    "average_precision": 0.9897620219901561,
+    "precision": 0.9063829787234042,
+    "recall": 0.9770642201834863,
+    "f1": 0.9403973509933775
   },
-  "samples": 10000,
+  "samples": 4000,
   "data_source": "synthetic",
   "split_mode": "random"
 }
