@@ -187,6 +187,15 @@
         .join(' ');
     }
 
+    function splitAgendaLabel(value) {
+      const raw = toFrenchText(value);
+      const parts = String(raw || '').split(' - ');
+      const base = toSentenceCase(parts[0] || raw);
+      const detailRaw = parts.slice(1).join(' - ');
+      const detail = detailRaw ? toSentenceCase(detailRaw) : '';
+      return { base, detail };
+    }
+
     function bodyShapeLabel(value) {
       const map = {
         hourglass: 'Sablier',
@@ -367,13 +376,31 @@
         if (ctx.weather && typeof ctx.weather.temperature_c === 'number') chips.push('Temp: ' + ctx.weather.temperature_c.toFixed(1) + ' °C');
         if (ctx.weather && ctx.weather.condition) chips.push('Météo: ' + toTitleCase(toFrenchText(ctx.weather.condition)));
         const agendaLabels = Array.isArray(ctx.agenda_labels) ? ctx.agenda_labels : [];
-        if (agendaLabels.length) chips.push('Agenda: ' + agendaLabels.map((label) => toSentenceCase(toFrenchText(label))).join(', '));
+        if (agendaLabels.length) {
+          agendaLabels.forEach((label) => {
+            const parts = splitAgendaLabel(label);
+            chips.push({ text: 'Agenda: ' + parts.base, detail: parts.detail, type: 'agenda' });
+          });
+        }
       }
       if (!chips.length) chips.push('Contexte indisponible');
       chips.forEach((label) => {
         const chip = document.createElement('span');
-        chip.className = 'chip';
-        chip.textContent = label;
+        const isObject = typeof label === 'object' && label !== null;
+        chip.className = 'chip' + (isObject && label.type ? ' chip-' + label.type : '');
+        if (isObject && label.detail) {
+          chip.className += ' chip-has-detail';
+          const main = document.createElement('span');
+          main.className = 'chip-main';
+          main.textContent = label.text;
+          const detail = document.createElement('span');
+          detail.className = 'chip-sub';
+          detail.textContent = label.detail;
+          chip.appendChild(main);
+          chip.appendChild(detail);
+        } else {
+          chip.textContent = isObject ? label.text : label;
+        }
         chipHost.appendChild(chip);
       });
 
