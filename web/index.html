@@ -76,6 +76,133 @@
       </div>
 
       <div class="panel section">
+        <p class="section-title">Entrées essentielles</p>
+        <div class="info-grid">
+          <div class="info-box">
+            <p class="info-title">Profil utilisateur</p>
+            <p class="info-text">Genre, âge, taille, pointure, morphologie et tailles de vêtements.</p>
+            <div class="metric-table">
+              <div class="metric-row"><span class="metric-label">Tailles</span><span class="metric-value">haut, bas, vêtement</span></div>
+              <div class="metric-row"><span class="metric-label">Styles</span><span class="metric-value">classic, minimalist, casual, sport, elegant, practical</span></div>
+              <div class="metric-row"><span class="metric-label">Morphologie</span><span class="metric-value">sablier, rectangle, poire, triangle inversé, ovale</span></div>
+            </div>
+          </div>
+          <div class="info-box">
+            <p class="info-title">Contexte</p>
+            <p class="info-text">Localisation, météo et agenda pour adapter la tenue au moment.</p>
+            <div class="metric-table">
+              <div class="metric-row"><span class="metric-label">Météo</span><span class="metric-value">température, condition</span></div>
+              <div class="metric-row"><span class="metric-label">Agenda</span><span class="metric-value">work, sport, event, outdoor, date, casual</span></div>
+              <div class="metric-row"><span class="metric-label">Mode auto</span><span class="metric-value">profil + agenda + météo résolus</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel section">
+        <p class="section-title">Fonctionnement du modèle</p>
+        <div class="info-grid">
+          <div class="info-box">
+            <p class="info-title">Étapes</p>
+            <div class="step-list">
+              <div class="step">
+                <span class="step-title">1. Normalisation</span>
+                <span class="step-text">Nettoyage des tailles, morphologie et agenda.</span>
+              </div>
+              <div class="step">
+                <span class="step-title">2. Scoring</span>
+                <span class="step-text">Chaque tenue reçoit un score selon le contexte.</span>
+              </div>
+              <div class="step">
+                <span class="step-title">3. Diversification</span>
+                <span class="step-text">Couverture des types d'agenda + météo avant tri final.</span>
+              </div>
+            </div>
+          </div>
+          <div class="info-box">
+            <p class="info-title">Signaux utilisés</p>
+            <div class="metric-table">
+              <div class="metric-row"><span class="metric-label">Style</span><span class="metric-value">match préférences vs tenue</span></div>
+              <div class="metric-row"><span class="metric-label">Agenda</span><span class="metric-value">occasion et sous-type</span></div>
+              <div class="metric-row"><span class="metric-label">Météo</span><span class="metric-value">froid, doux, chaud, pluie</span></div>
+              <div class="metric-row"><span class="metric-label">Compatibilité</span><span class="metric-value">genre, tailles, morphologie</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel section">
+        <p class="section-title">Sorties et interprétation</p>
+        <div class="info-grid">
+          <div class="info-box">
+            <p class="info-title">Ce que retourne l'API</p>
+            <div class="metric-table">
+              <div class="metric-row"><span class="metric-label">Suggestions</span><span class="metric-value">tenues classées avec score</span></div>
+              <div class="metric-row"><span class="metric-label">Raisons</span><span class="metric-value">style, agenda, météo, compatibilité</span></div>
+              <div class="metric-row"><span class="metric-label">Contexte résolu</span><span class="metric-value">profil et météo finalisés</span></div>
+            </div>
+          </div>
+          <div class="info-box">
+            <p class="info-title">Bonnes pratiques</p>
+            <div class="step-list">
+              <div class="step">
+                <span class="step-title">Utiliser Top K</span>
+                <span class="step-text">Augmente Top K pour couvrir plusieurs éléments du planning.</span>
+              </div>
+              <div class="step">
+                <span class="step-title">Vérifier la météo</span>
+                <span class="step-text">Une météo incohérente dégrade la pertinence.</span>
+              </div>
+              <div class="step">
+                <span class="step-title">Feedback utilisateur</span>
+                <span class="step-text">Utiliser les retours pour affiner le modèle.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel section">
+        <p class="section-title">Limites connues et cas particuliers</p>
+        <div class="info-grid">
+          <div class="info-box">
+            <p class="info-title">Limites connues</p>
+            <div class="step-list">
+              <div class="step">
+                <span class="step-title">Météo indisponible</span>
+                <span class="step-text">Si la météo n'est pas accessible, la pertinence peut baisser.</span>
+              </div>
+              <div class="step">
+                <span class="step-title">Profil incomplet</span>
+                <span class="step-text">Tailles ou morphologie manquantes réduisent la précision.</span>
+              </div>
+              <div class="step">
+                <span class="step-title">Styles hors vocabulaire</span>
+                <span class="step-text">Les styles non listés sont moins bien interprétés.</span>
+              </div>
+            </div>
+          </div>
+          <div class="info-box">
+            <p class="info-title">Cas particuliers</p>
+            <div class="step-list">
+              <div class="step">
+                <span class="step-title">Agenda mixte</span>
+                <span class="step-text">Augmenter Top K pour couvrir plusieurs moments d'une journée.</span>
+              </div>
+              <div class="step">
+                <span class="step-title">Météo extrême</span>
+                <span class="step-text">Prioriser la météo avant les styles pour rester adapté.</span>
+              </div>
+              <div class="step">
+                <span class="step-title">Localisation absente</span>
+                <span class="step-text">En mode auto, la localisation est obligatoire.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel section">
         <p class="section-title">Types d'agenda</p>
         <div class="chip-row">
           <span class="chip chip-agenda chip-has-detail"><span class="chip-main">Agenda: Work</span><span class="chip-sub">Réunion</span></span>
