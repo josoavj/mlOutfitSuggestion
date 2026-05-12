@@ -57,7 +57,20 @@
         </div>
       </div>
 
-      <div class="panel section">
+      <div class="panel section" id="sommaire">
+        <p class="section-title">Sommaire</p>
+        <div class="summary-nav">
+          <a class="summary-link" href="#experience-produit">Expérience produit</a>
+          <a class="summary-link" href="#entrees-essentielles">Entrées essentielles</a>
+          <a class="summary-link" href="#fonctionnement-modele">Fonctionnement du modèle</a>
+          <a class="summary-link" href="#sorties-interpretation">Sorties et interprétation</a>
+          <a class="summary-link" href="#limites-cas">Limites et cas particuliers</a>
+          <a class="summary-link" href="#types-agenda">Types d'agenda</a>
+          <a class="summary-link" href="#parcours">Parcours</a>
+        </div>
+      </div>
+
+      <div class="panel section" id="experience-produit">
         <p class="section-title">Expérience produit</p>
         <div class="section-grid">
           <div class="feature-card">
@@ -75,7 +88,7 @@
         </div>
       </div>
 
-      <div class="panel section">
+      <div class="panel section" id="entrees-essentielles">
         <p class="section-title">Entrées essentielles</p>
         <div class="info-grid">
           <div class="info-box">
@@ -99,7 +112,7 @@
         </div>
       </div>
 
-      <div class="panel section">
+      <div class="panel section" id="fonctionnement-modele">
         <p class="section-title">Fonctionnement du modèle</p>
         <div class="info-grid">
           <div class="info-box">
@@ -131,7 +144,7 @@
         </div>
       </div>
 
-      <div class="panel section">
+      <div class="panel section" id="sorties-interpretation">
         <p class="section-title">Sorties et interprétation</p>
         <div class="info-grid">
           <div class="info-box">
@@ -162,7 +175,7 @@
         </div>
       </div>
 
-      <div class="panel section">
+      <div class="panel section" id="limites-cas">
         <p class="section-title">Limites connues et cas particuliers</p>
         <div class="info-grid">
           <div class="info-box">
@@ -202,31 +215,61 @@
         </div>
       </div>
 
-      <div class="panel section">
+      <div class="panel section" id="types-agenda">
         <p class="section-title">Types d'agenda</p>
-        <div class="chip-row">
-          <span class="chip chip-agenda chip-has-detail"><span class="chip-main">Agenda : Work</span><span class="chip-sub">Réunion</span></span>
-          <span class="chip chip-agenda chip-has-detail"><span class="chip-main">Agenda : Work</span><span class="chip-sub">Présentation</span></span>
-          <span class="chip chip-agenda chip-has-detail"><span class="chip-main">Agenda : Work</span><span class="chip-sub">Entretien</span></span>
-          <span class="chip chip-agenda chip-has-detail"><span class="chip-main">Agenda : Sport</span><span class="chip-sub">Running</span></span>
-          <span class="chip chip-agenda chip-has-detail"><span class="chip-main">Agenda : Sport</span><span class="chip-sub">Natation</span></span>
-          <span class="chip chip-agenda chip-has-detail"><span class="chip-main">Agenda : Sport</span><span class="chip-sub">Basket</span></span>
-          <span class="chip chip-agenda chip-has-detail"><span class="chip-main">Agenda : Event</span><span class="chip-sub">Concert</span></span>
-          <span class="chip chip-agenda chip-has-detail"><span class="chip-main">Agenda : Event</span><span class="chip-sub">Mariage</span></span>
-          <span class="chip chip-agenda chip-has-detail"><span class="chip-main">Agenda : Event</span><span class="chip-sub">Afterwork</span></span>
-          <span class="chip chip-agenda chip-has-detail"><span class="chip-main">Agenda : Outdoor</span><span class="chip-sub">Roadtrip</span></span>
-          <span class="chip chip-agenda chip-has-detail"><span class="chip-main">Agenda : Outdoor</span><span class="chip-sub">Randonnée</span></span>
-          <span class="chip chip-agenda chip-has-detail"><span class="chip-main">Agenda : Outdoor</span><span class="chip-sub">Weekend</span></span>
-          <span class="chip chip-agenda chip-has-detail"><span class="chip-main">Agenda : Date</span><span class="chip-sub">Restaurant</span></span>
-          <span class="chip chip-agenda chip-has-detail"><span class="chip-main">Agenda : Date</span><span class="chip-sub">Cinéma</span></span>
-          <span class="chip chip-agenda chip-has-detail"><span class="chip-main">Agenda : Date</span><span class="chip-sub">Bar</span></span>
-          <span class="chip chip-agenda chip-has-detail"><span class="chip-main">Agenda : Casual</span><span class="chip-sub">Brunch</span></span>
-          <span class="chip chip-agenda chip-has-detail"><span class="chip-main">Agenda : Casual</span><span class="chip-sub">Shopping</span></span>
-          <span class="chip chip-agenda chip-has-detail"><span class="chip-main">Agenda : Casual</span><span class="chip-sub">Famille</span></span>
+        <div class="agenda-grid">
+          <div class="agenda-group">
+            <p class="agenda-title">Work</p>
+            <div class="chip-row">
+              <span class="chip chip-agenda chip-has-detail"><span class="chip-main">Agenda : Work</span><span class="chip-sub">Réunion</span></span>
+              <span class="chip chip-agenda chip-has-detail"><span class="chip-main">Agenda : Work</span><span class="chip-sub">Présentation</span></span>
+              <span class="chip chip-agenda chip-has-detail"><span class="chip-main">Agenda : Work</span><span class="chip-sub">Entretien</span></span>
+            </div>
+          </div>
+          <div class="agenda-group">
+            <p class="agenda-title">Sport</p>
+            <div class="chip-row">
+              <span class="chip chip-agenda chip-has-detail"><span class="chip-main">Agenda : Sport</span><span class="chip-sub">Running</span></span>
+              <span class="chip chip-agenda chip-has-detail"><span class="chip-main">Agenda : Sport</span><span class="chip-sub">Natation</span></span>
+              <span class="chip chip-agenda chip-has-detail"><span class="chip-main">Agenda : Sport</span><span class="chip-sub">Basket</span></span>
+            </div>
+          </div>
+          <div class="agenda-group">
+            <p class="agenda-title">Event</p>
+            <div class="chip-row">
+              <span class="chip chip-agenda chip-has-detail"><span class="chip-main">Agenda : Event</span><span class="chip-sub">Concert</span></span>
+              <span class="chip chip-agenda chip-has-detail"><span class="chip-main">Agenda : Event</span><span class="chip-sub">Mariage</span></span>
+              <span class="chip chip-agenda chip-has-detail"><span class="chip-main">Agenda : Event</span><span class="chip-sub">Afterwork</span></span>
+            </div>
+          </div>
+          <div class="agenda-group">
+            <p class="agenda-title">Outdoor</p>
+            <div class="chip-row">
+              <span class="chip chip-agenda chip-has-detail"><span class="chip-main">Agenda : Outdoor</span><span class="chip-sub">Roadtrip</span></span>
+              <span class="chip chip-agenda chip-has-detail"><span class="chip-main">Agenda : Outdoor</span><span class="chip-sub">Randonnée</span></span>
+              <span class="chip chip-agenda chip-has-detail"><span class="chip-main">Agenda : Outdoor</span><span class="chip-sub">Weekend</span></span>
+            </div>
+          </div>
+          <div class="agenda-group">
+            <p class="agenda-title">Date</p>
+            <div class="chip-row">
+              <span class="chip chip-agenda chip-has-detail"><span class="chip-main">Agenda : Date</span><span class="chip-sub">Restaurant</span></span>
+              <span class="chip chip-agenda chip-has-detail"><span class="chip-main">Agenda : Date</span><span class="chip-sub">Cinéma</span></span>
+              <span class="chip chip-agenda chip-has-detail"><span class="chip-main">Agenda : Date</span><span class="chip-sub">Bar</span></span>
+            </div>
+          </div>
+          <div class="agenda-group">
+            <p class="agenda-title">Casual</p>
+            <div class="chip-row">
+              <span class="chip chip-agenda chip-has-detail"><span class="chip-main">Agenda : Casual</span><span class="chip-sub">Brunch</span></span>
+              <span class="chip chip-agenda chip-has-detail"><span class="chip-main">Agenda : Casual</span><span class="chip-sub">Shopping</span></span>
+              <span class="chip chip-agenda chip-has-detail"><span class="chip-main">Agenda : Casual</span><span class="chip-sub">Famille</span></span>
+            </div>
+          </div>
         </div>
       </div>
 
-      <div class="panel section">
+      <div class="panel section" id="parcours">
         <p class="section-title">Parcours</p>
         <div class="step-list">
           <div class="step">
