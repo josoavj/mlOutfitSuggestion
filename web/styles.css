@@ -231,8 +231,8 @@ body {
 }
 
 .summary-dot {
-  width: 32px;
-  height: 32px;
+  width: 34px;
+  height: 34px;
   border-radius: 50%;
   display: grid;
   place-items: center;
@@ -243,6 +243,35 @@ body {
   background: rgba(24,60,104,0.6);
   border: 1px solid rgba(156,204,255,0.4);
   transition: background 0.15s, transform 0.12s, box-shadow 0.15s;
+}
+
+.summary-dot svg {
+  width: 16px;
+  height: 16px;
+}
+
+.summary-dot::after {
+  content: attr(data-label);
+  position: absolute;
+  right: calc(100% + 10px);
+  top: 50%;
+  transform: translateY(-50%);
+  padding: 6px 10px;
+  border-radius: 10px;
+  font-size: 11px;
+  color: var(--ink);
+  background: rgba(7,18,33,0.92);
+  border: 1px solid rgba(155,203,255,0.35);
+  box-shadow: 0 6px 18px rgba(5,16,30,0.4);
+  opacity: 0;
+  pointer-events: none;
+  white-space: nowrap;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+.summary-dot:hover::after {
+  opacity: 1;
+  transform: translateY(-50%) translateX(-2px);
 }
 
 .summary-dot:hover {
@@ -261,6 +290,10 @@ body {
   .summary-float {
     display: none;
   }
+}
+
+body.has-summary-float .scene {
+  padding-right: clamp(64px, 7vw, 90px);
 }
 
 .agenda-grid {
