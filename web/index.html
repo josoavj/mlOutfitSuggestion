@@ -5,7 +5,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Outfit Suggestion · Présentation</title>
-  <link rel="stylesheet" href="/ui-assets/styles.css?v=1" />
+  <link rel="stylesheet" href="/ui-assets/styles.css?v=2" />
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23102149'/%3E%3Cpath d='M16 40c6-8 14-14 24-18 4-2 8 2 8 6 0 12-10 20-22 20-6 0-10-4-10-8z' fill='%2372b0ff'/%3E%3Cpath d='M20 24c2-6 6-10 12-12 2-1 4 0 4 2 0 4-4 10-10 12-4 2-6 0-6-2z' fill='%239bc7ff'/%3E%3C/svg%3E" />
 </head>
 <body>
@@ -57,7 +57,44 @@
         </div>
       </div>
 
-      <div class="panel section">
+      <div class="panel section" id="sommaire">
+        <p class="section-title">Sommaire</p>
+        <div class="summary-nav">
+          <a class="summary-link" href="#experience-produit">Expérience produit</a>
+          <a class="summary-link" href="#entrees-essentielles">Entrées essentielles</a>
+          <a class="summary-link" href="#fonctionnement-modele">Fonctionnement du modèle</a>
+          <a class="summary-link" href="#sorties-interpretation">Sorties et interprétation</a>
+          <a class="summary-link" href="#limites-cas">Limites et cas particuliers</a>
+          <a class="summary-link" href="#types-agenda">Types d'agenda</a>
+          <a class="summary-link" href="#parcours">Parcours</a>
+        </div>
+      </div>
+
+      <div class="summary-float" id="summaryFloat" aria-label="Sommaire rapide">
+        <a class="summary-dot" href="#experience-produit" data-label="Expérience produit" aria-label="Expérience produit">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5l1.4 3.2 3.4.4-2.6 2.3.8 3.3-3-1.8-3 1.8.8-3.3-2.6-2.3 3.4-.4L12 3.5z" fill="currentColor"/></svg>
+        </a>
+        <a class="summary-dot" href="#entrees-essentielles" data-label="Entrées essentielles" aria-label="Entrées essentielles">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6.5h12M6 12h12M6 17.5h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="8" cy="6.5" r="2" fill="currentColor"/><circle cx="12" cy="12" r="2" fill="currentColor"/><circle cx="16" cy="17.5" r="2" fill="currentColor"/></svg>
+        </a>
+        <a class="summary-dot" href="#fonctionnement-modele" data-label="Fonctionnement du modèle" aria-label="Fonctionnement du modèle">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="2" stroke="currentColor" stroke-width="2" fill="none"/><path d="M9 3v3M15 3v3M9 18v3M15 18v3M3 9h3M3 15h3M18 9h3M18 15h3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </a>
+        <a class="summary-dot" href="#sorties-interpretation" data-label="Sorties et interprétation" aria-label="Sorties et interprétation">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 17l5-5 4 3 7-8" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/><circle cx="4" cy="17" r="2" fill="currentColor"/><circle cx="9" cy="12" r="2" fill="currentColor"/><circle cx="13" cy="15" r="2" fill="currentColor"/><circle cx="20" cy="7" r="2" fill="currentColor"/></svg>
+        </a>
+        <a class="summary-dot" href="#limites-cas" data-label="Limites et cas particuliers" aria-label="Limites et cas particuliers">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l9 16H3L12 3z" stroke="currentColor" stroke-width="2" fill="none" stroke-linejoin="round"/><path d="M12 9v5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="17" r="1.5" fill="currentColor"/></svg>
+        </a>
+        <a class="summary-dot" href="#types-agenda" data-label="Types d'agenda" aria-label="Types d'agenda">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="2" stroke="currentColor" stroke-width="2" fill="none"/><path d="M8 3v4M16 3v4M4 10h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </a>
+        <a class="summary-dot" href="#parcours" data-label="Parcours" aria-label="Parcours">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 18c4-8 8-8 12-4l3-3" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M19 7v4h-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+      </div>
+
+      <div class="panel section" id="experience-produit">
         <p class="section-title">Expérience produit</p>
         <div class="section-grid">
           <div class="feature-card">
@@ -75,19 +112,188 @@
         </div>
       </div>
 
-      <div class="panel section">
-        <p class="section-title">Types d'agenda</p>
-        <div class="chip-row">
-          <span class="chip chip-agenda chip-has-detail"><span class="chip-main">Agenda: Work</span><span class="chip-sub">Réunion</span></span>
-          <span class="chip chip-agenda chip-has-detail"><span class="chip-main">Agenda: Sport</span><span class="chip-sub">Running</span></span>
-          <span class="chip chip-agenda chip-has-detail"><span class="chip-main">Agenda: Event</span><span class="chip-sub">Concert</span></span>
-          <span class="chip chip-agenda chip-has-detail"><span class="chip-main">Agenda: Outdoor</span><span class="chip-sub">Roadtrip</span></span>
-          <span class="chip chip-agenda chip-has-detail"><span class="chip-main">Agenda: Date</span><span class="chip-sub">Restaurant</span></span>
-          <span class="chip chip-agenda chip-has-detail"><span class="chip-main">Agenda: Casual</span><span class="chip-sub">Brunch</span></span>
+      <div class="panel section" id="entrees-essentielles">
+        <p class="section-title">Entrées essentielles</p>
+        <div class="info-grid">
+          <div class="info-box">
+            <p class="info-title">Profil utilisateur</p>
+            <p class="info-text">Genre, âge, taille, pointure, morphologie et tailles de vêtements.</p>
+            <div class="metric-table">
+              <div class="metric-row"><span class="metric-label">Tailles</span><span class="metric-value">Haut, Bas, Vêtement</span></div>
+              <div class="metric-row"><span class="metric-label">Styles</span><span class="metric-value">Classic, Minimalist, Casual, Sport, Elegant, Practical</span></div>
+              <div class="metric-row"><span class="metric-label">Morphologie</span><span class="metric-value">Sablier, Rectangle, Poire, Triangle inversé, Ovale</span></div>
+            </div>
+          </div>
+          <div class="info-box">
+            <p class="info-title">Contexte</p>
+            <p class="info-text">Localisation, météo et agenda pour adapter la tenue au moment.</p>
+            <div class="metric-table">
+              <div class="metric-row"><span class="metric-label">Météo</span><span class="metric-value">Température, Condition</span></div>
+              <div class="metric-row"><span class="metric-label">Agenda</span><span class="metric-value">Work, Sport, Event, Outdoor, Date, Casual</span></div>
+              <div class="metric-row"><span class="metric-label">Mode auto</span><span class="metric-value">Profil + Agenda + Météo résolus</span></div>
+            </div>
+          </div>
         </div>
       </div>
 
-      <div class="panel section">
+      <div class="panel section" id="fonctionnement-modele">
+        <p class="section-title">Fonctionnement du modèle</p>
+        <div class="info-grid">
+          <div class="info-box">
+            <p class="info-title">Étapes</p>
+            <div class="step-list">
+              <div class="step">
+                <span class="step-title">1. Normalisation</span>
+                <span class="step-text">Nettoyage des tailles, morphologie et agenda.</span>
+              </div>
+              <div class="step">
+                <span class="step-title">2. Scoring</span>
+                <span class="step-text">Chaque tenue reçoit un score selon le contexte.</span>
+              </div>
+              <div class="step">
+                <span class="step-title">3. Diversification</span>
+                <span class="step-text">Couverture des types d'agenda + météo avant tri final.</span>
+              </div>
+            </div>
+          </div>
+          <div class="info-box">
+            <p class="info-title">Signaux utilisés</p>
+            <div class="metric-table">
+              <div class="metric-row"><span class="metric-label">Style</span><span class="metric-value">Match préférences vs tenue</span></div>
+              <div class="metric-row"><span class="metric-label">Agenda</span><span class="metric-value">Occasion et sous-type</span></div>
+              <div class="metric-row"><span class="metric-label">Météo</span><span class="metric-value">Froid, Doux, Chaud, Pluie</span></div>
+              <div class="metric-row"><span class="metric-label">Compatibilité</span><span class="metric-value">Genre, Tailles, Morphologie</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel section" id="sorties-interpretation">
+        <p class="section-title">Sorties et interprétation</p>
+        <div class="info-grid">
+          <div class="info-box">
+            <p class="info-title">Ce que retourne l'API</p>
+            <div class="metric-table">
+              <div class="metric-row"><span class="metric-label">Suggestions</span><span class="metric-value">Tenues classées avec score</span></div>
+              <div class="metric-row"><span class="metric-label">Raisons</span><span class="metric-value">Style, Agenda, Météo, Compatibilité</span></div>
+              <div class="metric-row"><span class="metric-label">Contexte résolu</span><span class="metric-value">Profil et Météo finalisés</span></div>
+            </div>
+          </div>
+          <div class="info-box">
+            <p class="info-title">Bonnes pratiques</p>
+            <div class="step-list">
+              <div class="step">
+                <span class="step-title">Utiliser Top K</span>
+                <span class="step-text">Augmente Top K pour couvrir plusieurs éléments du planning.</span>
+              </div>
+              <div class="step">
+                <span class="step-title">Vérifier la météo</span>
+                <span class="step-text">Une météo incohérente dégrade la pertinence.</span>
+              </div>
+              <div class="step">
+                <span class="step-title">Feedback utilisateur</span>
+                <span class="step-text">Utiliser les retours pour affiner le modèle.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel section" id="limites-cas">
+        <p class="section-title">Limites connues et cas particuliers</p>
+        <div class="info-grid">
+          <div class="info-box">
+            <p class="info-title">Limites connues</p>
+            <div class="step-list">
+              <div class="step">
+                <span class="step-title">Météo indisponible</span>
+                <span class="step-text">Si la météo n'est pas accessible, la pertinence peut baisser.</span>
+              </div>
+              <div class="step">
+                <span class="step-title">Profil incomplet</span>
+                <span class="step-text">Tailles ou morphologie manquantes réduisent la précision.</span>
+              </div>
+              <div class="step">
+                <span class="step-title">Styles hors vocabulaire</span>
+                <span class="step-text">Les styles non listés sont moins bien interprétés.</span>
+              </div>
+            </div>
+          </div>
+          <div class="info-box">
+            <p class="info-title">Cas particuliers</p>
+            <div class="step-list">
+              <div class="step">
+                <span class="step-title">Agenda mixte</span>
+                <span class="step-text">Augmenter Top K pour couvrir plusieurs moments d'une journée.</span>
+              </div>
+              <div class="step">
+                <span class="step-title">Météo extrême</span>
+                <span class="step-text">Prioriser la météo avant les styles pour rester adapté.</span>
+              </div>
+              <div class="step">
+                <span class="step-title">Localisation absente</span>
+                <span class="step-text">En mode auto, la localisation est obligatoire.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel section" id="types-agenda">
+        <p class="section-title">Types d'agenda</p>
+        <div class="agenda-grid">
+          <div class="agenda-group">
+            <p class="agenda-title">Work</p>
+            <div class="chip-row">
+              <span class="chip chip-agenda chip-has-detail"><span class="chip-main">Agenda : Work</span><span class="chip-sub">Réunion</span></span>
+              <span class="chip chip-agenda chip-has-detail"><span class="chip-main">Agenda : Work</span><span class="chip-sub">Présentation</span></span>
+              <span class="chip chip-agenda chip-has-detail"><span class="chip-main">Agenda : Work</span><span class="chip-sub">Entretien</span></span>
+            </div>
+          </div>
+          <div class="agenda-group">
+            <p class="agenda-title">Sport</p>
+            <div class="chip-row">
+              <span class="chip chip-agenda chip-has-detail"><span class="chip-main">Agenda : Sport</span><span class="chip-sub">Running</span></span>
+              <span class="chip chip-agenda chip-has-detail"><span class="chip-main">Agenda : Sport</span><span class="chip-sub">Natation</span></span>
+              <span class="chip chip-agenda chip-has-detail"><span class="chip-main">Agenda : Sport</span><span class="chip-sub">Basket</span></span>
+            </div>
+          </div>
+          <div class="agenda-group">
+            <p class="agenda-title">Event</p>
+            <div class="chip-row">
+              <span class="chip chip-agenda chip-has-detail"><span class="chip-main">Agenda : Event</span><span class="chip-sub">Concert</span></span>
+              <span class="chip chip-agenda chip-has-detail"><span class="chip-main">Agenda : Event</span><span class="chip-sub">Mariage</span></span>
+              <span class="chip chip-agenda chip-has-detail"><span class="chip-main">Agenda : Event</span><span class="chip-sub">Afterwork</span></span>
+            </div>
+          </div>
+          <div class="agenda-group">
+            <p class="agenda-title">Outdoor</p>
+            <div class="chip-row">
+              <span class="chip chip-agenda chip-has-detail"><span class="chip-main">Agenda : Outdoor</span><span class="chip-sub">Roadtrip</span></span>
+              <span class="chip chip-agenda chip-has-detail"><span class="chip-main">Agenda : Outdoor</span><span class="chip-sub">Randonnée</span></span>
+              <span class="chip chip-agenda chip-has-detail"><span class="chip-main">Agenda : Outdoor</span><span class="chip-sub">Weekend</span></span>
+            </div>
+          </div>
+          <div class="agenda-group">
+            <p class="agenda-title">Date</p>
+            <div class="chip-row">
+              <span class="chip chip-agenda chip-has-detail"><span class="chip-main">Agenda : Date</span><span class="chip-sub">Restaurant</span></span>
+              <span class="chip chip-agenda chip-has-detail"><span class="chip-main">Agenda : Date</span><span class="chip-sub">Cinéma</span></span>
+              <span class="chip chip-agenda chip-has-detail"><span class="chip-main">Agenda : Date</span><span class="chip-sub">Bar</span></span>
+            </div>
+          </div>
+          <div class="agenda-group">
+            <p class="agenda-title">Casual</p>
+            <div class="chip-row">
+              <span class="chip chip-agenda chip-has-detail"><span class="chip-main">Agenda : Casual</span><span class="chip-sub">Brunch</span></span>
+              <span class="chip chip-agenda chip-has-detail"><span class="chip-main">Agenda : Casual</span><span class="chip-sub">Shopping</span></span>
+              <span class="chip chip-agenda chip-has-detail"><span class="chip-main">Agenda : Casual</span><span class="chip-sub">Famille</span></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel section" id="parcours">
         <p class="section-title">Parcours</p>
         <div class="step-list">
           <div class="step">
@@ -107,5 +313,20 @@
 
     </div>
   </div>
+
+  <script>
+    const summaryFloat = document.getElementById('summaryFloat');
+    const sommaire = document.getElementById('sommaire');
+
+    function syncSummaryFloat() {
+      if (!summaryFloat || !sommaire) return;
+      const show = window.scrollY > sommaire.offsetTop + 120;
+      summaryFloat.classList.toggle('is-visible', show);
+      document.body.classList.toggle('has-summary-float', show);
+    }
+
+    window.addEventListener('scroll', syncSummaryFloat, { passive: true });
+    window.addEventListener('load', syncSummaryFloat);
+  </script>
 </body>
 </html>

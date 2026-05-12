@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Outfit Suggestion · Test</title>
-  <link rel="stylesheet" href="/ui-assets/styles.css?v=1" />
+  <link rel="stylesheet" href="/ui-assets/styles.css?v=2" />
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23102149'/%3E%3Cpath d='M16 40c6-8 14-14 24-18 4-2 8 2 8 6 0 12-10 20-22 20-6 0-10-4-10-8z' fill='%2372b0ff'/%3E%3Cpath d='M20 24c2-6 6-10 12-12 2-1 4 0 4 2 0 4-4 10-10 12-4 2-6 0-6-2z' fill='%239bc7ff'/%3E%3C/svg%3E" />
 </head>
 <body>
@@ -31,7 +31,32 @@
         <p class="subtitle">Remplis le profil et le contexte pour analyser la sortie du modèle, avec une synthèse lisible et les raisons principales.</p>
       </div>
 
-      <div class="panel">
+      <div class="panel section" id="sommaire">
+        <p class="section-title">Sommaire</p>
+        <div class="summary-nav">
+          <a class="summary-link" href="#mode-api">Mode et clé API</a>
+          <a class="summary-link" href="#profil">Profil utilisateur</a>
+          <a class="summary-link" href="#contexte">Contexte</a>
+          <a class="summary-link" href="#resultats">Résultats</a>
+        </div>
+      </div>
+
+      <div class="summary-float" id="summaryFloat" aria-label="Sommaire rapide">
+        <a class="summary-dot" href="#mode-api" data-label="Mode et clé API" aria-label="Mode et clé API">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="14" rx="2" stroke="currentColor" stroke-width="2" fill="none"/><path d="M8 9h8M8 13h8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </a>
+        <a class="summary-dot" href="#profil" data-label="Profil utilisateur" aria-label="Profil utilisateur">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="2" fill="none"/><path d="M4 20c2-4 6-6 8-6s6 2 8 6" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg>
+        </a>
+        <a class="summary-dot" href="#contexte" data-label="Contexte" aria-label="Contexte">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 6v11H5V9l7-6z" stroke="currentColor" stroke-width="2" fill="none" stroke-linejoin="round"/><path d="M9 20v-6h6v6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </a>
+        <a class="summary-dot" href="#resultats" data-label="Résultats" aria-label="Résultats">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 18h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><rect x="6" y="10" width="3" height="6" fill="currentColor"/><rect x="11" y="7" width="3" height="9" fill="currentColor"/><rect x="16" y="4" width="3" height="12" fill="currentColor"/></svg>
+        </a>
+      </div>
+
+      <div class="panel" id="mode-api">
         <div class="mode-seg">
           <button class="seg-btn active" id="modeManual" onclick="setMode('manual')">Manuel · /recommend</button>
           <button class="seg-btn" id="modeAuto" onclick="setMode('auto')">Auto · /recommend/auto</button>
@@ -41,7 +66,7 @@
         </label>
       </div>
 
-      <div class="panel">
+      <div class="panel" id="profil">
         <p class="section-title">Profil utilisateur</p>
         <div class="grid g3">
           <label>User ID <input id="userId" value="u-001" /></label>
@@ -94,7 +119,7 @@
         </div>
       </div>
 
-      <div class="panel">
+      <div class="panel" id="contexte">
         <p class="section-title">Contexte</p>
         <div class="grid g3">
           <label>Location <input id="location" value="Lyon" /></label>
@@ -111,7 +136,7 @@
         </div>
       </div>
 
-      <div class="panel">
+      <div class="panel" id="resultats">
         <div class="row-head">
           <p class="section-title" style="margin:0;">Résultats</p>
           <span class="status-pill" id="status"><span class="pulse"></span>Prêt</span>
@@ -153,6 +178,16 @@
 
   <script>
     let currentMode = 'manual';
+
+    const summaryFloat = document.getElementById('summaryFloat');
+    const sommaire = document.getElementById('sommaire');
+
+    function syncSummaryFloat() {
+      if (!summaryFloat || !sommaire) return;
+      const show = window.scrollY > sommaire.offsetTop + 120;
+      summaryFloat.classList.toggle('is-visible', show);
+      document.body.classList.toggle('has-summary-float', show);
+    }
 
     function setMode(m) {
       currentMode = m;
@@ -499,6 +534,8 @@
     }
 
     byId('runBtn').addEventListener('click', runRecommendation);
+    window.addEventListener('scroll', syncSummaryFloat, { passive: true });
+    window.addEventListener('load', syncSummaryFloat);
   </script>
 </body>
 </html>
