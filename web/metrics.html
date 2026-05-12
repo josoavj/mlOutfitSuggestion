@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Outfit Suggestion · Métriques</title>
-  <link rel="stylesheet" href="/ui-assets/styles.css?v=1" />
+  <link rel="stylesheet" href="/ui-assets/styles.css?v=2" />
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23102149'/%3E%3Cpath d='M16 40c6-8 14-14 24-18 4-2 8 2 8 6 0 12-10 20-22 20-6 0-10-4-10-8z' fill='%2372b0ff'/%3E%3Cpath d='M20 24c2-6 6-10 12-12 2-1 4 0 4 2 0 4-4 10-10 12-4 2-6 0-6-2z' fill='%239bc7ff'/%3E%3C/svg%3E" />
 </head>
 <body>
@@ -31,7 +31,40 @@
         <p class="subtitle">Surveille la fraîcheur des métriques, l'activité feedback et les informations critiques côté service.</p>
       </div>
 
-      <div class="panel">
+      <div class="panel section" id="sommaire">
+        <p class="section-title">Sommaire</p>
+        <div class="summary-nav">
+          <a class="summary-link" href="#dashboard">Dashboard</a>
+          <a class="summary-link" href="#synthese">Synthèse modèle</a>
+          <a class="summary-link" href="#configuration">Configuration</a>
+          <a class="summary-link" href="#metriques">Métriques</a>
+          <a class="summary-link" href="#feedback">Feedback</a>
+          <a class="summary-link" href="#json">JSON</a>
+        </div>
+      </div>
+
+      <div class="summary-float" id="summaryFloat" aria-label="Sommaire rapide">
+        <a class="summary-dot" href="#dashboard" data-label="Dashboard" aria-label="Dashboard">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="7" height="7" fill="currentColor"/><rect x="13" y="4" width="7" height="7" fill="currentColor"/><rect x="4" y="13" width="7" height="7" fill="currentColor"/><rect x="13" y="13" width="7" height="7" fill="currentColor"/></svg>
+        </a>
+        <a class="summary-dot" href="#synthese" data-label="Synthèse modèle" aria-label="Synthèse modèle">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6h12M6 12h9M6 18h6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </a>
+        <a class="summary-dot" href="#configuration" data-label="Configuration" aria-label="Configuration">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l1.2 2.6 2.8.3-2.1 1.9.7 2.7-2.6-1.6-2.6 1.6.7-2.7-2.1-1.9 2.8-.3L12 3z" fill="currentColor"/></svg>
+        </a>
+        <a class="summary-dot" href="#metriques" data-label="Métriques" aria-label="Métriques">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 18h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><rect x="6" y="10" width="3" height="6" fill="currentColor"/><rect x="11" y="7" width="3" height="9" fill="currentColor"/><rect x="16" y="4" width="3" height="12" fill="currentColor"/></svg>
+        </a>
+        <a class="summary-dot" href="#feedback" data-label="Feedback" aria-label="Feedback">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 6h14v9H9l-4 4V6z" stroke="currentColor" stroke-width="2" fill="none" stroke-linejoin="round"/></svg>
+        </a>
+        <a class="summary-dot" href="#json" data-label="JSON" aria-label="JSON">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5H7v14h2M15 5h2v14h-2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M11 9h2M11 12h2M11 15h2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </a>
+      </div>
+
+      <div class="panel" id="dashboard">
         <div class="row-head">
           <p class="section-title" style="margin:0;">Dashboard technique</p>
           <button class="btn-refresh" id="refreshDashBtn">
@@ -47,7 +80,7 @@
           <div class="kpi"><p class="kpi-label">Feedback</p><h3 id="kpiFeedback">—</h3></div>
           <div class="kpi"><p class="kpi-label">Fraîcheur</p><h3 id="kpiFreshness">—</h3></div>
         </div>
-        <p class="section-label">Synthèse modèle</p>
+        <p class="section-label" id="synthese">Synthèse modèle</p>
         <div class="info-grid">
           <div class="info-box">
             <p class="info-title">Résumé</p>
@@ -59,13 +92,13 @@
             <div id="learningDetails" class="metric-table"></div>
           </div>
         </div>
-        <p class="section-label">Configuration modèle</p>
+        <p class="section-label" id="configuration">Configuration modèle</p>
         <div id="modelDetails" class="metric-table"></div>
-        <p class="section-label">Métriques modèle</p>
+        <p class="section-label" id="metriques">Métriques modèle</p>
         <div id="modelMetrics" class="metric-table"></div>
-        <p class="section-label">Feedback par type</p>
+        <p class="section-label" id="feedback">Feedback par type</p>
         <div id="feedbackBars" class="bars"></div>
-        <p class="section-label">Dashboard JSON</p>
+        <p class="section-label" id="json">Dashboard JSON</p>
         <pre id="dashBox">—</pre>
       </div>
     </div>
@@ -73,6 +106,16 @@
 
   <script>
     function byId(id) { return document.getElementById(id); }
+
+    const summaryFloat = document.getElementById('summaryFloat');
+    const sommaire = document.getElementById('sommaire');
+
+    function syncSummaryFloat() {
+      if (!summaryFloat || !sommaire) return;
+      const show = window.scrollY > sommaire.offsetTop + 120;
+      summaryFloat.classList.toggle('is-visible', show);
+      document.body.classList.toggle('has-summary-float', show);
+    }
 
     function toSentenceCase(value) {
       const text = String(value || '').trim();
@@ -385,6 +428,8 @@
 
     byId('refreshDashBtn').addEventListener('click', refreshDashboard);
     refreshDashboard();
+    window.addEventListener('scroll', syncSummaryFloat, { passive: true });
+    window.addEventListener('load', syncSummaryFloat);
   </script>
 </body>
 </html>
