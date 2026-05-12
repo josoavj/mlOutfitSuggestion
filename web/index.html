@@ -5,7 +5,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Outfit Suggestion · Présentation</title>
-  <link rel="stylesheet" href="/ui-assets/styles.css?v=1" />
+  <link rel="stylesheet" href="/ui-assets/styles.css?v=2" />
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23102149'/%3E%3Cpath d='M16 40c6-8 14-14 24-18 4-2 8 2 8 6 0 12-10 20-22 20-6 0-10-4-10-8z' fill='%2372b0ff'/%3E%3Cpath d='M20 24c2-6 6-10 12-12 2-1 4 0 4 2 0 4-4 10-10 12-4 2-6 0-6-2z' fill='%239bc7ff'/%3E%3C/svg%3E" />
 </head>
 <body>
@@ -68,6 +68,16 @@
           <a class="summary-link" href="#types-agenda">Types d'agenda</a>
           <a class="summary-link" href="#parcours">Parcours</a>
         </div>
+      </div>
+
+      <div class="summary-float" id="summaryFloat" aria-label="Sommaire rapide">
+        <a class="summary-dot" href="#experience-produit" title="Expérience produit">E</a>
+        <a class="summary-dot" href="#entrees-essentielles" title="Entrées essentielles">I</a>
+        <a class="summary-dot" href="#fonctionnement-modele" title="Fonctionnement du modèle">F</a>
+        <a class="summary-dot" href="#sorties-interpretation" title="Sorties et interprétation">S</a>
+        <a class="summary-dot" href="#limites-cas" title="Limites et cas particuliers">L</a>
+        <a class="summary-dot" href="#types-agenda" title="Types d'agenda">A</a>
+        <a class="summary-dot" href="#parcours" title="Parcours">P</a>
       </div>
 
       <div class="panel section" id="experience-produit">
@@ -289,5 +299,19 @@
 
     </div>
   </div>
+
+  <script>
+    const summaryFloat = document.getElementById('summaryFloat');
+    const sommaire = document.getElementById('sommaire');
+
+    function syncSummaryFloat() {
+      if (!summaryFloat || !sommaire) return;
+      const show = window.scrollY > sommaire.offsetTop + 120;
+      summaryFloat.classList.toggle('is-visible', show);
+    }
+
+    window.addEventListener('scroll', syncSummaryFloat, { passive: true });
+    window.addEventListener('load', syncSummaryFloat);
+  </script>
 </body>
 </html>
