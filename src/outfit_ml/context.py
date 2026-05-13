@@ -61,8 +61,6 @@ def _app_base_url() -> str:
 def _http_get_json(url: str, headers_override: dict[str, str] | None = None) -> dict | list:
     token = os.getenv("MAGICMIRROR_API_TOKEN", "").strip()
     headers = {"Accept": "application/json"}
-    if headers_override:
-        headers.update(headers_override)
     if token:
         headers["Authorization"] = f"Bearer {token}"
     if headers_override:
