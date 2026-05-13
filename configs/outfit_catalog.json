@@ -244,5 +244,1932 @@
     "weather": ["hot"],
     "genders": ["female", "male", "unisex"],
     "body_shapes": ["hourglass", "rectangle", "pear", "inverted_triangle", "oval"]
+  },
+  {
+    "id": "work_power",
+    "label": "Work Power",
+    "items": [
+      "blazer structuré marine",
+      "pantalon tailleur marine",
+      "chemise blanche",
+      "derbies ou escarpins"
+    ],
+    "items_by_gender": {
+      "female": [
+        "blazer structuré marine",
+        "pantalon tailleur marine",
+        "chemise blanche",
+        "escarpins sobres"
+      ],
+      "male": [
+        "blazer structuré marine",
+        "pantalon tailleur marine",
+        "chemise blanche",
+        "derbies noires"
+      ],
+      "non_binary": [
+        "blazer structuré marine",
+        "pantalon tailleur marine",
+        "chemise blanche",
+        "chaussures ville"
+      ],
+      "unisex": [
+        "blazer structuré marine",
+        "pantalon tailleur marine",
+        "chemise blanche",
+        "chaussures ville"
+      ]
+    },
+    "styles": ["classic", "elegant"],
+    "occasions": ["work", "meeting"],
+    "weather": ["mild", "cold"],
+    "genders": ["female", "male", "unisex"],
+    "body_shapes": ["hourglass", "rectangle", "pear", "inverted_triangle", "oval"]
+  },
+  {
+    "id": "creative_office",
+    "label": "Creative Office",
+    "items": [
+      "pull fin coloré",
+      "pantalon droit anthracite",
+      "sneakers sobres",
+      "sac tote structuré"
+    ],
+    "items_by_gender": {
+      "female": [
+        "pull fin coloré",
+        "pantalon droit anthracite",
+        "sneakers sobres",
+        "sac tote structuré"
+      ],
+      "male": [
+        "pull fin coloré",
+        "pantalon droit anthracite",
+        "sneakers sobres",
+        "sac ordinateur"
+      ],
+      "non_binary": [
+        "pull fin coloré",
+        "pantalon droit anthracite",
+        "sneakers sobres",
+        "sac bandoulière"
+      ],
+      "unisex": [
+        "pull fin coloré",
+        "pantalon droit anthracite",
+        "sneakers sobres",
+        "sac bandoulière"
+      ]
+    },
+    "styles": ["casual", "minimalist"],
+    "occasions": ["work", "casual"],
+    "weather": ["mild"],
+    "genders": ["female", "male", "unisex"],
+    "body_shapes": ["hourglass", "rectangle", "pear", "inverted_triangle", "oval"]
+  },
+  {
+    "id": "sport_swim",
+    "label": "Swim Session",
+    "items": [
+      "maillot une piece ou short",
+      "t-shirt technique",
+      "claquettes confort",
+      "serviette microfibre"
+    ],
+    "items_by_gender": {
+      "female": [
+        "maillot une piece",
+        "t-shirt technique",
+        "claquettes confort",
+        "serviette microfibre"
+      ],
+      "male": [
+        "short de bain",
+        "t-shirt technique",
+        "claquettes confort",
+        "serviette microfibre"
+      ],
+      "non_binary": [
+        "short de bain",
+        "t-shirt technique",
+        "claquettes confort",
+        "serviette microfibre"
+      ],
+      "unisex": [
+        "short de bain",
+        "t-shirt technique",
+        "claquettes confort",
+        "serviette microfibre"
+      ]
+    },
+    "styles": ["sport", "practical"],
+    "occasions": ["sport", "outdoor"],
+    "weather": ["hot", "mild"],
+    "genders": ["female", "male", "unisex"],
+    "body_shapes": ["hourglass", "rectangle", "pear", "inverted_triangle", "oval"]
+  },
+  {
+    "id": "sport_gym",
+    "label": "Gym Core",
+    "items": [
+      "t-shirt respirant",
+      "legging ou short",
+      "sweat zippé léger",
+      "chaussures training"
+    ],
+    "items_by_gender": {
+      "female": [
+        "brassière sport",
+        "legging technique",
+        "sweat zippé léger",
+        "chaussures training"
+      ],
+      "male": [
+        "t-shirt respirant",
+        "short training",
+        "sweat zippé léger",
+        "chaussures training"
+      ],
+      "non_binary": [
+        "t-shirt respirant",
+        "legging ou short",
+        "sweat zippé léger",
+        "chaussures training"
+      ],
+      "unisex": [
+        "t-shirt respirant",
+        "legging ou short",
+        "sweat zippé léger",
+        "chaussures training"
+      ]
+    },
+    "styles": ["sport", "casual"],
+    "occasions": ["sport"],
+    "weather": ["mild"],
+    "genders": ["female", "male", "unisex"],
+    "body_shapes": ["hourglass", "rectangle", "pear", "inverted_triangle", "oval"]
+  },
+  {
+    "id": "outdoor_hike",
+    "label": "Outdoor Hike",
+    "items": [
+      "polaire légère",
+      "pantalon randonnée",
+      "veste coupe-vent",
+      "chaussures de marche"
+    ],
+    "items_by_gender": {
+      "female": [
+        "polaire légère",
+        "pantalon randonnée",
+        "veste coupe-vent",
+        "chaussures de marche"
+      ],
+      "male": [
+        "polaire légère",
+        "pantalon randonnée",
+        "veste coupe-vent",
+        "chaussures de marche"
+      ],
+      "non_binary": [
+        "polaire légère",
+        "pantalon randonnée",
+        "veste coupe-vent",
+        "chaussures de marche"
+      ],
+      "unisex": [
+        "polaire légère",
+        "pantalon randonnée",
+        "veste coupe-vent",
+        "chaussures de marche"
+      ]
+    },
+    "styles": ["practical", "sport"],
+    "occasions": ["outdoor", "sport"],
+    "weather": ["mild", "cold"],
+    "genders": ["female", "male", "unisex"],
+    "body_shapes": ["hourglass", "rectangle", "pear", "inverted_triangle", "oval"]
+  },
+  {
+    "id": "outdoor_city_trip",
+    "label": "City Trip",
+    "items": [
+      "t-shirt blanc",
+      "veste légère",
+      "pantalon confortable",
+      "sneakers polyvalentes"
+    ],
+    "items_by_gender": {
+      "female": [
+        "t-shirt blanc",
+        "veste légère",
+        "pantalon confortable",
+        "sneakers polyvalentes"
+      ],
+      "male": [
+        "t-shirt blanc",
+        "veste légère",
+        "pantalon confortable",
+        "sneakers polyvalentes"
+      ],
+      "non_binary": [
+        "t-shirt blanc",
+        "veste légère",
+        "pantalon confortable",
+        "sneakers polyvalentes"
+      ],
+      "unisex": [
+        "t-shirt blanc",
+        "veste légère",
+        "pantalon confortable",
+        "sneakers polyvalentes"
+      ]
+    },
+    "styles": ["casual", "practical"],
+    "occasions": ["outdoor", "casual"],
+    "weather": ["mild", "hot"],
+    "genders": ["female", "male", "unisex"],
+    "body_shapes": ["hourglass", "rectangle", "pear", "inverted_triangle", "oval"]
+  },
+  {
+    "id": "date_casual",
+    "label": "Date Casual",
+    "items": [
+      "chemise fluide",
+      "jean brut",
+      "baskets propres",
+      "accessoire discret"
+    ],
+    "items_by_gender": {
+      "female": [
+        "chemisier fluide",
+        "jean brut",
+        "baskets propres",
+        "accessoire discret"
+      ],
+      "male": [
+        "chemise fluide",
+        "jean brut",
+        "baskets propres",
+        "accessoire discret"
+      ],
+      "non_binary": [
+        "chemise fluide",
+        "jean brut",
+        "baskets propres",
+        "accessoire discret"
+      ],
+      "unisex": [
+        "chemise fluide",
+        "jean brut",
+        "baskets propres",
+        "accessoire discret"
+      ]
+    },
+    "styles": ["casual", "elegant"],
+    "occasions": ["date", "casual"],
+    "weather": ["mild"],
+    "genders": ["female", "male", "unisex"],
+    "body_shapes": ["hourglass", "rectangle", "pear", "inverted_triangle", "oval"]
+  },
+  {
+    "id": "date_evening",
+    "label": "Date Evening",
+    "items": [
+      "haut satiné",
+      "pantalon tailleur",
+      "chaussures élégantes",
+      "accessoire raffiné"
+    ],
+    "items_by_gender": {
+      "female": [
+        "haut satiné",
+        "pantalon tailleur",
+        "chaussures élégantes",
+        "accessoire raffiné"
+      ],
+      "male": [
+        "chemise satinée",
+        "pantalon tailleur",
+        "chaussures élégantes",
+        "accessoire raffiné"
+      ],
+      "non_binary": [
+        "haut satiné",
+        "pantalon tailleur",
+        "chaussures élégantes",
+        "accessoire raffiné"
+      ],
+      "unisex": [
+        "haut satiné",
+        "pantalon tailleur",
+        "chaussures élégantes",
+        "accessoire raffiné"
+      ]
+    },
+    "styles": ["elegant", "classic"],
+    "occasions": ["date", "event"],
+    "weather": ["mild", "cold"],
+    "genders": ["female", "male", "unisex"],
+    "body_shapes": ["hourglass", "rectangle", "pear", "inverted_triangle", "oval"]
+  },
+  {
+    "id": "event_wedding",
+    "label": "Wedding Guest",
+    "items": [
+      "chemise claire",
+      "pantalon habillé",
+      "chaussures habillées",
+      "veste élégante"
+    ],
+    "items_by_gender": {
+      "female": [
+        "robe midi élégante",
+        "veste légère",
+        "chaussures habillées",
+        "accessoire fin"
+      ],
+      "male": [
+        "chemise claire",
+        "pantalon habillé",
+        "chaussures habillées",
+        "veste élégante"
+      ],
+      "non_binary": [
+        "chemise claire",
+        "pantalon habillé",
+        "chaussures habillées",
+        "veste élégante"
+      ],
+      "unisex": [
+        "chemise claire",
+        "pantalon habillé",
+        "chaussures habillées",
+        "veste élégante"
+      ]
+    },
+    "styles": ["elegant", "classic"],
+    "occasions": ["event"],
+    "weather": ["mild", "cold"],
+    "genders": ["female", "male", "unisex"],
+    "body_shapes": ["hourglass", "rectangle", "pear", "inverted_triangle", "oval"]
+  },
+  {
+    "id": "event_festival",
+    "label": "Festival Day",
+    "items": [
+      "t-shirt graphique",
+      "short confortable",
+      "veste légère",
+      "baskets robustes"
+    ],
+    "items_by_gender": {
+      "female": [
+        "t-shirt graphique",
+        "short confortable",
+        "veste légère",
+        "baskets robustes"
+      ],
+      "male": [
+        "t-shirt graphique",
+        "short confortable",
+        "veste légère",
+        "baskets robustes"
+      ],
+      "non_binary": [
+        "t-shirt graphique",
+        "short confortable",
+        "veste légère",
+        "baskets robustes"
+      ],
+      "unisex": [
+        "t-shirt graphique",
+        "short confortable",
+        "veste légère",
+        "baskets robustes"
+      ]
+    },
+    "styles": ["casual", "sport"],
+    "occasions": ["event", "outdoor"],
+    "weather": ["hot", "mild"],
+    "genders": ["female", "male", "unisex"],
+    "body_shapes": ["hourglass", "rectangle", "pear", "inverted_triangle", "oval"]
+  },
+  {
+    "id": "casual_home",
+    "label": "Home Comfort",
+    "items": [
+      "sweat doux",
+      "pantalon jogger",
+      "chaussettes confort",
+      "gilet moelleux"
+    ],
+    "items_by_gender": {
+      "female": [
+        "sweat doux",
+        "pantalon jogger",
+        "chaussettes confort",
+        "gilet moelleux"
+      ],
+      "male": [
+        "sweat doux",
+        "pantalon jogger",
+        "chaussettes confort",
+        "gilet moelleux"
+      ],
+      "non_binary": [
+        "sweat doux",
+        "pantalon jogger",
+        "chaussettes confort",
+        "gilet moelleux"
+      ],
+      "unisex": [
+        "sweat doux",
+        "pantalon jogger",
+        "chaussettes confort",
+        "gilet moelleux"
+      ]
+    },
+    "styles": ["casual", "practical"],
+    "occasions": ["casual"],
+    "weather": ["cold", "mild"],
+    "genders": ["female", "male", "unisex"],
+    "body_shapes": ["hourglass", "rectangle", "pear", "inverted_triangle", "oval"]
+  },
+  {
+    "id": "casual_brunch",
+    "label": "Brunch Time",
+    "items": [
+      "pull léger",
+      "jean clair",
+      "baskets propres",
+      "sac cabas"
+    ],
+    "items_by_gender": {
+      "female": [
+        "pull léger",
+        "jean clair",
+        "baskets propres",
+        "sac cabas"
+      ],
+      "male": [
+        "pull léger",
+        "jean clair",
+        "baskets propres",
+        "sac cabas"
+      ],
+      "non_binary": [
+        "pull léger",
+        "jean clair",
+        "baskets propres",
+        "sac cabas"
+      ],
+      "unisex": [
+        "pull léger",
+        "jean clair",
+        "baskets propres",
+        "sac cabas"
+      ]
+    },
+    "styles": ["casual", "minimalist"],
+    "occasions": ["casual", "date"],
+    "weather": ["mild"],
+    "genders": ["female", "male", "unisex"],
+    "body_shapes": ["hourglass", "rectangle", "pear", "inverted_triangle", "oval"]
+  },
+  {
+    "id": "rain_city",
+    "label": "Rain City",
+    "items": [
+      "trench imperméable",
+      "pantalon droit",
+      "bottines imperméables",
+      "parapluie compact"
+    ],
+    "items_by_gender": {
+      "female": [
+        "trench imperméable",
+        "pantalon droit",
+        "bottines imperméables",
+        "parapluie compact"
+      ],
+      "male": [
+        "trench imperméable",
+        "pantalon droit",
+        "bottines imperméables",
+        "parapluie compact"
+      ],
+      "non_binary": [
+        "trench imperméable",
+        "pantalon droit",
+        "bottines imperméables",
+        "parapluie compact"
+      ],
+      "unisex": [
+        "trench imperméable",
+        "pantalon droit",
+        "bottines imperméables",
+        "parapluie compact"
+      ]
+    },
+    "styles": ["practical", "classic"],
+    "occasions": ["work", "casual"],
+    "weather": ["rainy", "mild"],
+    "genders": ["female", "male", "unisex"],
+    "body_shapes": ["hourglass", "rectangle", "pear", "inverted_triangle", "oval"]
+  },
+  {
+    "id": "winter_cozy",
+    "label": "Winter Cozy",
+    "items": [
+      "pull laine",
+      "pantalon chaud",
+      "manteau long",
+      "bottes isolantes"
+    ],
+    "items_by_gender": {
+      "female": [
+        "pull laine",
+        "pantalon chaud",
+        "manteau long",
+        "bottes isolantes"
+      ],
+      "male": [
+        "pull laine",
+        "pantalon chaud",
+        "manteau long",
+        "bottes isolantes"
+      ],
+      "non_binary": [
+        "pull laine",
+        "pantalon chaud",
+        "manteau long",
+        "bottes isolantes"
+      ],
+      "unisex": [
+        "pull laine",
+        "pantalon chaud",
+        "manteau long",
+        "bottes isolantes"
+      ]
+    },
+    "styles": ["practical", "casual"],
+    "occasions": ["casual", "outdoor"],
+    "weather": ["cold"],
+    "genders": ["female", "male", "unisex"],
+    "body_shapes": ["hourglass", "rectangle", "pear", "inverted_triangle", "oval"]
+  },
+  {
+    "id": "summer_sporty",
+    "label": "Summer Sporty",
+    "items": [
+      "debardeur technique",
+      "short respirant",
+      "casquette",
+      "sneakers légères"
+    ],
+    "items_by_gender": {
+      "female": [
+        "debardeur technique",
+        "short respirant",
+        "casquette",
+        "sneakers légères"
+      ],
+      "male": [
+        "debardeur technique",
+        "short respirant",
+        "casquette",
+        "sneakers légères"
+      ],
+      "non_binary": [
+        "debardeur technique",
+        "short respirant",
+        "casquette",
+        "sneakers légères"
+      ],
+      "unisex": [
+        "debardeur technique",
+        "short respirant",
+        "casquette",
+        "sneakers légères"
+      ]
+    },
+    "styles": ["sport", "casual"],
+    "occasions": ["sport", "outdoor"],
+    "weather": ["hot"],
+    "genders": ["female", "male", "unisex"],
+    "body_shapes": ["hourglass", "rectangle", "pear", "inverted_triangle", "oval"]
+  },
+  {
+    "id": "smart_presentation",
+    "label": "Presentation Ready",
+    "items": [
+      "blazer léger",
+      "chemise claire",
+      "pantalon droit",
+      "chaussures de ville"
+    ],
+    "items_by_gender": {
+      "female": [
+        "blazer léger",
+        "chemise claire",
+        "pantalon droit",
+        "chaussures de ville"
+      ],
+      "male": [
+        "blazer léger",
+        "chemise claire",
+        "pantalon droit",
+        "chaussures de ville"
+      ],
+      "non_binary": [
+        "blazer léger",
+        "chemise claire",
+        "pantalon droit",
+        "chaussures de ville"
+      ],
+      "unisex": [
+        "blazer léger",
+        "chemise claire",
+        "pantalon droit",
+        "chaussures de ville"
+      ]
+    },
+    "styles": ["classic", "elegant"],
+    "occasions": ["work", "meeting"],
+    "weather": ["mild"],
+    "genders": ["female", "male", "unisex"],
+    "body_shapes": ["hourglass", "rectangle", "pear", "inverted_triangle", "oval"]
+  },
+  {
+    "id": "afterwork_chic",
+    "label": "Afterwork Chic",
+    "items": [
+      "chemise fluide",
+      "pantalon ajusté",
+      "veste courte",
+      "chaussures élégantes"
+    ],
+    "items_by_gender": {
+      "female": [
+        "chemise fluide",
+        "pantalon ajusté",
+        "veste courte",
+        "chaussures élégantes"
+      ],
+      "male": [
+        "chemise fluide",
+        "pantalon ajusté",
+        "veste courte",
+        "chaussures élégantes"
+      ],
+      "non_binary": [
+        "chemise fluide",
+        "pantalon ajusté",
+        "veste courte",
+        "chaussures élégantes"
+      ],
+      "unisex": [
+        "chemise fluide",
+        "pantalon ajusté",
+        "veste courte",
+        "chaussures élégantes"
+      ]
+    },
+    "styles": ["elegant", "minimalist"],
+    "occasions": ["event", "date"],
+    "weather": ["mild"],
+    "genders": ["female", "male", "unisex"],
+    "body_shapes": ["hourglass", "rectangle", "pear", "inverted_triangle", "oval"]
+  },
+  {
+    "id": "travel_airport",
+    "label": "Travel Airport",
+    "items": [
+      "t-shirt doux",
+      "pantalon confort",
+      "hoodie léger",
+      "sneakers confort"
+    ],
+    "items_by_gender": {
+      "female": [
+        "t-shirt doux",
+        "pantalon confort",
+        "hoodie léger",
+        "sneakers confort"
+      ],
+      "male": [
+        "t-shirt doux",
+        "pantalon confort",
+        "hoodie léger",
+        "sneakers confort"
+      ],
+      "non_binary": [
+        "t-shirt doux",
+        "pantalon confort",
+        "hoodie léger",
+        "sneakers confort"
+      ],
+      "unisex": [
+        "t-shirt doux",
+        "pantalon confort",
+        "hoodie léger",
+        "sneakers confort"
+      ]
+    },
+    "styles": ["casual", "practical"],
+    "occasions": ["outdoor", "casual"],
+    "weather": ["mild", "cold"],
+    "genders": ["female", "male", "unisex"],
+    "body_shapes": ["hourglass", "rectangle", "pear", "inverted_triangle", "oval"]
+  },
+  {
+    "id": "streetwear_day",
+    "label": "Streetwear Day",
+    "items": [
+      "hoodie oversize",
+      "pantalon cargo",
+      "sneakers chunky",
+      "casquette"
+    ],
+    "items_by_gender": {
+      "female": [
+        "hoodie oversize",
+        "pantalon cargo",
+        "sneakers chunky",
+        "casquette"
+      ],
+      "male": [
+        "hoodie oversize",
+        "pantalon cargo",
+        "sneakers chunky",
+        "casquette"
+      ],
+      "non_binary": [
+        "hoodie oversize",
+        "pantalon cargo",
+        "sneakers chunky",
+        "casquette"
+      ],
+      "unisex": [
+        "hoodie oversize",
+        "pantalon cargo",
+        "sneakers chunky",
+        "casquette"
+      ]
+    },
+    "styles": ["casual", "sport"],
+    "occasions": ["casual", "outdoor"],
+    "weather": ["mild", "cold"],
+    "genders": ["female", "male", "unisex"],
+    "body_shapes": ["hourglass", "rectangle", "pear", "inverted_triangle", "oval"]
+  },
+  {
+    "id": "minimal_mono",
+    "label": "Minimal Mono",
+    "items": [
+      "t-shirt noir",
+      "pantalon droit noir",
+      "veste légère noire",
+      "sneakers noires"
+    ],
+    "items_by_gender": {
+      "female": [
+        "t-shirt noir",
+        "pantalon droit noir",
+        "veste légère noire",
+        "sneakers noires"
+      ],
+      "male": [
+        "t-shirt noir",
+        "pantalon droit noir",
+        "veste légère noire",
+        "sneakers noires"
+      ],
+      "non_binary": [
+        "t-shirt noir",
+        "pantalon droit noir",
+        "veste légère noire",
+        "sneakers noires"
+      ],
+      "unisex": [
+        "t-shirt noir",
+        "pantalon droit noir",
+        "veste légère noire",
+        "sneakers noires"
+      ]
+    },
+    "styles": ["minimalist", "casual"],
+    "occasions": ["work", "casual"],
+    "weather": ["mild"],
+    "genders": ["female", "male", "unisex"],
+    "body_shapes": ["hourglass", "rectangle", "pear", "inverted_triangle", "oval"]
+  },
+  {
+    "id": "business_formal",
+    "label": "Business Formal",
+    "items": [
+      "costume foncé",
+      "chemise blanche",
+      "cravate sobre",
+      "chaussures formelles"
+    ],
+    "items_by_gender": {
+      "female": [
+        "tailleur foncé",
+        "chemise blanche",
+        "accessoire sobre",
+        "chaussures formelles"
+      ],
+      "male": [
+        "costume foncé",
+        "chemise blanche",
+        "cravate sobre",
+        "chaussures formelles"
+      ],
+      "non_binary": [
+        "costume foncé",
+        "chemise blanche",
+        "accessoire sobre",
+        "chaussures formelles"
+      ],
+      "unisex": [
+        "costume foncé",
+        "chemise blanche",
+        "accessoire sobre",
+        "chaussures formelles"
+      ]
+    },
+    "styles": ["classic", "elegant"],
+    "occasions": ["work", "meeting", "event"],
+    "weather": ["cold", "mild"],
+    "genders": ["female", "male", "unisex"],
+    "body_shapes": ["hourglass", "rectangle", "pear", "inverted_triangle", "oval"]
+  },
+  {
+    "id": "picnic_day",
+    "label": "Picnic Day",
+    "items": [
+      "chemise légère",
+      "short en coton",
+      "sneakers confort",
+      "lunettes de soleil"
+    ],
+    "items_by_gender": {
+      "female": [
+        "chemise légère",
+        "short en coton",
+        "sneakers confort",
+        "lunettes de soleil"
+      ],
+      "male": [
+        "chemise légère",
+        "short en coton",
+        "sneakers confort",
+        "lunettes de soleil"
+      ],
+      "non_binary": [
+        "chemise légère",
+        "short en coton",
+        "sneakers confort",
+        "lunettes de soleil"
+      ],
+      "unisex": [
+        "chemise légère",
+        "short en coton",
+        "sneakers confort",
+        "lunettes de soleil"
+      ]
+    },
+    "styles": ["casual", "practical"],
+    "occasions": ["outdoor", "casual"],
+    "weather": ["hot"],
+    "genders": ["female", "male", "unisex"],
+    "body_shapes": ["hourglass", "rectangle", "pear", "inverted_triangle", "oval"]
+  },
+  {
+    "id": "concert_night",
+    "label": "Concert Night",
+    "items": [
+      "veste cuir",
+      "t-shirt noir",
+      "jean slim",
+      "boots"
+    ],
+    "items_by_gender": {
+      "female": [
+        "veste cuir",
+        "t-shirt noir",
+        "jean slim",
+        "boots"
+      ],
+      "male": [
+        "veste cuir",
+        "t-shirt noir",
+        "jean slim",
+        "boots"
+      ],
+      "non_binary": [
+        "veste cuir",
+        "t-shirt noir",
+        "jean slim",
+        "boots"
+      ],
+      "unisex": [
+        "veste cuir",
+        "t-shirt noir",
+        "jean slim",
+        "boots"
+      ]
+    },
+    "styles": ["casual", "elegant"],
+    "occasions": ["event", "date"],
+    "weather": ["mild", "cold"],
+    "genders": ["female", "male", "unisex"],
+    "body_shapes": ["hourglass", "rectangle", "pear", "inverted_triangle", "oval"]
+  },
+  {
+    "id": "gym_hiit",
+    "label": "HIIT Session",
+    "items": [
+      "t-shirt respirant",
+      "short technique",
+      "veste légère",
+      "chaussures training"
+    ],
+    "items_by_gender": {
+      "female": [
+        "brassière sport",
+        "short technique",
+        "veste légère",
+        "chaussures training"
+      ],
+      "male": [
+        "t-shirt respirant",
+        "short technique",
+        "veste légère",
+        "chaussures training"
+      ],
+      "non_binary": [
+        "t-shirt respirant",
+        "short technique",
+        "veste légère",
+        "chaussures training"
+      ],
+      "unisex": [
+        "t-shirt respirant",
+        "short technique",
+        "veste légère",
+        "chaussures training"
+      ]
+    },
+    "styles": ["sport", "practical"],
+    "occasions": ["sport"],
+    "weather": ["mild", "hot"],
+    "genders": ["female", "male", "unisex"],
+    "body_shapes": ["hourglass", "rectangle", "pear", "inverted_triangle", "oval"]
+  },
+  {
+    "id": "conference_day",
+    "label": "Conference Day",
+    "items": [
+      "blazer léger",
+      "pantalon droit",
+      "chemise claire",
+      "derbies sobres"
+    ],
+    "items_by_gender": {
+      "female": [
+        "blazer léger",
+        "pantalon droit",
+        "chemise claire",
+        "derbies sobres"
+      ],
+      "male": [
+        "blazer léger",
+        "pantalon droit",
+        "chemise claire",
+        "derbies sobres"
+      ],
+      "non_binary": [
+        "blazer léger",
+        "pantalon droit",
+        "chemise claire",
+        "derbies sobres"
+      ],
+      "unisex": [
+        "blazer léger",
+        "pantalon droit",
+        "chemise claire",
+        "derbies sobres"
+      ]
+    },
+    "styles": ["classic", "minimalist"],
+    "occasions": ["work", "meeting", "event"],
+    "weather": ["mild"],
+    "genders": ["female", "male", "unisex"],
+    "body_shapes": ["hourglass", "rectangle", "pear", "inverted_triangle", "oval"]
+  },
+  {
+    "id": "gala_night",
+    "label": "Gala Night",
+    "items": [
+      "haut élégant",
+      "pantalon habillé",
+      "chaussures vernies",
+      "accessoire raffiné"
+    ],
+    "items_by_gender": {
+      "female": [
+        "haut élégant",
+        "pantalon habillé",
+        "chaussures vernies",
+        "accessoire raffiné"
+      ],
+      "male": [
+        "chemise élégante",
+        "pantalon habillé",
+        "chaussures vernies",
+        "accessoire raffiné"
+      ],
+      "non_binary": [
+        "haut élégant",
+        "pantalon habillé",
+        "chaussures vernies",
+        "accessoire raffiné"
+      ],
+      "unisex": [
+        "haut élégant",
+        "pantalon habillé",
+        "chaussures vernies",
+        "accessoire raffiné"
+      ]
+    },
+    "styles": ["elegant", "classic"],
+    "occasions": ["event", "date"],
+    "weather": ["mild", "cold"],
+    "genders": ["female", "male", "unisex"],
+    "body_shapes": ["hourglass", "rectangle", "pear", "inverted_triangle", "oval"]
+  },
+  {
+    "id": "commute_rain",
+    "label": "Commute Rain",
+    "items": [
+      "veste imperméable",
+      "pantalon déperlant",
+      "chaussures résistantes",
+      "sac étanche"
+    ],
+    "items_by_gender": {
+      "female": [
+        "veste imperméable",
+        "pantalon déperlant",
+        "chaussures résistantes",
+        "sac étanche"
+      ],
+      "male": [
+        "veste imperméable",
+        "pantalon déperlant",
+        "chaussures résistantes",
+        "sac étanche"
+      ],
+      "non_binary": [
+        "veste imperméable",
+        "pantalon déperlant",
+        "chaussures résistantes",
+        "sac étanche"
+      ],
+      "unisex": [
+        "veste imperméable",
+        "pantalon déperlant",
+        "chaussures résistantes",
+        "sac étanche"
+      ]
+    },
+    "styles": ["practical", "casual"],
+    "occasions": ["work", "casual", "outdoor"],
+    "weather": ["rainy"],
+    "genders": ["female", "male", "unisex"],
+    "body_shapes": ["hourglass", "rectangle", "pear", "inverted_triangle", "oval"]
+  },
+  {
+    "id": "winter_formal",
+    "label": "Winter Formal",
+    "items": [
+      "manteau long",
+      "pull col roulé",
+      "pantalon habillé",
+      "bottes élégantes"
+    ],
+    "items_by_gender": {
+      "female": [
+        "manteau long",
+        "pull col roulé",
+        "pantalon habillé",
+        "bottes élégantes"
+      ],
+      "male": [
+        "manteau long",
+        "pull col roulé",
+        "pantalon habillé",
+        "bottes élégantes"
+      ],
+      "non_binary": [
+        "manteau long",
+        "pull col roulé",
+        "pantalon habillé",
+        "bottes élégantes"
+      ],
+      "unisex": [
+        "manteau long",
+        "pull col roulé",
+        "pantalon habillé",
+        "bottes élégantes"
+      ]
+    },
+    "styles": ["classic", "elegant"],
+    "occasions": ["work", "event"],
+    "weather": ["cold"],
+    "genders": ["female", "male", "unisex"],
+    "body_shapes": ["hourglass", "rectangle", "pear", "inverted_triangle", "oval"]
+  },
+  {
+    "id": "beach_day",
+    "label": "Beach Day",
+    "items": [
+      "t-shirt léger",
+      "short de plage",
+      "sandales",
+      "chapeau"
+    ],
+    "items_by_gender": {
+      "female": [
+        "t-shirt léger",
+        "short de plage",
+        "sandales",
+        "chapeau"
+      ],
+      "male": [
+        "t-shirt léger",
+        "short de plage",
+        "sandales",
+        "chapeau"
+      ],
+      "non_binary": [
+        "t-shirt léger",
+        "short de plage",
+        "sandales",
+        "chapeau"
+      ],
+      "unisex": [
+        "t-shirt léger",
+        "short de plage",
+        "sandales",
+        "chapeau"
+      ]
+    },
+    "styles": ["casual", "practical"],
+    "occasions": ["outdoor", "casual"],
+    "weather": ["hot"],
+    "genders": ["female", "male", "unisex"],
+    "body_shapes": ["hourglass", "rectangle", "pear", "inverted_triangle", "oval"]
+  },
+  {
+    "id": "yoga_flow",
+    "label": "Yoga Flow",
+    "items": [
+      "top léger",
+      "legging souple",
+      "veste légère",
+      "chaussettes antidérapantes"
+    ],
+    "items_by_gender": {
+      "female": [
+        "top léger",
+        "legging souple",
+        "veste légère",
+        "chaussettes antidérapantes"
+      ],
+      "male": [
+        "top léger",
+        "legging souple",
+        "veste légère",
+        "chaussettes antidérapantes"
+      ],
+      "non_binary": [
+        "top léger",
+        "legging souple",
+        "veste légère",
+        "chaussettes antidérapantes"
+      ],
+      "unisex": [
+        "top léger",
+        "legging souple",
+        "veste légère",
+        "chaussettes antidérapantes"
+      ]
+    },
+    "styles": ["sport", "minimalist"],
+    "occasions": ["sport"],
+    "weather": ["mild"],
+    "genders": ["female", "male", "unisex"],
+    "body_shapes": ["hourglass", "rectangle", "pear", "inverted_triangle", "oval"]
+  },
+  {
+    "id": "cycling_commute",
+    "label": "Cycling Commute",
+    "items": [
+      "veste coupe-vent",
+      "pantalon stretch",
+      "sneakers techniques",
+      "sac à dos"
+    ],
+    "items_by_gender": {
+      "female": [
+        "veste coupe-vent",
+        "pantalon stretch",
+        "sneakers techniques",
+        "sac à dos"
+      ],
+      "male": [
+        "veste coupe-vent",
+        "pantalon stretch",
+        "sneakers techniques",
+        "sac à dos"
+      ],
+      "non_binary": [
+        "veste coupe-vent",
+        "pantalon stretch",
+        "sneakers techniques",
+        "sac à dos"
+      ],
+      "unisex": [
+        "veste coupe-vent",
+        "pantalon stretch",
+        "sneakers techniques",
+        "sac à dos"
+      ]
+    },
+    "styles": ["sport", "practical"],
+    "occasions": ["work", "outdoor"],
+    "weather": ["mild", "rainy"],
+    "genders": ["female", "male", "unisex"],
+    "body_shapes": ["hourglass", "rectangle", "pear", "inverted_triangle", "oval"]
+  },
+  {
+    "id": "weekend_market",
+    "label": "Weekend Market",
+    "items": [
+      "chemise légère",
+      "pantalon cargo",
+      "sneakers confort",
+      "sac cabas"
+    ],
+    "items_by_gender": {
+      "female": [
+        "chemise légère",
+        "pantalon cargo",
+        "sneakers confort",
+        "sac cabas"
+      ],
+      "male": [
+        "chemise légère",
+        "pantalon cargo",
+        "sneakers confort",
+        "sac cabas"
+      ],
+      "non_binary": [
+        "chemise légère",
+        "pantalon cargo",
+        "sneakers confort",
+        "sac cabas"
+      ],
+      "unisex": [
+        "chemise légère",
+        "pantalon cargo",
+        "sneakers confort",
+        "sac cabas"
+      ]
+    },
+    "styles": ["casual", "practical"],
+    "occasions": ["casual", "outdoor"],
+    "weather": ["mild"],
+    "genders": ["female", "male", "unisex"],
+    "body_shapes": ["hourglass", "rectangle", "pear", "inverted_triangle", "oval"]
+  },
+  {
+    "id": "movie_night",
+    "label": "Movie Night",
+    "items": [
+      "pull doux",
+      "jean confortable",
+      "baskets propres",
+      "veste légère"
+    ],
+    "items_by_gender": {
+      "female": [
+        "pull doux",
+        "jean confortable",
+        "baskets propres",
+        "veste légère"
+      ],
+      "male": [
+        "pull doux",
+        "jean confortable",
+        "baskets propres",
+        "veste légère"
+      ],
+      "non_binary": [
+        "pull doux",
+        "jean confortable",
+        "baskets propres",
+        "veste légère"
+      ],
+      "unisex": [
+        "pull doux",
+        "jean confortable",
+        "baskets propres",
+        "veste légère"
+      ]
+    },
+    "styles": ["casual", "minimalist"],
+    "occasions": ["date", "casual"],
+    "weather": ["mild", "cold"],
+    "genders": ["female", "male", "unisex"],
+    "body_shapes": ["hourglass", "rectangle", "pear", "inverted_triangle", "oval"]
+  },
+  {
+    "id": "family_outing",
+    "label": "Family Outing",
+    "items": [
+      "t-shirt uni",
+      "pantalon confortable",
+      "veste légère",
+      "sneakers polyvalentes"
+    ],
+    "items_by_gender": {
+      "female": [
+        "t-shirt uni",
+        "pantalon confortable",
+        "veste légère",
+        "sneakers polyvalentes"
+      ],
+      "male": [
+        "t-shirt uni",
+        "pantalon confortable",
+        "veste légère",
+        "sneakers polyvalentes"
+      ],
+      "non_binary": [
+        "t-shirt uni",
+        "pantalon confortable",
+        "veste légère",
+        "sneakers polyvalentes"
+      ],
+      "unisex": [
+        "t-shirt uni",
+        "pantalon confortable",
+        "veste légère",
+        "sneakers polyvalentes"
+      ]
+    },
+    "styles": ["casual", "practical"],
+    "occasions": ["casual"],
+    "weather": ["mild", "hot"],
+    "genders": ["female", "male", "unisex"],
+    "body_shapes": ["hourglass", "rectangle", "pear", "inverted_triangle", "oval"]
+  },
+  {
+    "id": "hike_rain",
+    "label": "Rain Hike",
+    "items": [
+      "veste impermeable",
+      "pantalon technique",
+      "chaussures de marche",
+      "sac compact"
+    ],
+    "items_by_gender": {
+      "female": [
+        "veste impermeable",
+        "pantalon technique",
+        "chaussures de marche",
+        "sac compact"
+      ],
+      "male": [
+        "veste impermeable",
+        "pantalon technique",
+        "chaussures de marche",
+        "sac compact"
+      ],
+      "non_binary": [
+        "veste impermeable",
+        "pantalon technique",
+        "chaussures de marche",
+        "sac compact"
+      ],
+      "unisex": [
+        "veste impermeable",
+        "pantalon technique",
+        "chaussures de marche",
+        "sac compact"
+      ]
+    },
+    "styles": ["practical", "sport"],
+    "occasions": ["outdoor", "sport"],
+    "weather": ["rainy"],
+    "genders": ["female", "male", "unisex"],
+    "body_shapes": ["hourglass", "rectangle", "pear", "inverted_triangle", "oval"]
+  },
+  {
+    "id": "weekend_denim",
+    "label": "Weekend Denim",
+    "items": [
+      "veste en jean",
+      "t-shirt blanc",
+      "jean brut",
+      "baskets blanches"
+    ],
+    "items_by_gender": {
+      "female": [
+        "veste en jean",
+        "t-shirt blanc",
+        "jean brut",
+        "baskets blanches"
+      ],
+      "male": [
+        "veste en jean",
+        "t-shirt blanc",
+        "jean brut",
+        "baskets blanches"
+      ],
+      "non_binary": [
+        "veste en jean",
+        "t-shirt blanc",
+        "jean brut",
+        "baskets blanches"
+      ],
+      "unisex": [
+        "veste en jean",
+        "t-shirt blanc",
+        "jean brut",
+        "baskets blanches"
+      ]
+    },
+    "styles": ["casual", "classic"],
+    "occasions": ["casual", "outdoor"],
+    "weather": ["mild"],
+    "genders": ["female", "male", "unisex"],
+    "body_shapes": ["hourglass", "rectangle", "pear", "inverted_triangle", "oval"]
+  },
+  {
+    "id": "office_friday",
+    "label": "Office Friday",
+    "items": [
+      "polo en coton",
+      "pantalon chino beige",
+      "veste légère",
+      "sneakers propres"
+    ],
+    "items_by_gender": {
+      "female": [
+        "polo en coton",
+        "pantalon chino beige",
+        "veste légère",
+        "sneakers propres"
+      ],
+      "male": [
+        "polo en coton",
+        "pantalon chino beige",
+        "veste légère",
+        "sneakers propres"
+      ],
+      "non_binary": [
+        "polo en coton",
+        "pantalon chino beige",
+        "veste légère",
+        "sneakers propres"
+      ],
+      "unisex": [
+        "polo en coton",
+        "pantalon chino beige",
+        "veste légère",
+        "sneakers propres"
+      ]
+    },
+    "styles": ["casual", "classic"],
+    "occasions": ["work", "casual"],
+    "weather": ["mild", "hot"],
+    "genders": ["female", "male", "unisex"],
+    "body_shapes": ["hourglass", "rectangle", "pear", "inverted_triangle", "oval"]
+  },
+  {
+    "id": "client_lunch",
+    "label": "Client Lunch",
+    "items": [
+      "chemise claire",
+      "pantalon ajusté",
+      "veste courte",
+      "mocassins cuir"
+    ],
+    "items_by_gender": {
+      "female": [
+        "chemise claire",
+        "pantalon ajusté",
+        "veste courte",
+        "mocassins cuir"
+      ],
+      "male": [
+        "chemise claire",
+        "pantalon ajusté",
+        "veste courte",
+        "mocassins cuir"
+      ],
+      "non_binary": [
+        "chemise claire",
+        "pantalon ajusté",
+        "veste courte",
+        "mocassins cuir"
+      ],
+      "unisex": [
+        "chemise claire",
+        "pantalon ajusté",
+        "veste courte",
+        "mocassins cuir"
+      ]
+    },
+    "styles": ["elegant", "classic"],
+    "occasions": ["work", "meeting", "date"],
+    "weather": ["mild"],
+    "genders": ["female", "male", "unisex"],
+    "body_shapes": ["hourglass", "rectangle", "pear", "inverted_triangle", "oval"]
+  },
+  {
+    "id": "training_boxing",
+    "label": "Boxing Training",
+    "items": [
+      "t-shirt respirant",
+      "short technique",
+      "sweat léger",
+      "chaussures training"
+    ],
+    "items_by_gender": {
+      "female": [
+        "brassière sport",
+        "short technique",
+        "sweat léger",
+        "chaussures training"
+      ],
+      "male": [
+        "t-shirt respirant",
+        "short technique",
+        "sweat léger",
+        "chaussures training"
+      ],
+      "non_binary": [
+        "t-shirt respirant",
+        "short technique",
+        "sweat léger",
+        "chaussures training"
+      ],
+      "unisex": [
+        "t-shirt respirant",
+        "short technique",
+        "sweat léger",
+        "chaussures training"
+      ]
+    },
+    "styles": ["sport", "practical"],
+    "occasions": ["sport"],
+    "weather": ["mild", "hot"],
+    "genders": ["female", "male", "unisex"],
+    "body_shapes": ["hourglass", "rectangle", "pear", "inverted_triangle", "oval"]
+  },
+  {
+    "id": "street_night",
+    "label": "Street Night",
+    "items": [
+      "bomber",
+      "t-shirt noir",
+      "pantalon cargo",
+      "sneakers chunky"
+    ],
+    "items_by_gender": {
+      "female": [
+        "bomber",
+        "t-shirt noir",
+        "pantalon cargo",
+        "sneakers chunky"
+      ],
+      "male": [
+        "bomber",
+        "t-shirt noir",
+        "pantalon cargo",
+        "sneakers chunky"
+      ],
+      "non_binary": [
+        "bomber",
+        "t-shirt noir",
+        "pantalon cargo",
+        "sneakers chunky"
+      ],
+      "unisex": [
+        "bomber",
+        "t-shirt noir",
+        "pantalon cargo",
+        "sneakers chunky"
+      ]
+    },
+    "styles": ["casual", "sport"],
+    "occasions": ["event", "casual"],
+    "weather": ["mild", "cold"],
+    "genders": ["female", "male", "unisex"],
+    "body_shapes": ["hourglass", "rectangle", "pear", "inverted_triangle", "oval"]
+  },
+  {
+    "id": "brunch_elegant",
+    "label": "Brunch Elegant",
+    "items": [
+      "chemise fluide",
+      "pantalon clair",
+      "mocassins fins",
+      "sac structuré"
+    ],
+    "items_by_gender": {
+      "female": [
+        "chemise fluide",
+        "pantalon clair",
+        "mocassins fins",
+        "sac structuré"
+      ],
+      "male": [
+        "chemise fluide",
+        "pantalon clair",
+        "mocassins fins",
+        "sac structuré"
+      ],
+      "non_binary": [
+        "chemise fluide",
+        "pantalon clair",
+        "mocassins fins",
+        "sac structuré"
+      ],
+      "unisex": [
+        "chemise fluide",
+        "pantalon clair",
+        "mocassins fins",
+        "sac structuré"
+      ]
+    },
+    "styles": ["elegant", "minimalist"],
+    "occasions": ["date", "casual"],
+    "weather": ["mild", "hot"],
+    "genders": ["female", "male", "unisex"],
+    "body_shapes": ["hourglass", "rectangle", "pear", "inverted_triangle", "oval"]
+  },
+  {
+    "id": "weekend_hike",
+    "label": "Weekend Hike",
+    "items": [
+      "t-shirt technique",
+      "pantalon rando",
+      "veste coupe-vent",
+      "chaussures de marche"
+    ],
+    "items_by_gender": {
+      "female": [
+        "t-shirt technique",
+        "pantalon rando",
+        "veste coupe-vent",
+        "chaussures de marche"
+      ],
+      "male": [
+        "t-shirt technique",
+        "pantalon rando",
+        "veste coupe-vent",
+        "chaussures de marche"
+      ],
+      "non_binary": [
+        "t-shirt technique",
+        "pantalon rando",
+        "veste coupe-vent",
+        "chaussures de marche"
+      ],
+      "unisex": [
+        "t-shirt technique",
+        "pantalon rando",
+        "veste coupe-vent",
+        "chaussures de marche"
+      ]
+    },
+    "styles": ["sport", "practical"],
+    "occasions": ["outdoor", "sport"],
+    "weather": ["mild", "cold"],
+    "genders": ["female", "male", "unisex"],
+    "body_shapes": ["hourglass", "rectangle", "pear", "inverted_triangle", "oval"]
+  },
+  {
+    "id": "museum_day",
+    "label": "Museum Day",
+    "items": [
+      "pull léger",
+      "pantalon droit",
+      "veste élégante",
+      "sneakers sobres"
+    ],
+    "items_by_gender": {
+      "female": [
+        "pull léger",
+        "pantalon droit",
+        "veste élégante",
+        "sneakers sobres"
+      ],
+      "male": [
+        "pull léger",
+        "pantalon droit",
+        "veste élégante",
+        "sneakers sobres"
+      ],
+      "non_binary": [
+        "pull léger",
+        "pantalon droit",
+        "veste élégante",
+        "sneakers sobres"
+      ],
+      "unisex": [
+        "pull léger",
+        "pantalon droit",
+        "veste élégante",
+        "sneakers sobres"
+      ]
+    },
+    "styles": ["minimalist", "elegant"],
+    "occasions": ["casual", "event", "date"],
+    "weather": ["mild"],
+    "genders": ["female", "male", "unisex"],
+    "body_shapes": ["hourglass", "rectangle", "pear", "inverted_triangle", "oval"]
+  },
+  {
+    "id": "autumn_layers",
+    "label": "Autumn Layers",
+    "items": [
+      "pull léger",
+      "veste en jean",
+      "pantalon droit",
+      "boots"
+    ],
+    "items_by_gender": {
+      "female": [
+        "pull léger",
+        "veste en jean",
+        "pantalon droit",
+        "boots"
+      ],
+      "male": [
+        "pull léger",
+        "veste en jean",
+        "pantalon droit",
+        "boots"
+      ],
+      "non_binary": [
+        "pull léger",
+        "veste en jean",
+        "pantalon droit",
+        "boots"
+      ],
+      "unisex": [
+        "pull léger",
+        "veste en jean",
+        "pantalon droit",
+        "boots"
+      ]
+    },
+    "styles": ["casual", "classic"],
+    "occasions": ["casual", "outdoor"],
+    "weather": ["mild", "cold"],
+    "genders": ["female", "male", "unisex"],
+    "body_shapes": ["hourglass", "rectangle", "pear", "inverted_triangle", "oval"]
+  },
+  {
+    "id": "snow_day",
+    "label": "Snow Day",
+    "items": [
+      "doudoune",
+      "pantalon chaud",
+      "bottes imperméables",
+      "bonnet"
+    ],
+    "items_by_gender": {
+      "female": [
+        "doudoune",
+        "pantalon chaud",
+        "bottes imperméables",
+        "bonnet"
+      ],
+      "male": [
+        "doudoune",
+        "pantalon chaud",
+        "bottes imperméables",
+        "bonnet"
+      ],
+      "non_binary": [
+        "doudoune",
+        "pantalon chaud",
+        "bottes imperméables",
+        "bonnet"
+      ],
+      "unisex": [
+        "doudoune",
+        "pantalon chaud",
+        "bottes imperméables",
+        "bonnet"
+      ]
+    },
+    "styles": ["practical", "casual"],
+    "occasions": ["outdoor", "casual"],
+    "weather": ["cold"],
+    "genders": ["female", "male", "unisex"],
+    "body_shapes": ["hourglass", "rectangle", "pear", "inverted_triangle", "oval"]
+  },
+  {
+    "id": "rain_business",
+    "label": "Rain Business",
+    "items": [
+      "trench imperméable",
+      "pantalon habillé",
+      "chemise blanche",
+      "chaussures cuir"
+    ],
+    "items_by_gender": {
+      "female": [
+        "trench imperméable",
+        "pantalon habillé",
+        "chemise blanche",
+        "chaussures cuir"
+      ],
+      "male": [
+        "trench imperméable",
+        "pantalon habillé",
+        "chemise blanche",
+        "chaussures cuir"
+      ],
+      "non_binary": [
+        "trench imperméable",
+        "pantalon habillé",
+        "chemise blanche",
+        "chaussures cuir"
+      ],
+      "unisex": [
+        "trench imperméable",
+        "pantalon habillé",
+        "chemise blanche",
+        "chaussures cuir"
+      ]
+    },
+    "styles": ["classic", "practical"],
+    "occasions": ["work", "meeting"],
+    "weather": ["rainy", "mild"],
+    "genders": ["female", "male", "unisex"],
+    "body_shapes": ["hourglass", "rectangle", "pear", "inverted_triangle", "oval"]
+  },
+  {
+    "id": "evening_cocktail",
+    "label": "Evening Cocktail",
+    "items": [
+      "haut élégant",
+      "pantalon fluide",
+      "chaussures élégantes",
+      "accessoire fin"
+    ],
+    "items_by_gender": {
+      "female": [
+        "haut élégant",
+        "pantalon fluide",
+        "chaussures élégantes",
+        "accessoire fin"
+      ],
+      "male": [
+        "chemise élégante",
+        "pantalon fluide",
+        "chaussures élégantes",
+        "accessoire fin"
+      ],
+      "non_binary": [
+        "haut élégant",
+        "pantalon fluide",
+        "chaussures élégantes",
+        "accessoire fin"
+      ],
+      "unisex": [
+        "haut élégant",
+        "pantalon fluide",
+        "chaussures élégantes",
+        "accessoire fin"
+      ]
+    },
+    "styles": ["elegant", "classic"],
+    "occasions": ["event", "date"],
+    "weather": ["mild"],
+    "genders": ["female", "male", "unisex"],
+    "body_shapes": ["hourglass", "rectangle", "pear", "inverted_triangle", "oval"]
   }
 ]

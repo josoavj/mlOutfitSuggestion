@@ -215,6 +215,7 @@ class FeedbackEventRequest(BaseModel):
 
 class FeedbackEventResponse(BaseModel):
     status: Literal["ok"] = "ok"
+    event_id: str | None = None
 
 
 class FeedbackBatchRequest(BaseModel):
@@ -224,6 +225,8 @@ class FeedbackBatchRequest(BaseModel):
 class FeedbackBatchResponse(BaseModel):
     status: Literal["ok"] = "ok"
     accepted: int = 0
+    created_count: int = 0
+    event_ids: list[str] = Field(default_factory=list)
 
 
 class FeedbackStatsResponse(BaseModel):

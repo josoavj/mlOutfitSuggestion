@@ -1,6 +1,5 @@
 import json
 import os
-from collections import Counter
 from datetime import UTC, datetime
 from functools import lru_cache
 from pathlib import Path
@@ -49,48 +48,21 @@ from .schemas import (
 from .vision import FaceRegistry, VisionError, VisionUnavailableError
 
 
+# ---------------------------------------------------------------------------
+# Paths
+# ---------------------------------------------------------------------------
+
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 WEB_DIR = PROJECT_ROOT / "web"
 MODEL_METRICS_PATH = PROJECT_ROOT / "models" / "outfit_ranker_metrics.json"
-FEEDBACK_EVENTS_PATH = PROJECT_ROOT / "data" / "feedback" / "events.jsonl"
 
 
 load_dotenv()
 
 
-def _append_feedback_event(event: FeedbackEventRequest) -> None:
-    FEEDBACK_EVENTS_PATH.parent.mkdir(parents=True, exist_ok=True)
-    payload = {
-        "timestamp_utc": datetime.now(UTC).isoformat(),
-        "user_id": event.user_id,
-        "event_type": event.event_type,
-        "outfit_id": event.outfit_id,
-        "score": event.score,
-        "session_id": event.session_id,
-        "metadata": event.metadata,
-    }
-    with FEEDBACK_EVENTS_PATH.open("a", encoding="utf-8") as file:
-        file.write(json.dumps(payload, ensure_ascii=False) + "\n")
-
-
-def _iter_feedback_events() -> list[dict]:
-    if not FEEDBACK_EVENTS_PATH.exists():
-        return []
-
-    events: list[dict] = []
-    with FEEDBACK_EVENTS_PATH.open("r", encoding="utf-8") as file:
-        for line in file:
-            raw = line.strip()
-            if not raw:
-                continue
-            try:
-                item = json.loads(raw)
-            except json.JSONDecodeError:
-                continue
-            if isinstance(item, dict):
-                events.append(item)
-    return events
-
+# ---------------------------------------------------------------------------
+# Auth helpers
+# ---------------------------------------------------------------------------
 
 def _allowed_origins() -> list[str]:
     raw = os.getenv("ALLOWED_ORIGINS", "*").strip()
@@ -119,6 +91,10 @@ def require_api_key(x_api_key: str | None = Header(default=None, alias="X-API-Ke
         raise HTTPException(status_code=401, detail="Clé API invalide")
 
 
+# ---------------------------------------------------------------------------
+# App setup
+# ---------------------------------------------------------------------------
+
 app = FastAPI(title="Outfit Suggestion API", version="0.1.0")
 
 limiter = Limiter(key_func=get_remote_address)
@@ -126,8 +102,6 @@ app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 app.add_middleware(SlowAPIMiddleware)
 
-WEB_DIR = Path(__file__).resolve().parents[2] / "web"
-MODEL_METRICS_PATH = Path(__file__).resolve().parents[2] / "models" / "outfit_ranker_metrics.json"
 if WEB_DIR.exists():
     app.mount("/ui-assets", StaticFiles(directory=str(WEB_DIR)), name="ui-assets")
 
@@ -140,54 +114,9 @@ app.add_middleware(
 )
 
 
-@app.post("/feedback/event", response_model=FeedbackEventResponse)
-@limiter.limit(os.getenv("RATE_LIMIT_FEEDBACK", "30/minute"))
-def feedback_event(
-    request: Request,
-    payload: FeedbackEventRequest = Body(...),
-    _: None = Depends(require_api_key),
-) -> FeedbackEventResponse:
-    _append_feedback_event(payload)
-    return FeedbackEventResponse()
-
-
-@app.post("/feedback/batch", response_model=FeedbackBatchResponse)
-@limiter.limit(os.getenv("RATE_LIMIT_FEEDBACK", "30/minute"))
-def feedback_batch(
-    request: Request,
-    payload: FeedbackBatchRequest = Body(...),
-    _: None = Depends(require_api_key),
-) -> FeedbackBatchResponse:
-    accepted = 0
-    for event in payload.events:
-        _append_feedback_event(event)
-        accepted += 1
-    return FeedbackBatchResponse(accepted=accepted)
-
-
-@app.get("/feedback/stats", response_model=FeedbackStatsResponse)
-@limiter.limit(os.getenv("RATE_LIMIT_FEEDBACK", "30/minute"))
-def feedback_stats(request: Request, _: None = Depends(require_api_key)) -> FeedbackStatsResponse:
-    events = _iter_feedback_events()
-    type_counts = Counter(str(item.get("event_type") or "unknown") for item in events)
-    unique_users = {
-        str(item.get("user_id"))
-        for item in events
-        if item.get("user_id")
-    }
-    unique_sessions = {
-        str(item.get("session_id"))
-        for item in events
-        if item.get("session_id")
-    }
-
-    return FeedbackStatsResponse(
-        total_events=len(events),
-        unique_users=len(unique_users),
-        unique_sessions=len(unique_sessions),
-        event_type_counts=dict(type_counts),
-    )
-
+# ---------------------------------------------------------------------------
+# Cached singletons
+# ---------------------------------------------------------------------------
 
 @lru_cache
 def get_recommender() -> OutfitRecommender:
@@ -199,10 +128,9 @@ def get_face_registry() -> FaceRegistry:
     return FaceRegistry()
 
 
-@app.get("/health")
-def health() -> dict[str, str]:
-    return {"status": "ok"}
-
+# ---------------------------------------------------------------------------
+# Internal helpers
+# ---------------------------------------------------------------------------
 
 def _resolve_openweather_payload(openweather: OpenWeatherResponse) -> OpenWeatherResolved:
     primary = openweather.weather[0] if openweather.weather else None
@@ -232,6 +160,93 @@ def _load_model_metrics() -> tuple[bool, dict]:
         return True, {"error": "metrics_format_invalid"}
     return True, parsed
 
+
+# ---------------------------------------------------------------------------
+# Business logic extracted from endpoints so they can be called
+# internally without going through the FastAPI/rate-limiter stack.
+# ---------------------------------------------------------------------------
+
+def _recommend_auto_logic(payload: AutoRecommendationRequest) -> RecommendationResponse:
+    """Core auto-recommendation logic, decoupled from the FastAPI endpoint."""
+    try:
+        profile = fetch_user_profile(payload.user_id)
+        agenda_entries = fetch_today_agenda_entries(payload.user_id)
+    except AppIntegrationError as exc:
+        raise HTTPException(status_code=502, detail=str(exc)) from exc
+
+    resolved_location = (payload.location or profile.location or "").strip()
+    if not resolved_location:
+        raise HTTPException(
+            status_code=400,
+            detail="Localisation absente : fournir request.location ou location dans le profil.",
+        )
+
+    try:
+        weather, openweather = fetch_openweather_detailed(resolved_location)
+    except OpenWeatherError as exc:
+        raise HTTPException(status_code=502, detail=str(exc)) from exc
+
+    agenda_labels = payload.agenda if payload.agenda else agenda_to_labels(agenda_entries)
+    resolved_gender = payload.gender or profile.gender
+    resolved_age = payload.age if payload.age is not None else profile.age
+    resolved_height_cm = payload.height_cm if payload.height_cm is not None else profile.height_cm
+    resolved_clothing_size = payload.clothing_size if payload.clothing_size is not None else profile.clothing_size
+    resolved_top_size = payload.top_size if payload.top_size is not None else profile.top_size
+    resolved_bottom_size = payload.bottom_size if payload.bottom_size is not None else profile.bottom_size
+    resolved_shoe_size = payload.shoe_size if payload.shoe_size is not None else profile.shoe_size
+    resolved_style_preferences = (
+        payload.style_preferences
+        if payload.style_preferences is not None
+        else profile.style_preferences
+    )
+    resolved_body_shape = payload.body_shape if payload.body_shape is not None else profile.body_shape
+    resolved_body_measurements = (
+        payload.body_measurements
+        if payload.body_measurements is not None
+        else profile.body_measurements
+    )
+
+    base_request = RecommendationRequest(
+        user_id=profile.user_id,
+        gender=resolved_gender,
+        age=resolved_age,
+        height_cm=resolved_height_cm,
+        clothing_size=resolved_clothing_size,
+        top_size=resolved_top_size,
+        bottom_size=resolved_bottom_size,
+        shoe_size=resolved_shoe_size,
+        style_preferences=resolved_style_preferences,
+        body_shape=resolved_body_shape,
+        body_measurements=resolved_body_measurements,
+        agenda=agenda_labels,
+        location=resolved_location,
+        weather=weather,
+        top_k=payload.top_k,
+    )
+    recommender = get_recommender()
+    response = recommender.recommend(base_request)
+    response.resolved_context = RecommendationResolvedContext(
+        source="auto",
+        location=resolved_location,
+        weather=weather,
+        openweather=_resolve_openweather_payload(openweather),
+        agenda_labels=agenda_labels,
+    )
+    return response
+
+
+# ---------------------------------------------------------------------------
+# Health
+# ---------------------------------------------------------------------------
+
+@app.get("/health")
+def health() -> dict[str, str]:
+    return {"status": "ok"}
+
+
+# ---------------------------------------------------------------------------
+# UI routes
+# ---------------------------------------------------------------------------
 
 @app.get("/ui")
 def ui_page() -> FileResponse:
@@ -282,11 +297,15 @@ def ui_favicon() -> Response:
     return Response(content=icon_svg, media_type="image/svg+xml")
 
 
+# ---------------------------------------------------------------------------
+# Dashboard
+# ---------------------------------------------------------------------------
+
 @app.get("/dashboard/technical")
 @limiter.limit(os.getenv("RATE_LIMIT_TECHNICAL", "60/minute"))
 def technical_dashboard(request: Request, _: None = Depends(require_api_key)) -> dict:
     model_present, model_metrics = _load_model_metrics()
-    feedback = feedback_stats(request).model_dump()
+    feedback = feedback_stats().model_dump()
     now_utc = datetime.now(UTC)
     metrics_modified_iso: str | None = None
     metrics_age_seconds: float | None = None
@@ -316,6 +335,10 @@ def technical_dashboard(request: Request, _: None = Depends(require_api_key)) ->
         "feedback": feedback,
     }
 
+
+# ---------------------------------------------------------------------------
+# Recommendation endpoints
+# ---------------------------------------------------------------------------
 
 @app.post("/recommend", response_model=RecommendationResponse)
 @limiter.limit(os.getenv("RATE_LIMIT_RECOMMEND", "30/minute"))
@@ -391,72 +414,12 @@ def recommend_auto(
     payload: AutoRecommendationRequest = Body(...),
     _: None = Depends(require_api_key),
 ) -> RecommendationResponse:
-    try:
-        profile = fetch_user_profile(payload.user_id)
-        agenda_entries = fetch_today_agenda_entries(payload.user_id)
-    except AppIntegrationError as exc:
-        raise HTTPException(status_code=502, detail=str(exc)) from exc
+    return _recommend_auto_logic(payload)
 
-    resolved_location = (payload.location or profile.location or "").strip()
-    if not resolved_location:
-        raise HTTPException(
-            status_code=400,
-            detail="Localisation absente : fournir request.location ou location dans le profil.",
-        )
 
-    try:
-        weather, openweather = fetch_openweather_detailed(resolved_location)
-    except OpenWeatherError as exc:
-        raise HTTPException(status_code=502, detail=str(exc)) from exc
-
-    agenda_labels = payload.agenda if payload.agenda else agenda_to_labels(agenda_entries)
-    resolved_gender = payload.gender or profile.gender
-    resolved_age = payload.age if payload.age is not None else profile.age
-    resolved_height_cm = payload.height_cm if payload.height_cm is not None else profile.height_cm
-    resolved_clothing_size = payload.clothing_size if payload.clothing_size is not None else profile.clothing_size
-    resolved_top_size = payload.top_size if payload.top_size is not None else profile.top_size
-    resolved_bottom_size = payload.bottom_size if payload.bottom_size is not None else profile.bottom_size
-    resolved_shoe_size = payload.shoe_size if payload.shoe_size is not None else profile.shoe_size
-    resolved_style_preferences = (
-        payload.style_preferences
-        if payload.style_preferences is not None
-        else profile.style_preferences
-    )
-    resolved_body_shape = payload.body_shape if payload.body_shape is not None else profile.body_shape
-    resolved_body_measurements = (
-        payload.body_measurements
-        if payload.body_measurements is not None
-        else profile.body_measurements
-    )
-
-    base_request = RecommendationRequest(
-        user_id=profile.user_id,
-        gender=resolved_gender,
-        age=resolved_age,
-        height_cm=resolved_height_cm,
-        clothing_size=resolved_clothing_size,
-        top_size=resolved_top_size,
-        bottom_size=resolved_bottom_size,
-        shoe_size=resolved_shoe_size,
-        style_preferences=resolved_style_preferences,
-        body_shape=resolved_body_shape,
-        body_measurements=resolved_body_measurements,
-        agenda=agenda_labels,
-        location=resolved_location,
-        weather=weather,
-        top_k=payload.top_k,
-    )
-    recommender = get_recommender()
-    response = recommender.recommend(base_request)
-    response.resolved_context = RecommendationResolvedContext(
-        source="auto",
-        location=resolved_location,
-        weather=weather,
-        openweather=_resolve_openweather_payload(openweather),
-        agenda_labels=agenda_labels,
-    )
-    return response
-
+# ---------------------------------------------------------------------------
+# Vision endpoints
+# ---------------------------------------------------------------------------
 
 @app.post("/vision/enroll", response_model=FaceEnrollResponse)
 @limiter.limit(os.getenv("RATE_LIMIT_VISION", "15/minute"))
@@ -473,7 +436,8 @@ def vision_enroll(
     except VisionError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
 
-    return FaceEnrollResponse(user_id=request.user_id, status="enrolled")
+    # B2 — use payload.user_id, not request.user_id (request is fastapi.Request)
+    return FaceEnrollResponse(user_id=payload.user_id, status="enrolled")
 
 
 @app.post("/vision/identify", response_model=FaceIdentifyResponse)
@@ -524,7 +488,9 @@ def recommend_from_camera(
         )
 
     best_match = matches[0]
-    recommendation = recommend_auto(
+
+    # B3 — call internal logic function, not the FastAPI endpoint directly
+    recommendation = _recommend_auto_logic(
         AutoRecommendationRequest(
             user_id=best_match.user_id,
             location=payload.location,
@@ -539,6 +505,10 @@ def recommend_from_camera(
     )
 
 
+# ---------------------------------------------------------------------------
+# Feedback endpoints  (B1 — single definition per route)
+# ---------------------------------------------------------------------------
+
 @app.post("/feedback/event", response_model=FeedbackEventResponse)
 @limiter.limit(os.getenv("RATE_LIMIT_FEEDBACK", "30/minute"))
 def create_feedback_event(
@@ -548,6 +518,21 @@ def create_feedback_event(
 ) -> FeedbackEventResponse:
     event_id = append_feedback_event(payload)
     return FeedbackEventResponse(status="ok", event_id=event_id)
+
+
+@app.post("/feedback/batch", response_model=FeedbackBatchResponse)
+@limiter.limit(os.getenv("RATE_LIMIT_FEEDBACK", "30/minute"))
+def create_feedback_batch(
+    request: Request,
+    payload: FeedbackBatchRequest = Body(...),
+    _: None = Depends(require_api_key),
+) -> FeedbackBatchResponse:
+    event_ids = append_feedback_events(payload.events)
+    return FeedbackBatchResponse(
+        status="ok",
+        created_count=len(event_ids),
+        event_ids=event_ids,
+    )
 
 
 @app.post("/feedback/events", response_model=FeedbackBatchResponse)
@@ -568,4 +553,4 @@ def create_feedback_events(
 @app.get("/feedback/stats", response_model=FeedbackStatsResponse)
 @limiter.limit(os.getenv("RATE_LIMIT_FEEDBACK", "30/minute"))
 def get_feedback_stats(request: Request, _: None = Depends(require_api_key)) -> FeedbackStatsResponse:
-    return feedback_stats(request)
+    return feedback_stats()

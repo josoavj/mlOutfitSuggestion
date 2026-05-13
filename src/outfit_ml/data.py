@@ -111,10 +111,6 @@ def synthetic_training_pairs(catalog: list[OutfitItem], n_samples: int, seed: in
         row: dict[str, int | float | str] = {
             "age": age,
             "height_cm": height_cm,
-            "clothing_size": clothing_size,
-            "top_size": top_size,
-            "bottom_size": bottom_size,
-            "shoe_size": shoe_size,
             "gender": gender,
             "body_shape": body_shape,
             "occasion": occasion,

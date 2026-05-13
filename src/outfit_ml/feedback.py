@@ -18,12 +18,7 @@ def _feedback_log_path() -> Path:
 def append_feedback_event(event: FeedbackEventRequest) -> str:
     event_id = str(uuid.uuid4())
     payload = event.model_dump()
-
-    if payload.get("timestamp") is None:
-        payload["timestamp"] = datetime.now(UTC).isoformat()
-    else:
-        payload["timestamp"] = event.timestamp.isoformat()
-
+    payload["timestamp"] = datetime.now(UTC).isoformat()
     payload["event_id"] = event_id
 
     log_path = _feedback_log_path()
@@ -47,12 +42,7 @@ def append_feedback_events(events: list[FeedbackEventRequest]) -> list[str]:
         for event in events:
             event_id = str(uuid.uuid4())
             payload = event.model_dump()
-
-            if payload.get("timestamp") is None:
-                payload["timestamp"] = datetime.now(UTC).isoformat()
-            else:
-                payload["timestamp"] = event.timestamp.isoformat()
-
+            payload["timestamp"] = datetime.now(UTC).isoformat()
             payload["event_id"] = event_id
             file.write(json.dumps(payload, ensure_ascii=True) + "\n")
             event_ids.append(event_id)
