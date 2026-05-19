@@ -369,6 +369,11 @@
       document.body.classList.toggle('has-summary-float', show);
     }
 
+    if (mobileSummaryMedia.matches && summaryFloat) {
+      summaryFloat.remove();
+      document.body.classList.remove('has-summary-float');
+    }
+
     function setSummaryCollapsed(collapsed) {
       if (!summaryToggle || !summaryNav) return;
       summaryNav.classList.toggle('is-collapsed', collapsed);
