@@ -408,12 +408,6 @@ body {
   }
 }
 
-@media (max-width: 580px) {
-  .summary-float {
-    display: none;
-  }
-}
-
 body.has-summary-float .scene {
   padding-right: clamp(64px, 7vw, 90px);
 }
