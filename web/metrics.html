@@ -154,21 +154,10 @@
     let summaryTouchTimer = null;
 
     function syncSummaryFloat() {
-      if (!summaryFloat || !sommaire) return;
+      if (!summaryFloat || !sommaire || mobileSummaryMedia.matches) return;
       const show = window.scrollY > sommaire.offsetTop + 120;
       summaryFloat.classList.toggle('is-visible', show);
       document.body.classList.toggle('has-summary-float', show);
-    }
-
-    function flashSummaryFloat() {
-      if (!mobileSummaryMedia.matches) return;
-      document.body.classList.add('touch-summary');
-      if (summaryTouchTimer) {
-        window.clearTimeout(summaryTouchTimer);
-      }
-      summaryTouchTimer = window.setTimeout(() => {
-        document.body.classList.remove('touch-summary');
-      }, 1800);
     }
 
     function setSummaryCollapsed(collapsed) {
@@ -224,12 +213,6 @@
       });
     }
 
-    window.addEventListener('touchstart', flashSummaryFloat, { passive: true });
-    window.addEventListener('pointerdown', (event) => {
-      if (event.pointerType === 'touch') {
-        flashSummaryFloat();
-      }
-    }, { passive: true });
 
     function toSentenceCase(value) {
       const text = String(value || '').trim();
