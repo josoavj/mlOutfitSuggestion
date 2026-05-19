@@ -359,12 +359,25 @@
     const summaryDrawer = document.getElementById('summaryDrawer');
     const summaryDrawerBackdrop = document.getElementById('summaryDrawerBackdrop');
     const summaryClose = document.getElementById('summaryClose');
+    const mobileSummaryMedia = window.matchMedia('(max-width: 720px)');
+    let summaryTouchTimer = null;
 
     function syncSummaryFloat() {
       if (!summaryFloat || !sommaire) return;
       const show = window.scrollY > sommaire.offsetTop + 120;
       summaryFloat.classList.toggle('is-visible', show);
       document.body.classList.toggle('has-summary-float', show);
+    }
+
+    function flashSummaryFloat() {
+      if (!mobileSummaryMedia.matches) return;
+      document.body.classList.add('touch-summary');
+      if (summaryTouchTimer) {
+        window.clearTimeout(summaryTouchTimer);
+      }
+      summaryTouchTimer = window.setTimeout(() => {
+        document.body.classList.remove('touch-summary');
+      }, 1800);
     }
 
     function setSummaryCollapsed(collapsed) {
@@ -388,16 +401,15 @@
 
     if (summaryToggle && summaryNav) {
       summaryToggle.addEventListener('click', () => {
-        if (window.matchMedia('(max-width: 720px)').matches) {
+        if (mobileSummaryMedia.matches) {
           openSummaryDrawer();
           return;
         }
         setSummaryCollapsed(!summaryNav.classList.contains('is-collapsed'));
       });
-      const media = window.matchMedia('(max-width: 720px)');
-      setSummaryCollapsed(media.matches);
-      summaryToggle.textContent = media.matches ? 'Sommaire' : 'Masquer';
-      media.addEventListener('change', (event) => {
+      setSummaryCollapsed(mobileSummaryMedia.matches);
+      summaryToggle.textContent = mobileSummaryMedia.matches ? 'Sommaire' : 'Masquer';
+      mobileSummaryMedia.addEventListener('change', (event) => {
         setSummaryCollapsed(event.matches);
         summaryToggle.textContent = event.matches ? 'Sommaire' : 'Masquer';
       });
@@ -420,6 +432,13 @@
         link.addEventListener('click', closeSummaryDrawer);
       });
     }
+
+    window.addEventListener('touchstart', flashSummaryFloat, { passive: true });
+    window.addEventListener('pointerdown', (event) => {
+      if (event.pointerType === 'touch') {
+        flashSummaryFloat();
+      }
+    }, { passive: true });
 
     window.addEventListener('scroll', syncSummaryFloat, { passive: true });
     window.addEventListener('load', syncSummaryFloat);
