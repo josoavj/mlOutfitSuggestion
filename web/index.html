@@ -58,8 +58,11 @@
       </div>
 
       <div class="panel section" id="sommaire">
-        <p class="section-title">Sommaire</p>
-        <div class="summary-nav">
+        <div class="summary-head">
+          <p class="section-title">Sommaire</p>
+          <button class="summary-toggle" id="summaryToggle" aria-expanded="true" aria-controls="summaryNav">Masquer</button>
+        </div>
+        <div class="summary-nav" id="summaryNav">
           <a class="summary-link" href="#experience-produit">Expérience produit</a>
           <a class="summary-link" href="#entrees-essentielles">Entrées essentielles</a>
           <a class="summary-link" href="#fonctionnement-modele">Fonctionnement du modèle</a>
@@ -317,12 +320,32 @@
   <script>
     const summaryFloat = document.getElementById('summaryFloat');
     const sommaire = document.getElementById('sommaire');
+    const summaryToggle = document.getElementById('summaryToggle');
+    const summaryNav = document.getElementById('summaryNav');
 
     function syncSummaryFloat() {
       if (!summaryFloat || !sommaire) return;
       const show = window.scrollY > sommaire.offsetTop + 120;
       summaryFloat.classList.toggle('is-visible', show);
       document.body.classList.toggle('has-summary-float', show);
+    }
+
+    function setSummaryCollapsed(collapsed) {
+      if (!summaryToggle || !summaryNav) return;
+      summaryNav.classList.toggle('is-collapsed', collapsed);
+      summaryToggle.setAttribute('aria-expanded', String(!collapsed));
+      summaryToggle.textContent = collapsed ? 'Afficher' : 'Masquer';
+    }
+
+    if (summaryToggle && summaryNav) {
+      summaryToggle.addEventListener('click', () => {
+        setSummaryCollapsed(!summaryNav.classList.contains('is-collapsed'));
+      });
+      const media = window.matchMedia('(max-width: 720px)');
+      setSummaryCollapsed(media.matches);
+      media.addEventListener('change', (event) => {
+        setSummaryCollapsed(event.matches);
+      });
     }
 
     window.addEventListener('scroll', syncSummaryFloat, { passive: true });
