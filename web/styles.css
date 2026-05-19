@@ -969,6 +969,9 @@ pre {
   .summary-nav {
     display: none;
   }
+  .summary-drawer .summary-nav {
+    display: grid;
+  }
   .summary-float {
     display: none;
   }
