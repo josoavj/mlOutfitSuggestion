@@ -970,12 +970,7 @@ pre {
     display: none;
   }
   .summary-float {
-    opacity: 0;
-    pointer-events: none;
-  }
-  body.touch-summary .summary-float {
-    opacity: 1;
-    pointer-events: auto;
+    display: none;
   }
   .bottom-nav {
     display: none;
