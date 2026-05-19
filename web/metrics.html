@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Outfit Suggestion · Métriques</title>
-  <link rel="stylesheet" href="/ui-assets/styles.css?v=2" />
+  <link rel="stylesheet" href="/ui-assets/styles.css?v=3" />
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23102149'/%3E%3Cpath d='M16 40c6-8 14-14 24-18 4-2 8 2 8 6 0 12-10 20-22 20-6 0-10-4-10-8z' fill='%2372b0ff'/%3E%3Cpath d='M20 24c2-6 6-10 12-12 2-1 4 0 4 2 0 4-4 10-10 12-4 2-6 0-6-2z' fill='%239bc7ff'/%3E%3C/svg%3E" />
 </head>
 <body>
@@ -32,8 +32,11 @@
       </div>
 
       <div class="panel section" id="sommaire">
-        <p class="section-title">Sommaire</p>
-        <div class="summary-nav">
+        <div class="summary-head">
+          <p class="section-title">Sommaire</p>
+          <button class="summary-toggle" id="summaryToggle" aria-expanded="true" aria-controls="summaryNav">Masquer</button>
+        </div>
+        <div class="summary-nav" id="summaryNav">
           <a class="summary-link" href="#dashboard">Dashboard</a>
           <a class="summary-link" href="#synthese">Synthèse modèle</a>
           <a class="summary-link" href="#configuration">Configuration</a>
@@ -62,6 +65,24 @@
         <a class="summary-dot" href="#json" data-label="JSON" aria-label="JSON">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5H7v14h2M15 5h2v14h-2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M11 9h2M11 12h2M11 15h2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
         </a>
+      </div>
+
+      <div class="summary-drawer" id="summaryDrawer" aria-hidden="true">
+        <div class="summary-drawer-backdrop" id="summaryDrawerBackdrop"></div>
+        <div class="summary-drawer-panel" role="dialog" aria-modal="true" aria-labelledby="summaryDrawerTitle">
+          <div class="summary-drawer-header">
+            <span class="summary-drawer-title" id="summaryDrawerTitle">Sommaire</span>
+            <button class="summary-close" id="summaryClose">Fermer</button>
+          </div>
+          <div class="summary-nav">
+            <a class="summary-link" href="#dashboard">Dashboard</a>
+            <a class="summary-link" href="#synthese">Synthèse modèle</a>
+            <a class="summary-link" href="#configuration">Configuration</a>
+            <a class="summary-link" href="#metriques">Métriques</a>
+            <a class="summary-link" href="#feedback">Feedback</a>
+            <a class="summary-link" href="#json">JSON</a>
+          </div>
+        </div>
       </div>
 
       <div class="panel" id="dashboard">
@@ -104,18 +125,99 @@
     </div>
   </div>
 
+  <nav class="bottom-nav" aria-label="Navigation principale">
+    <a class="bottom-link" href="/ui">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11l8-7 8 7v8a1 1 0 0 1-1 1h-4v-6h-6v6H5a1 1 0 0 1-1-1z" fill="currentColor"/></svg>
+      Présentation
+    </a>
+    <a class="bottom-link" href="/ui-assets/test.html">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="4" width="14" height="16" rx="2" stroke="currentColor" stroke-width="2" fill="none"/><path d="M8 8h8M8 12h8M8 16h5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      Test
+    </a>
+    <a class="bottom-link" href="/ui-assets/metrics.html" aria-current="page">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 18h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><rect x="6" y="10" width="3" height="6" fill="currentColor"/><rect x="11" y="7" width="3" height="9" fill="currentColor"/><rect x="16" y="4" width="3" height="12" fill="currentColor"/></svg>
+      Métriques
+    </a>
+  </nav>
+
   <script>
     function byId(id) { return document.getElementById(id); }
 
     const summaryFloat = document.getElementById('summaryFloat');
     const sommaire = document.getElementById('sommaire');
+    const summaryToggle = document.getElementById('summaryToggle');
+    const summaryNav = document.getElementById('summaryNav');
+    const summaryDrawer = document.getElementById('summaryDrawer');
+    const summaryDrawerBackdrop = document.getElementById('summaryDrawerBackdrop');
+    const summaryClose = document.getElementById('summaryClose');
+    const mobileSummaryMedia = window.matchMedia('(max-width: 720px)');
+    let summaryTouchTimer = null;
 
     function syncSummaryFloat() {
-      if (!summaryFloat || !sommaire) return;
+      if (!summaryFloat || !sommaire || mobileSummaryMedia.matches) return;
       const show = window.scrollY > sommaire.offsetTop + 120;
       summaryFloat.classList.toggle('is-visible', show);
       document.body.classList.toggle('has-summary-float', show);
     }
+
+    if (mobileSummaryMedia.matches && summaryFloat) {
+      summaryFloat.remove();
+      document.body.classList.remove('has-summary-float');
+    }
+
+    function setSummaryCollapsed(collapsed) {
+      if (!summaryToggle || !summaryNav) return;
+      summaryNav.classList.toggle('is-collapsed', collapsed);
+      summaryToggle.setAttribute('aria-expanded', String(!collapsed));
+      summaryToggle.textContent = collapsed ? 'Afficher' : 'Masquer';
+    }
+
+    function openSummaryDrawer() {
+      if (!summaryDrawer) return;
+      summaryDrawer.classList.add('is-open');
+      summaryDrawer.setAttribute('aria-hidden', 'false');
+    }
+
+    function closeSummaryDrawer() {
+      if (!summaryDrawer) return;
+      summaryDrawer.classList.remove('is-open');
+      summaryDrawer.setAttribute('aria-hidden', 'true');
+    }
+
+    if (summaryToggle && summaryNav) {
+      summaryToggle.addEventListener('click', () => {
+        if (mobileSummaryMedia.matches) {
+          openSummaryDrawer();
+          return;
+        }
+        setSummaryCollapsed(!summaryNav.classList.contains('is-collapsed'));
+      });
+      setSummaryCollapsed(mobileSummaryMedia.matches);
+      summaryToggle.textContent = mobileSummaryMedia.matches ? 'Sommaire' : 'Masquer';
+      mobileSummaryMedia.addEventListener('change', (event) => {
+        setSummaryCollapsed(event.matches);
+        summaryToggle.textContent = event.matches ? 'Sommaire' : 'Masquer';
+      });
+    }
+
+    if (summaryDrawer) {
+      summaryDrawer.addEventListener('click', (event) => {
+        if (event.target === summaryDrawer || event.target === summaryDrawerBackdrop) {
+          closeSummaryDrawer();
+        }
+      });
+    }
+
+    if (summaryClose) {
+      summaryClose.addEventListener('click', closeSummaryDrawer);
+    }
+
+    if (summaryDrawer) {
+      summaryDrawer.querySelectorAll('a').forEach((link) => {
+        link.addEventListener('click', closeSummaryDrawer);
+      });
+    }
+
 
     function toSentenceCase(value) {
       const text = String(value || '').trim();

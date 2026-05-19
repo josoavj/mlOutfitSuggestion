@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Outfit Suggestion · Test</title>
-  <link rel="stylesheet" href="/ui-assets/styles.css?v=2" />
+  <link rel="stylesheet" href="/ui-assets/styles.css?v=3" />
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23102149'/%3E%3Cpath d='M16 40c6-8 14-14 24-18 4-2 8 2 8 6 0 12-10 20-22 20-6 0-10-4-10-8z' fill='%2372b0ff'/%3E%3Cpath d='M20 24c2-6 6-10 12-12 2-1 4 0 4 2 0 4-4 10-10 12-4 2-6 0-6-2z' fill='%239bc7ff'/%3E%3C/svg%3E" />
 </head>
 <body>
@@ -32,8 +32,11 @@
       </div>
 
       <div class="panel section" id="sommaire">
-        <p class="section-title">Sommaire</p>
-        <div class="summary-nav">
+        <div class="summary-head">
+          <p class="section-title">Sommaire</p>
+          <button class="summary-toggle" id="summaryToggle" aria-expanded="true" aria-controls="summaryNav">Masquer</button>
+        </div>
+        <div class="summary-nav" id="summaryNav">
           <a class="summary-link" href="#mode-api">Mode et clé API</a>
           <a class="summary-link" href="#profil">Profil utilisateur</a>
           <a class="summary-link" href="#contexte">Contexte</a>
@@ -56,6 +59,22 @@
         </a>
       </div>
 
+      <div class="summary-drawer" id="summaryDrawer" aria-hidden="true">
+        <div class="summary-drawer-backdrop" id="summaryDrawerBackdrop"></div>
+        <div class="summary-drawer-panel" role="dialog" aria-modal="true" aria-labelledby="summaryDrawerTitle">
+          <div class="summary-drawer-header">
+            <span class="summary-drawer-title" id="summaryDrawerTitle">Sommaire</span>
+            <button class="summary-close" id="summaryClose">Fermer</button>
+          </div>
+          <div class="summary-nav">
+            <a class="summary-link" href="#mode-api">Mode et clé API</a>
+            <a class="summary-link" href="#profil">Profil utilisateur</a>
+            <a class="summary-link" href="#contexte">Contexte</a>
+            <a class="summary-link" href="#resultats">Résultats</a>
+          </div>
+        </div>
+      </div>
+
       <div class="panel" id="mode-api">
         <div class="mode-seg">
           <button class="seg-btn active" id="modeManual" onclick="setMode('manual')">Manuel · /recommend</button>
@@ -69,7 +88,9 @@
       <div class="panel" id="profil">
         <p class="section-title">Profil utilisateur</p>
         <div class="grid g3">
-          <label>User ID <input id="userId" value="u-001" /></label>
+          <label>Prénom <input id="firstName" placeholder="ex: Camille" /></label>
+          <label>Nom <input id="lastName" placeholder="ex: Martin" /></label>
+          <input id="userId" type="hidden" value="u-001" />
           <label>Genre
             <select id="gender"><option>female</option><option>male</option><option>non_binary</option><option selected>unknown</option></select>
           </label>
@@ -167,6 +188,7 @@
         <div id="contextChips" class="chip-row"></div>
         <p class="section-label">Top raisons</p>
         <div id="reasonChips" class="chip-row"></div>
+        <p class="section-label" id="resultTitle">Tenues recommandées</p>
         <div id="cards" class="cards"></div>
         <p class="section-label">Payload envoyé</p>
         <pre id="requestBox">—</pre>
@@ -176,18 +198,99 @@
     </div>
   </div>
 
+  <nav class="bottom-nav" aria-label="Navigation principale">
+    <a class="bottom-link" href="/ui">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11l8-7 8 7v8a1 1 0 0 1-1 1h-4v-6h-6v6H5a1 1 0 0 1-1-1z" fill="currentColor"/></svg>
+      Présentation
+    </a>
+    <a class="bottom-link" href="/ui-assets/test.html" aria-current="page">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="4" width="14" height="16" rx="2" stroke="currentColor" stroke-width="2" fill="none"/><path d="M8 8h8M8 12h8M8 16h5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      Test
+    </a>
+    <a class="bottom-link" href="/ui-assets/metrics.html">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 18h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><rect x="6" y="10" width="3" height="6" fill="currentColor"/><rect x="11" y="7" width="3" height="9" fill="currentColor"/><rect x="16" y="4" width="3" height="12" fill="currentColor"/></svg>
+      Métriques
+    </a>
+  </nav>
+
   <script>
     let currentMode = 'manual';
 
     const summaryFloat = document.getElementById('summaryFloat');
     const sommaire = document.getElementById('sommaire');
+    const summaryToggle = document.getElementById('summaryToggle');
+    const summaryNav = document.getElementById('summaryNav');
+    const summaryDrawer = document.getElementById('summaryDrawer');
+    const summaryDrawerBackdrop = document.getElementById('summaryDrawerBackdrop');
+    const summaryClose = document.getElementById('summaryClose');
+    const mobileSummaryMedia = window.matchMedia('(max-width: 720px)');
+    let summaryTouchTimer = null;
 
     function syncSummaryFloat() {
-      if (!summaryFloat || !sommaire) return;
+      if (!summaryFloat || !sommaire || mobileSummaryMedia.matches) return;
       const show = window.scrollY > sommaire.offsetTop + 120;
       summaryFloat.classList.toggle('is-visible', show);
       document.body.classList.toggle('has-summary-float', show);
     }
+
+    if (mobileSummaryMedia.matches && summaryFloat) {
+      summaryFloat.remove();
+      document.body.classList.remove('has-summary-float');
+    }
+
+    function setSummaryCollapsed(collapsed) {
+      if (!summaryToggle || !summaryNav) return;
+      summaryNav.classList.toggle('is-collapsed', collapsed);
+      summaryToggle.setAttribute('aria-expanded', String(!collapsed));
+      summaryToggle.textContent = collapsed ? 'Afficher' : 'Masquer';
+    }
+
+    function openSummaryDrawer() {
+      if (!summaryDrawer) return;
+      summaryDrawer.classList.add('is-open');
+      summaryDrawer.setAttribute('aria-hidden', 'false');
+    }
+
+    function closeSummaryDrawer() {
+      if (!summaryDrawer) return;
+      summaryDrawer.classList.remove('is-open');
+      summaryDrawer.setAttribute('aria-hidden', 'true');
+    }
+
+    if (summaryToggle && summaryNav) {
+      summaryToggle.addEventListener('click', () => {
+        if (mobileSummaryMedia.matches) {
+          openSummaryDrawer();
+          return;
+        }
+        setSummaryCollapsed(!summaryNav.classList.contains('is-collapsed'));
+      });
+      setSummaryCollapsed(mobileSummaryMedia.matches);
+      summaryToggle.textContent = mobileSummaryMedia.matches ? 'Sommaire' : 'Masquer';
+      mobileSummaryMedia.addEventListener('change', (event) => {
+        setSummaryCollapsed(event.matches);
+        summaryToggle.textContent = event.matches ? 'Sommaire' : 'Masquer';
+      });
+    }
+
+    if (summaryDrawer) {
+      summaryDrawer.addEventListener('click', (event) => {
+        if (event.target === summaryDrawer || event.target === summaryDrawerBackdrop) {
+          closeSummaryDrawer();
+        }
+      });
+    }
+
+    if (summaryClose) {
+      summaryClose.addEventListener('click', closeSummaryDrawer);
+    }
+
+    if (summaryDrawer) {
+      summaryDrawer.querySelectorAll('a').forEach((link) => {
+        link.addEventListener('click', closeSummaryDrawer);
+      });
+    }
+
 
     function setMode(m) {
       currentMode = m;
@@ -394,7 +497,6 @@
             <h4>${item.outfit_label||item.outfit_id}</h4>
             <span class="score-pill">${Number(item.score).toFixed(4)}</span>
           </div>
-          <p><strong>ID :</strong> ${item.outfit_id}</p>
           <p><strong>Tenue proposée :</strong></p>
           ${outfitItemsHtml}
           ${reasons ? '<p class="reasons">'+reasons+'</p>' : ''}
@@ -428,6 +530,10 @@
       byId('sumBody').textContent = bodyText;
 
       const chipHost = byId('contextChips');
+      const firstName = toTitleCase(byId('firstName').value.trim());
+      const resultTitle = firstName ? 'Tenues recommandées pour ' + firstName : 'Tenues recommandées';
+      const resultTitleEl = byId('resultTitle');
+      if (resultTitleEl) resultTitleEl.textContent = resultTitle;
       chipHost.innerHTML = '';
       const chips = [];
       if (ctx) {
@@ -497,6 +603,8 @@
         .forEach((id) => { const el = byId(id); if (el) el.textContent = '—'; });
       byId('contextChips').innerHTML = '';
       byId('reasonChips').innerHTML = '';
+      const resultTitleEl = byId('resultTitle');
+      if (resultTitleEl) resultTitleEl.textContent = 'Tenues recommandées';
     }
 
     async function runRecommendation() {
