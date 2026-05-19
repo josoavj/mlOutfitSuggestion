@@ -69,7 +69,9 @@
       <div class="panel" id="profil">
         <p class="section-title">Profil utilisateur</p>
         <div class="grid g3">
-          <label>User ID <input id="userId" value="u-001" /></label>
+          <label>Prénom <input id="firstName" placeholder="ex: Camille" /></label>
+          <label>Nom <input id="lastName" placeholder="ex: Martin" /></label>
+          <input id="userId" type="hidden" value="u-001" />
           <label>Genre
             <select id="gender"><option>female</option><option>male</option><option>non_binary</option><option selected>unknown</option></select>
           </label>
@@ -167,6 +169,7 @@
         <div id="contextChips" class="chip-row"></div>
         <p class="section-label">Top raisons</p>
         <div id="reasonChips" class="chip-row"></div>
+        <p class="section-label" id="resultTitle">Tenues recommandées</p>
         <div id="cards" class="cards"></div>
         <p class="section-label">Payload envoyé</p>
         <pre id="requestBox">—</pre>
@@ -394,7 +397,6 @@
             <h4>${item.outfit_label||item.outfit_id}</h4>
             <span class="score-pill">${Number(item.score).toFixed(4)}</span>
           </div>
-          <p><strong>ID :</strong> ${item.outfit_id}</p>
           <p><strong>Tenue proposée :</strong></p>
           ${outfitItemsHtml}
           ${reasons ? '<p class="reasons">'+reasons+'</p>' : ''}
@@ -428,6 +430,10 @@
       byId('sumBody').textContent = bodyText;
 
       const chipHost = byId('contextChips');
+      const firstName = toTitleCase(byId('firstName').value.trim());
+      const resultTitle = firstName ? 'Tenues recommandées pour ' + firstName : 'Tenues recommandées';
+      const resultTitleEl = byId('resultTitle');
+      if (resultTitleEl) resultTitleEl.textContent = resultTitle;
       chipHost.innerHTML = '';
       const chips = [];
       if (ctx) {
@@ -497,6 +503,8 @@
         .forEach((id) => { const el = byId(id); if (el) el.textContent = '—'; });
       byId('contextChips').innerHTML = '';
       byId('reasonChips').innerHTML = '';
+      const resultTitleEl = byId('resultTitle');
+      if (resultTitleEl) resultTitleEl.textContent = 'Tenues recommandées';
     }
 
     async function runRecommendation() {
