@@ -929,6 +929,10 @@ pre {
   .top-nav {
     flex-direction: column;
     align-items: stretch;
+    position: sticky;
+    top: 10px;
+    z-index: 35;
+    padding: 0.7rem 0.9rem;
   }
   .nav-links {
     width: 100%;
@@ -974,8 +978,7 @@ pre {
     pointer-events: auto;
   }
   .bottom-nav {
-    display: flex;
-    padding-bottom: calc(8px + env(safe-area-inset-bottom));
+    display: none;
   }
   .nav-links {
     padding: 6px;
