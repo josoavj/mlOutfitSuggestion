@@ -97,6 +97,25 @@
         </a>
       </div>
 
+      <div class="summary-drawer" id="summaryDrawer" aria-hidden="true">
+        <div class="summary-drawer-backdrop" id="summaryDrawerBackdrop"></div>
+        <div class="summary-drawer-panel" role="dialog" aria-modal="true" aria-labelledby="summaryDrawerTitle">
+          <div class="summary-drawer-header">
+            <span class="summary-drawer-title" id="summaryDrawerTitle">Sommaire</span>
+            <button class="summary-close" id="summaryClose">Fermer</button>
+          </div>
+          <div class="summary-nav">
+            <a class="summary-link" href="#experience-produit">Expérience produit</a>
+            <a class="summary-link" href="#entrees-essentielles">Entrées essentielles</a>
+            <a class="summary-link" href="#fonctionnement-modele">Fonctionnement du modèle</a>
+            <a class="summary-link" href="#sorties-interpretation">Sorties et interprétation</a>
+            <a class="summary-link" href="#limites-cas">Limites et cas particuliers</a>
+            <a class="summary-link" href="#types-agenda">Types d'agenda</a>
+            <a class="summary-link" href="#parcours">Parcours</a>
+          </div>
+        </div>
+      </div>
+
       <div class="panel section" id="experience-produit">
         <p class="section-title">Expérience produit</p>
         <div class="section-grid">
@@ -317,11 +336,29 @@
     </div>
   </div>
 
+  <nav class="bottom-nav" aria-label="Navigation principale">
+    <a class="bottom-link" href="/ui" aria-current="page">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11l8-7 8 7v8a1 1 0 0 1-1 1h-4v-6h-6v6H5a1 1 0 0 1-1-1z" fill="currentColor"/></svg>
+      Présentation
+    </a>
+    <a class="bottom-link" href="/ui-assets/test.html">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="4" width="14" height="16" rx="2" stroke="currentColor" stroke-width="2" fill="none"/><path d="M8 8h8M8 12h8M8 16h5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      Test
+    </a>
+    <a class="bottom-link" href="/ui-assets/metrics.html">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 18h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><rect x="6" y="10" width="3" height="6" fill="currentColor"/><rect x="11" y="7" width="3" height="9" fill="currentColor"/><rect x="16" y="4" width="3" height="12" fill="currentColor"/></svg>
+      Métriques
+    </a>
+  </nav>
+
   <script>
     const summaryFloat = document.getElementById('summaryFloat');
     const sommaire = document.getElementById('sommaire');
     const summaryToggle = document.getElementById('summaryToggle');
     const summaryNav = document.getElementById('summaryNav');
+    const summaryDrawer = document.getElementById('summaryDrawer');
+    const summaryDrawerBackdrop = document.getElementById('summaryDrawerBackdrop');
+    const summaryClose = document.getElementById('summaryClose');
 
     function syncSummaryFloat() {
       if (!summaryFloat || !sommaire) return;
@@ -337,14 +374,50 @@
       summaryToggle.textContent = collapsed ? 'Afficher' : 'Masquer';
     }
 
+    function openSummaryDrawer() {
+      if (!summaryDrawer) return;
+      summaryDrawer.classList.add('is-open');
+      summaryDrawer.setAttribute('aria-hidden', 'false');
+    }
+
+    function closeSummaryDrawer() {
+      if (!summaryDrawer) return;
+      summaryDrawer.classList.remove('is-open');
+      summaryDrawer.setAttribute('aria-hidden', 'true');
+    }
+
     if (summaryToggle && summaryNav) {
       summaryToggle.addEventListener('click', () => {
+        if (window.matchMedia('(max-width: 720px)').matches) {
+          openSummaryDrawer();
+          return;
+        }
         setSummaryCollapsed(!summaryNav.classList.contains('is-collapsed'));
       });
       const media = window.matchMedia('(max-width: 720px)');
       setSummaryCollapsed(media.matches);
+      summaryToggle.textContent = media.matches ? 'Sommaire' : 'Masquer';
       media.addEventListener('change', (event) => {
         setSummaryCollapsed(event.matches);
+        summaryToggle.textContent = event.matches ? 'Sommaire' : 'Masquer';
+      });
+    }
+
+    if (summaryDrawer) {
+      summaryDrawer.addEventListener('click', (event) => {
+        if (event.target === summaryDrawer || event.target === summaryDrawerBackdrop) {
+          closeSummaryDrawer();
+        }
+      });
+    }
+
+    if (summaryClose) {
+      summaryClose.addEventListener('click', closeSummaryDrawer);
+    }
+
+    if (summaryDrawer) {
+      summaryDrawer.querySelectorAll('a').forEach((link) => {
+        link.addEventListener('click', closeSummaryDrawer);
       });
     }
 
