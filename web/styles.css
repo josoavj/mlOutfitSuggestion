@@ -187,6 +187,25 @@ body {
   border-radius: var(--radius-lg);
   padding: 10px;
 }
+.summary-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.summary-toggle {
+  display: none;
+  padding: 6px 12px;
+  border-radius: var(--radius-pill);
+  border: 1px solid rgba(162,207,255,0.46);
+  background: rgba(60,117,196,0.30);
+  color: var(--accent2);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.summary-toggle:active { transform: scale(0.98); }
 
 .summary-link {
   text-decoration: none;
@@ -857,9 +876,36 @@ pre {
   .summary-grid { grid-template-columns: repeat(2,1fr); }
   .summary-nav { grid-template-columns: 1fr; }
   .style-grid { grid-template-columns: 1fr; }
+  .summary-toggle {
+    display: inline-flex;
+  }
+  .summary-nav.is-collapsed {
+    display: none;
+  }
+  .nav-links {
+    padding: 6px;
+    overflow-x: auto;
+    scrollbar-width: thin;
+  }
+  .nav-links::-webkit-scrollbar { height: 6px; }
+  .nav-links::-webkit-scrollbar-thumb {
+    background: rgba(155,203,255,0.35);
+    border-radius: 99px;
+  }
+  .nav-link {
+    min-width: 120px;
+  }
+  .cards { gap: 10px; }
+  .card { padding: 0.9rem 1rem; }
+  .chip-row { gap: 8px; }
+  .chip { font-size: 12.5px; }
   .nav-links { gap: 6px; }
   .nav-link { font-size: 12px; padding: 6px 8px; }
   .section-title { font-size: 10px; }
   .metric-row { grid-template-columns: 1fr; gap: 4px; }
   .metric-value { justify-self: start; }
+  .cards { gap: 12px; }
+  .card { padding: 0.9rem 1rem; }
+  .chip-row { gap: 8px; }
+  .chip { font-size: 12.5px; }
 }
