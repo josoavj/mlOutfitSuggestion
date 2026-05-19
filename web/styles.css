@@ -971,6 +971,14 @@ pre {
   .summary-nav {
     display: none;
   }
+  .summary-float {
+    opacity: 0;
+    pointer-events: none;
+  }
+  body.touch-summary .summary-float {
+    opacity: 1;
+    pointer-events: auto;
+  }
   .bottom-nav {
     display: flex;
     padding-bottom: calc(8px + env(safe-area-inset-bottom));
