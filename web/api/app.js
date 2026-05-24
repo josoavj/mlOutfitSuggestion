@@ -328,11 +328,17 @@ function addHistory(entry) {
   state.history.forEach((item) => {
     const row = document.createElement("div");
     row.className = "history-item";
-    row.innerHTML = `
-      <div>${item.method} ${item.path}</div>
-      <div class="status ${item.ok ? "ok" : "err"}">${item.status}</div>
-      <div>${item.duration} ms</div>
-    `;
+    const summary = document.createElement("div");
+    summary.textContent = `${item.method} ${item.path}`;
+
+    const status = document.createElement("div");
+    status.className = `status ${item.ok ? "ok" : "err"}`;
+    status.textContent = String(item.status);
+
+    const duration = document.createElement("div");
+    duration.textContent = `${item.duration} ms`;
+
+    row.append(summary, status, duration);
     historyList.appendChild(row);
   });
 }
