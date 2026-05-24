@@ -341,7 +341,8 @@ async function sendRequest() {
   const baseUrl = baseUrlInput.value.trim() || window.location.origin;
   const method = methodSelect.value.toUpperCase();
   const path = pathInput.value.trim() || "/health";
-  const url = baseUrl.replace(/\/$/, "") + path;
+  const normalizedPath = path.startsWith("/") ? path : `/${path}`;
+  const url = baseUrl.replace(/\/$/, "") + normalizedPath;
 
   let headers = {};
   try {
