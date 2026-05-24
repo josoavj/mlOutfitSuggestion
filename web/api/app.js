@@ -1,0 +1,464 @@
+const endpoints = [
+  {
+    id: "health",
+    method: "GET",
+    path: "/health",
+    name: "Health",
+    category: "Core",
+    description: "Service health probe",
+    sample: "",
+  },
+  {
+    id: "dashboard",
+    method: "GET",
+    path: "/dashboard/technical",
+    name: "Technical dashboard",
+    category: "Dashboard",
+    description: "Model metrics, feedback, and service status",
+    sample: "",
+  },
+  {
+    id: "recommend",
+    method: "POST",
+    path: "/recommend",
+    name: "Recommend (manual)",
+    category: "Recommendations",
+    description: "Manual payload with weather and agenda",
+    sample: JSON.stringify(
+      {
+        user_id: "u-001",
+        gender: "female",
+        age: 29,
+        height_cm: 168,
+        clothing_size: "m",
+        top_size: "m",
+        bottom_size: "m",
+        shoe_size: "40",
+        style_preferences: ["minimalist", "elegant"],
+        body_shape: "hourglass",
+        agenda: ["work", "meeting"],
+        location: "Lyon",
+        weather: { temperature_c: 14.0, condition: "rain" },
+        top_k: 3,
+      },
+      null,
+      2
+    ),
+  },
+  {
+    id: "recommend-context",
+    method: "POST",
+    path: "/recommend/context",
+    name: "Recommend (context)",
+    category: "Recommendations",
+    description: "Agenda entries + location resolved",
+    sample: JSON.stringify(
+      {
+        user_id: "u-001",
+        gender: "female",
+        age: 29,
+        height_cm: 168,
+        clothing_size: "m",
+        top_size: "m",
+        bottom_size: "m",
+        shoe_size: "40",
+        style_preferences: ["minimalist", "elegant"],
+        body_shape: "hourglass",
+        agenda_entries: [
+          { title: "Client meeting", category: "work", tags: ["meeting"] },
+          { title: "Evening run", category: "sport", tags: ["outdoor"] },
+        ],
+        location: "Lyon",
+        top_k: 3,
+      },
+      null,
+      2
+    ),
+  },
+  {
+    id: "recommend-auto",
+    method: "POST",
+    path: "/recommend/auto",
+    name: "Recommend (auto)",
+    category: "Recommendations",
+    description: "Auto mode with overrides",
+    sample: JSON.stringify(
+      {
+        user_id: "u-001",
+        location: "Lyon",
+        gender: "female",
+        age: 29,
+        top_size: "m",
+        bottom_size: "m",
+        shoe_size: "40",
+        style_preferences: ["minimalist", "elegant"],
+        agenda: ["work", "meeting"],
+        top_k: 3,
+      },
+      null,
+      2
+    ),
+  },
+  {
+    id: "vision-enroll",
+    method: "POST",
+    path: "/vision/enroll",
+    name: "Vision enroll",
+    category: "Vision",
+    description: "Enroll a user face",
+    sample: JSON.stringify(
+      {
+        user_id: "u-001",
+        image_base64: "data:image/jpeg;base64,...",
+      },
+      null,
+      2
+    ),
+  },
+  {
+    id: "vision-identify",
+    method: "POST",
+    path: "/vision/identify",
+    name: "Vision identify",
+    category: "Vision",
+    description: "Identify a user face",
+    sample: JSON.stringify(
+      {
+        image_base64: "data:image/jpeg;base64,...",
+        threshold: 0.45,
+        max_results: 1,
+      },
+      null,
+      2
+    ),
+  },
+  {
+    id: "mirror-recommend",
+    method: "POST",
+    path: "/mirror/recommend-from-camera",
+    name: "Mirror recommend",
+    category: "Vision",
+    description: "Camera flow with recommendation",
+    sample: JSON.stringify(
+      {
+        image_base64: "data:image/jpeg;base64,...",
+        location: "Lyon",
+        threshold: 0.45,
+        top_k: 3,
+      },
+      null,
+      2
+    ),
+  },
+  {
+    id: "feedback-event",
+    method: "POST",
+    path: "/feedback/event",
+    name: "Feedback event",
+    category: "Feedback",
+    description: "Send one event",
+    sample: JSON.stringify(
+      {
+        user_id: "u-001",
+        event_type: "like",
+        outfit_id: "outfit-001",
+        score: 0.9,
+        session_id: "session-001",
+        metadata: { source: "api-console" },
+      },
+      null,
+      2
+    ),
+  },
+  {
+    id: "feedback-batch",
+    method: "POST",
+    path: "/feedback/batch",
+    name: "Feedback batch",
+    category: "Feedback",
+    description: "Send batch events",
+    sample: JSON.stringify(
+      {
+        events: [
+          {
+            user_id: "u-001",
+            event_type: "view",
+            outfit_id: "outfit-001",
+            score: 0.5,
+            session_id: "session-001",
+            metadata: { source: "api-console" },
+          },
+        ],
+      },
+      null,
+      2
+    ),
+  },
+  {
+    id: "feedback-events",
+    method: "POST",
+    path: "/feedback/events",
+    name: "Feedback events",
+    category: "Feedback",
+    description: "Alias for batch events",
+    sample: JSON.stringify(
+      {
+        events: [
+          {
+            user_id: "u-001",
+            event_type: "dislike",
+            outfit_id: "outfit-002",
+            score: 0.1,
+            session_id: "session-001",
+            metadata: { source: "api-console" },
+          },
+        ],
+      },
+      null,
+      2
+    ),
+  },
+  {
+    id: "feedback-stats",
+    method: "GET",
+    path: "/feedback/stats",
+    name: "Feedback stats",
+    category: "Feedback",
+    description: "Aggregate feedback stats",
+    sample: "",
+  },
+];
+
+const el = (id) => document.getElementById(id);
+
+const endpointList = el("endpointList");
+const searchInput = el("searchInput");
+const baseUrlInput = el("baseUrl");
+const activeEndpoint = el("activeEndpoint");
+const methodSelect = el("methodSelect");
+const pathInput = el("pathInput");
+const headersInput = el("headersInput");
+const bodyInput = el("bodyInput");
+const bodyField = el("bodyField");
+const sendBtn = el("sendBtn");
+const sendBtnTop = el("sendBtnTop");
+const formatBtn = el("formatBtn");
+const formatBtnTop = el("formatBtnTop");
+const resetBtn = el("resetBtn");
+const methodPill = el("methodPill");
+const timePill = el("timePill");
+const httpStatus = el("httpStatus");
+const sizeStat = el("sizeStat");
+const typeStat = el("typeStat");
+const responseOutput = el("responseOutput");
+const headersOutput = el("headersOutput");
+const historyList = el("historyList");
+const lastStatus = el("lastStatus");
+const clearHistory = el("clearHistory");
+
+const state = {
+  selectedId: "health",
+  history: [],
+};
+
+const defaultHeaders = () => ({
+  "Content-Type": "application/json",
+});
+
+function formatJsonString(value) {
+  if (!value.trim()) return "";
+  const parsed = JSON.parse(value);
+  return JSON.stringify(parsed, null, 2);
+}
+
+function renderEndpoints(list) {
+  endpointList.innerHTML = "";
+  list.forEach((item) => {
+    const card = document.createElement("div");
+    card.className = "endpoint" + (item.id === state.selectedId ? " active" : "");
+    card.innerHTML = `
+      <div class="row">
+        <span class="method">${item.method}</span>
+        <span class="path">${item.path}</span>
+      </div>
+      <div class="desc">${item.name} - ${item.description}</div>
+    `;
+    card.addEventListener("click", () => selectEndpoint(item.id));
+    endpointList.appendChild(card);
+  });
+}
+
+function selectEndpoint(id) {
+  const endpoint = endpoints.find((item) => item.id === id);
+  if (!endpoint) return;
+  state.selectedId = id;
+  methodSelect.value = endpoint.method;
+  pathInput.value = endpoint.path;
+  methodPill.textContent = endpoint.method;
+  activeEndpoint.textContent = endpoint.path;
+  bodyInput.value = endpoint.sample || "";
+  updateBodyVisibility(endpoint.method);
+  renderEndpoints(filterEndpoints(searchInput.value));
+}
+
+function updateBodyVisibility(method) {
+  const upper = method.toUpperCase();
+  bodyField.style.display = upper === "GET" ? "none" : "grid";
+}
+
+function filterEndpoints(query) {
+  const term = query.trim().toLowerCase();
+  if (!term) return endpoints;
+  return endpoints.filter((item) =>
+    item.path.toLowerCase().includes(term) ||
+    item.name.toLowerCase().includes(term) ||
+    item.category.toLowerCase().includes(term)
+  );
+}
+
+function setStatus(text, type) {
+  lastStatus.textContent = text;
+  lastStatus.style.color = type === "err" ? "#ff7a6e" : "#3ee29a";
+}
+
+function addHistory(entry) {
+  state.history.unshift(entry);
+  state.history = state.history.slice(0, 12);
+  historyList.innerHTML = "";
+  state.history.forEach((item) => {
+    const row = document.createElement("div");
+    row.className = "history-item";
+    row.innerHTML = `
+      <div>${item.method} ${item.path}</div>
+      <div class="status ${item.ok ? "ok" : "err"}">${item.status}</div>
+      <div>${item.duration} ms</div>
+    `;
+    historyList.appendChild(row);
+  });
+}
+
+async function sendRequest() {
+  const baseUrl = baseUrlInput.value.trim() || window.location.origin;
+  const method = methodSelect.value.toUpperCase();
+  const path = pathInput.value.trim() || "/health";
+  const url = baseUrl.replace(/\/$/, "") + path;
+
+  let headers = {};
+  try {
+    headers = headersInput.value.trim() ? JSON.parse(headersInput.value) : defaultHeaders();
+  } catch (err) {
+    responseOutput.textContent = "Invalid headers JSON";
+    setStatus("Headers JSON error", "err");
+    return;
+  }
+
+  const options = { method, headers };
+
+  if (method !== "GET") {
+    try {
+      options.body = bodyInput.value.trim() ? JSON.stringify(JSON.parse(bodyInput.value)) : "{}";
+    } catch (err) {
+      responseOutput.textContent = "Invalid body JSON";
+      setStatus("Body JSON error", "err");
+      return;
+    }
+  }
+
+  const start = performance.now();
+  try {
+    setStatus("Sending...", "ok");
+    const response = await fetch(url, options);
+    const duration = Math.round(performance.now() - start);
+    const contentType = response.headers.get("content-type") || "-";
+    const rawText = await response.text();
+    const isJson = contentType.includes("application/json");
+    let pretty = rawText;
+    if (isJson && rawText) {
+      try {
+        pretty = JSON.stringify(JSON.parse(rawText), null, 2);
+      } catch (err) {
+        pretty = rawText;
+      }
+    }
+
+    responseOutput.textContent = pretty || "-";
+    headersOutput.textContent = Array.from(response.headers.entries())
+      .map(([key, value]) => `${key}: ${value}`)
+      .join("\n") || "-";
+
+    httpStatus.textContent = `${response.status} ${response.statusText}`;
+    sizeStat.textContent = `${rawText.length} bytes`;
+    typeStat.textContent = contentType;
+    timePill.textContent = `${duration} ms`;
+
+    setStatus(response.ok ? "Success" : "Error", response.ok ? "ok" : "err");
+    addHistory({ method, path, status: response.status, ok: response.ok, duration });
+  } catch (err) {
+    responseOutput.textContent = String(err);
+    headersOutput.textContent = "-";
+    httpStatus.textContent = "-";
+    sizeStat.textContent = "-";
+    typeStat.textContent = "-";
+    timePill.textContent = "-";
+    setStatus("Network error", "err");
+    addHistory({ method, path, status: "ERR", ok: false, duration: 0 });
+  }
+}
+
+function formatBody() {
+  try {
+    bodyInput.value = formatJsonString(bodyInput.value);
+  } catch (err) {
+    responseOutput.textContent = "Invalid body JSON";
+  }
+}
+
+function formatHeaders() {
+  try {
+    headersInput.value = formatJsonString(headersInput.value);
+  } catch (err) {
+    responseOutput.textContent = "Invalid headers JSON";
+  }
+}
+
+function resetForm() {
+  const endpoint = endpoints.find((item) => item.id === state.selectedId);
+  if (!endpoint) return;
+  methodSelect.value = endpoint.method;
+  pathInput.value = endpoint.path;
+  bodyInput.value = endpoint.sample || "";
+  headersInput.value = JSON.stringify(defaultHeaders(), null, 2);
+  updateBodyVisibility(endpoint.method);
+  responseOutput.textContent = "-";
+  headersOutput.textContent = "-";
+  httpStatus.textContent = "-";
+  sizeStat.textContent = "-";
+  typeStat.textContent = "-";
+  timePill.textContent = "0 ms";
+  setStatus("Idle", "ok");
+}
+
+searchInput.addEventListener("input", (event) => {
+  renderEndpoints(filterEndpoints(event.target.value));
+});
+
+methodSelect.addEventListener("change", (event) => {
+  updateBodyVisibility(event.target.value);
+  methodPill.textContent = event.target.value;
+});
+
+sendBtn.addEventListener("click", sendRequest);
+sendBtnTop.addEventListener("click", sendRequest);
+formatBtn.addEventListener("click", () => { formatBody(); formatHeaders(); });
+formatBtnTop.addEventListener("click", () => { formatBody(); formatHeaders(); });
+resetBtn.addEventListener("click", resetForm);
+clearHistory.addEventListener("click", () => {
+  state.history = [];
+  historyList.innerHTML = "";
+});
+
+baseUrlInput.value = window.location.origin;
+headersInput.value = JSON.stringify(defaultHeaders(), null, 2);
+
+renderEndpoints(endpoints);
+selectEndpoint(state.selectedId);

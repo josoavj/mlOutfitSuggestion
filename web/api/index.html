@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Outfit Suggestion · API Console</title>
+  <link rel="stylesheet" href="/ui-assets/api/styles.css" />
+  <link rel="icon" href="/favicon.ico" />
+</head>
+<body>
+  <div class="page">
+    <header class="top">
+      <div class="brand">
+        <span class="brand-kicker">Outfit Suggestion</span>
+        <span class="brand-title">API Console</span>
+      </div>
+      <nav class="nav">
+        <a class="nav-link" href="/ui">Presentation</a>
+        <a class="nav-link" href="/ui-assets/test.html">Test</a>
+        <a class="nav-link" href="/ui-assets/metrics.html">Metrics</a>
+        <a class="nav-link active" href="/ui-assets/api/index.html">API</a>
+      </nav>
+    </header>
+
+    <section class="hero">
+      <div class="hero-copy">
+        <p class="eyebrow">Console unifiee</p>
+        <h1>Pilote l API et rejoue les flux en direct.</h1>
+        <p class="subtitle">Choisis un endpoint, ajuste le payload, envoie la requête et inspecte la réponse sans quitter le navigateur.</p>
+        <div class="hero-actions">
+          <button class="btn" id="sendBtnTop">Envoyer la requête</button>
+          <button class="btn ghost" id="formatBtnTop">Formater le JSON</button>
+        </div>
+      </div>
+      <div class="hero-card">
+        <div class="stat">
+          <span class="stat-label">Base URL</span>
+          <input id="baseUrl" class="input" placeholder="http://127.0.0.1:8000" />
+        </div>
+        <div class="stat">
+          <span class="stat-label">Endpoint actif</span>
+          <div class="stat-value" id="activeEndpoint">/health</div>
+        </div>
+        <div class="stat">
+          <span class="stat-label">Status</span>
+          <div class="stat-value" id="lastStatus">Idle</div>
+        </div>
+      </div>
+    </section>
+
+    <main class="layout">
+      <aside class="panel">
+        <div class="panel-head">
+          <h2>Endpoints</h2>
+          <input id="searchInput" class="input" placeholder="Search endpoint" />
+        </div>
+        <div class="endpoint-list" id="endpointList"></div>
+      </aside>
+
+      <section class="panel stack">
+        <div class="panel-head">
+          <h2>Request</h2>
+          <div class="pill" id="methodPill">GET</div>
+        </div>
+
+        <div class="row">
+          <div class="field">
+            <label>Method</label>
+            <select id="methodSelect" class="input">
+              <option>GET</option>
+              <option>POST</option>
+            </select>
+          </div>
+          <div class="field grow">
+            <label>Path</label>
+            <input id="pathInput" class="input" placeholder="/health" />
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Headers (JSON)</label>
+          <textarea id="headersInput" class="code" rows="4" placeholder='{"X-API-Key":""}'></textarea>
+        </div>
+
+        <div class="field" id="bodyField">
+          <label>Body (JSON)</label>
+          <textarea id="bodyInput" class="code" rows="14"></textarea>
+        </div>
+
+        <div class="actions">
+          <button class="btn" id="sendBtn">Send</button>
+          <button class="btn ghost" id="formatBtn">Format</button>
+          <button class="btn ghost" id="resetBtn">Reset</button>
+        </div>
+      </section>
+
+      <section class="panel stack">
+        <div class="panel-head">
+          <h2>Response</h2>
+          <div class="pill" id="timePill">0 ms</div>
+        </div>
+        <div class="meta">
+          <div>
+            <span class="meta-label">HTTP</span>
+            <span class="meta-value" id="httpStatus">-</span>
+          </div>
+          <div>
+            <span class="meta-label">Size</span>
+            <span class="meta-value" id="sizeStat">-</span>
+          </div>
+          <div>
+            <span class="meta-label">Type</span>
+            <span class="meta-value" id="typeStat">-</span>
+          </div>
+        </div>
+        <div class="field">
+          <label>Response body</label>
+          <pre id="responseOutput" class="code output">-</pre>
+        </div>
+        <div class="field">
+          <label>Response headers</label>
+          <pre id="headersOutput" class="code output">-</pre>
+        </div>
+      </section>
+
+      <section class="panel stack full">
+        <div class="panel-head">
+          <h2>History</h2>
+          <button class="btn ghost" id="clearHistory">Clear</button>
+        </div>
+        <div class="history" id="historyList"></div>
+      </section>
+    </main>
+  </div>
+
+  <script src="/ui-assets/api/app.js"></script>
+</body>
+</html>
