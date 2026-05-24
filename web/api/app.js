@@ -276,13 +276,24 @@ function renderEndpoints(list) {
   list.forEach((item) => {
     const card = document.createElement("div");
     card.className = "endpoint" + (item.id === state.selectedId ? " active" : "");
-    card.innerHTML = `
-      <div class="row">
-        <span class="method">${item.method}</span>
-        <span class="path">${item.path}</span>
-      </div>
-      <div class="desc">${item.name} - ${item.description}</div>
-    `;
+    const row = document.createElement("div");
+    row.className = "row";
+
+    const method = document.createElement("span");
+    method.className = "method";
+    method.textContent = item.method;
+
+    const path = document.createElement("span");
+    path.className = "path";
+    path.textContent = item.path;
+
+    row.append(method, path);
+
+    const desc = document.createElement("div");
+    desc.className = "desc";
+    desc.textContent = `${item.name} - ${item.description}`;
+
+    card.append(row, desc);
     card.addEventListener("click", () => selectEndpoint(item.id));
     endpointList.appendChild(card);
   });
