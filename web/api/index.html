@@ -24,7 +24,7 @@
 
     <section class="hero">
       <div class="hero-copy">
-        <p class="eyebrow">Console unifiee</p>
+        <p class="eyebrow">Console unifiée</p>
         <h1>Pilote l API et rejoue les flux en direct.</h1>
         <p class="subtitle">Choisis un endpoint, ajuste le payload, envoie la requête et inspecte la réponse sans quitter le navigateur.</p>
         <div class="hero-actions">
@@ -52,7 +52,7 @@
       <aside class="panel">
         <div class="panel-head">
           <h2>Endpoints</h2>
-          <input id="searchInput" class="input" placeholder="Search endpoint" />
+          <input id="searchInput" class="input" placeholder="Rechercher un endpoint" />
         </div>
         <div class="endpoint-list" id="endpointList"></div>
       </aside>
@@ -65,25 +65,25 @@
 
         <div class="row">
           <div class="field">
-            <label>Method</label>
+           <label for="methodSelect">Method</label>
             <select id="methodSelect" class="input">
               <option>GET</option>
               <option>POST</option>
             </select>
           </div>
           <div class="field grow">
-            <label>Path</label>
+            <label for="pathInput">Path</label>
             <input id="pathInput" class="input" placeholder="/health" />
           </div>
         </div>
 
         <div class="field">
-          <label>Headers (JSON)</label>
+          <label for="headersInput">Headers (JSON)</label>
           <textarea id="headersInput" class="code" rows="4" placeholder='{"X-API-Key":""}'></textarea>
         </div>
 
         <div class="field" id="bodyField">
-          <label>Body (JSON)</label>
+          <label for="bodyInput">Body (JSON)</label>
           <textarea id="bodyInput" class="code" rows="14"></textarea>
         </div>
 
