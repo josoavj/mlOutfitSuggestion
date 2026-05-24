@@ -276,13 +276,24 @@ function renderEndpoints(list) {
   list.forEach((item) => {
     const card = document.createElement("div");
     card.className = "endpoint" + (item.id === state.selectedId ? " active" : "");
-    card.innerHTML = `
-      <div class="row">
-        <span class="method">${item.method}</span>
-        <span class="path">${item.path}</span>
-      </div>
-      <div class="desc">${item.name} - ${item.description}</div>
-    `;
+    const row = document.createElement("div");
+    row.className = "row";
+
+    const method = document.createElement("span");
+    method.className = "method";
+    method.textContent = item.method;
+
+    const path = document.createElement("span");
+    path.className = "path";
+    path.textContent = item.path;
+
+    row.append(method, path);
+
+    const desc = document.createElement("div");
+    desc.className = "desc";
+    desc.textContent = `${item.name} - ${item.description}`;
+
+    card.append(row, desc);
     card.addEventListener("click", () => selectEndpoint(item.id));
     endpointList.appendChild(card);
   });
@@ -328,11 +339,17 @@ function addHistory(entry) {
   state.history.forEach((item) => {
     const row = document.createElement("div");
     row.className = "history-item";
-    row.innerHTML = `
-      <div>${item.method} ${item.path}</div>
-      <div class="status ${item.ok ? "ok" : "err"}">${item.status}</div>
-      <div>${item.duration} ms</div>
-    `;
+    const summary = document.createElement("div");
+    summary.textContent = `${item.method} ${item.path}`;
+
+    const status = document.createElement("div");
+    status.className = `status ${item.ok ? "ok" : "err"}`;
+    status.textContent = String(item.status);
+
+    const duration = document.createElement("div");
+    duration.textContent = `${item.duration} ms`;
+
+    row.append(summary, status, duration);
     historyList.appendChild(row);
   });
 }
@@ -341,7 +358,8 @@ async function sendRequest() {
   const baseUrl = baseUrlInput.value.trim() || window.location.origin;
   const method = methodSelect.value.toUpperCase();
   const path = pathInput.value.trim() || "/health";
-  const url = baseUrl.replace(/\/$/, "") + path;
+  const normalizedPath = path.startsWith("/") ? path : `/${path}`;
+  const url = baseUrl.replace(/\/$/, "") + normalizedPath;
 
   let headers = {};
   try {
