@@ -74,6 +74,7 @@ body {
   grid-template-columns: 1.3fr 0.7fr;
   gap: 18px;
   margin: 24px 0;
+  align-items: stretch;
 }
 
 .hero-copy { display: grid; gap: 10px; }
@@ -99,20 +100,25 @@ body {
 
 .layout {
   display: grid;
-  grid-template-columns: 280px 1fr 1fr;
-  gap: 16px;
+  grid-template-columns: minmax(240px, 320px) minmax(320px, 1fr) minmax(320px, 1fr);
+  gap: 18px;
+  align-items: start;
 }
 
 .panel {
   background: var(--panel);
   border: 1px solid var(--panel-border);
   border-radius: var(--radius);
-  padding: 16px;
+  padding: 18px;
   box-shadow: var(--shadow);
 }
 
 .panel.full { grid-column: 1 / -1; }
-.panel.stack { display: grid; gap: 14px; }
+.panel.stack {
+  display: grid;
+  gap: 14px;
+  align-content: start;
+}
 .panel-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
 .panel-head h2 { font-size: 16px; }
 
@@ -185,7 +191,7 @@ body {
   border: 1px solid rgba(130, 188, 255, 0.35);
 }
 
-.row { display: flex; gap: 10px; }
+.row { display: flex; gap: 12px; align-items: center; }
 .row .grow { flex: 1; }
 
 .meta {
