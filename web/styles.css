@@ -4,12 +4,12 @@
   --bg: #07121f;
   --bg2: #0a1b2d;
   --bg3: #12335b;
-  --glass-bg: rgba(14, 30, 52, 0.75);
+  --glass-bg: rgba(14, 30, 52, 0.85);
   --glass-border: rgba(130, 188, 255, 0.35);
   --glass-shadow: 0 16px 40px rgba(2, 10, 24, 0.55);
-  --panel-bg: rgba(14, 30, 52, 0.7);
+  --panel-bg: rgba(14, 30, 52, 0.85);
   --panel-border: rgba(130, 188, 255, 0.35);
-  --input-bg: rgba(8, 20, 35, 0.7);
+  --input-bg: rgba(8, 20, 35, 0.75);
   --input-border: rgba(130, 188, 255, 0.35);
   --label-color: rgba(196, 218, 246, 0.8);
   --ink: #f4f8ff;
@@ -75,8 +75,8 @@ textarea {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
-  padding: 0.6rem 1rem;
+  gap: 18px;
+  padding: 14px 16px;
   border: 1px solid var(--glass-border);
   background: rgba(9, 23, 41, 0.7);
   box-shadow: var(--glass-shadow);
@@ -88,26 +88,26 @@ textarea {
 }
 
 .brand-title {
-  font-size: 13px;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--accent2);
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--ink);
 }
 
 .brand-sub {
-  font-size: 12px;
-  color: var(--ink2);
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--accent2);
 }
 
 .nav-links {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  padding: 4px;
-  border-radius: var(--radius-pill);
-  background: rgba(8, 20, 36, 0.55);
-  border: 1px solid rgba(130, 188, 255, 0.3);
+  padding: 0;
+  border-radius: 0;
+  background: transparent;
+  border: 0;
 }
 
 .nav-link {
@@ -115,9 +115,9 @@ textarea {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 6px 12px;
+  padding: 8px 14px;
   border-radius: var(--radius-pill);
-  font-size: 12.5px;
+  font-size: 13px;
   font-weight: 600;
   color: var(--ink);
   background: rgba(30, 68, 112, 0.6);
@@ -157,8 +157,7 @@ textarea {
   text-transform: uppercase; color: var(--accent2); margin-bottom: 5px;
 }
 
-.hero h1 { font-size: 21px; font-weight: 600; letter-spacing: -0.4px; margin-bottom: 5px; color: var(--ink); }
-.hero h1 { font-size: 22px; }
+.hero h1 { font-size: 30px; font-weight: 600; letter-spacing: -0.4px; margin-bottom: 5px; color: var(--ink); }
 .hero .subtitle { font-size: 13.5px; color: var(--ink2); max-width: 55ch; }
 
 .hero-layout {
