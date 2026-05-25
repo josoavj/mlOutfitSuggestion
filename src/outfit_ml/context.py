@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import os
+import time
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from urllib.parse import urlencode
@@ -17,6 +18,38 @@ class OpenWeatherError(RuntimeError):
 
 class AppIntegrationError(RuntimeError):
     pass
+
+
+_CACHE_WEATHER: dict[tuple[str], tuple[float, tuple[WeatherInput, OpenWeatherResponse]]] = {}
+_CACHE_PROFILE: dict[tuple[str, str], tuple[float, UserProfile]] = {}
+_CACHE_AGENDA: dict[tuple[str, str], tuple[float, list[AgendaEntry]]] = {}
+
+
+def _cache_ttl_seconds(env_key: str, default: int) -> int:
+    raw = os.getenv(env_key, str(default)).strip()
+    try:
+        return max(0, int(raw))
+    except ValueError:
+        return default
+
+
+def _cache_get(cache: dict, key: tuple, ttl_seconds: int):
+    if ttl_seconds <= 0:
+        return None
+    entry = cache.get(key)
+    if not entry:
+        return None
+    expires_at, value = entry
+    if time.monotonic() >= expires_at:
+        cache.pop(key, None)
+        return None
+    return value
+
+
+def _cache_set(cache: dict, key: tuple, ttl_seconds: int, value):
+    if ttl_seconds <= 0:
+        return
+    cache[key] = (time.monotonic() + ttl_seconds, value)
 
 
 def _normalize_body_shape(value: object) -> str:
@@ -159,6 +192,12 @@ def _fetch_supabase_agenda(user_id: str) -> list[dict]:
 
 
 def fetch_openweather_detailed(location: str) -> tuple[WeatherInput, OpenWeatherResponse]:
+    ttl_seconds = _cache_ttl_seconds("CACHE_TTL_WEATHER", 600)
+    cache_key = (location.strip().lower(),)
+    cached = _cache_get(_CACHE_WEATHER, cache_key, ttl_seconds)
+    if cached:
+        return cached
+
     api_key = os.getenv("OPENWEATHER_API_KEY", "").strip()
     if not api_key:
         raise OpenWeatherError("OPENWEATHER_API_KEY manquante")
@@ -179,6 +218,7 @@ def fetch_openweather_detailed(location: str) -> tuple[WeatherInput, OpenWeather
     data = OpenWeatherResponse.model_validate(json.loads(payload))
     condition = data.weather[0].main if data.weather else "clear"
     weather = WeatherInput(temperature_c=data.main.temp, condition=condition)
+    _cache_set(_CACHE_WEATHER, cache_key, ttl_seconds, (weather, data))
     return weather, data
 
 
@@ -200,6 +240,12 @@ def agenda_to_labels(entries: list[AgendaEntry]) -> list[str]:
 
 def fetch_user_profile(user_id: str) -> UserProfile:
     source = _data_source()
+    ttl_seconds = _cache_ttl_seconds("CACHE_TTL_PROFILE", 300)
+    cache_key = (source, str(user_id))
+    cached = _cache_get(_CACHE_PROFILE, cache_key, ttl_seconds)
+    if cached:
+        return cached
+
     if source == "file":
         file_template = os.getenv(
             "MAGICMIRROR_PROFILE_FILE_TEMPLATE",
@@ -250,7 +296,7 @@ def fetch_user_profile(user_id: str) -> UserProfile:
     else:
         style_preferences = []
 
-    return UserProfile(
+    profile = UserProfile(
         user_id=str(raw.get("user_id") or user_id),
         gender=str(raw.get("gender") or "unknown"),
         age=int(raw.get("age")),
@@ -264,10 +310,18 @@ def fetch_user_profile(user_id: str) -> UserProfile:
         body_measurements=measurements or None,
         location=str(location),
     )
+    _cache_set(_CACHE_PROFILE, cache_key, ttl_seconds, profile)
+    return profile
 
 
 def fetch_today_agenda_entries(user_id: str) -> list[AgendaEntry]:
     source = _data_source()
+    ttl_seconds = _cache_ttl_seconds("CACHE_TTL_AGENDA", 300)
+    cache_key = (source, str(user_id))
+    cached = _cache_get(_CACHE_AGENDA, cache_key, ttl_seconds)
+    if cached:
+        return cached
+
     if source == "file":
         file_template = os.getenv(
             "MAGICMIRROR_AGENDA_FILE_TEMPLATE",
@@ -327,4 +381,5 @@ def fetch_today_agenda_entries(user_id: str) -> list[AgendaEntry]:
             )
         )
 
+    _cache_set(_CACHE_AGENDA, cache_key, ttl_seconds, entries)
     return entries

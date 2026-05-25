@@ -4,24 +4,26 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Outfit Suggestion · Test</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="/ui-assets/styles.css?v=3" />
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23102149'/%3E%3Cpath d='M16 40c6-8 14-14 24-18 4-2 8 2 8 6 0 12-10 20-22 20-6 0-10-4-10-8z' fill='%2372b0ff'/%3E%3Cpath d='M20 24c2-6 6-10 12-12 2-1 4 0 4 2 0 4-4 10-10 12-4 2-6 0-6-2z' fill='%239bc7ff'/%3E%3C/svg%3E" />
 </head>
 <body>
   <div class="scene">
     <div class="shell">
-      <div class="glass top-nav">
+      <header class="top">
         <div class="brand">
-          <span class="brand-title">Outfit Suggestion</span>
-          <span class="brand-sub">Test et validation du modèle ML</span>
+          <span class="brand-kicker">Outfit Suggestion</span>
+          <span class="brand-title">Test et validation du modèle ML</span>
         </div>
-        <div class="nav-links">
+        <nav class="nav">
           <a class="nav-link" href="/ui">Présentation</a>
           <a class="nav-link" href="/ui-assets/test.html" aria-current="page">Test</a>
           <a class="nav-link" href="/ui-assets/metrics.html">Métriques</a>
           <a class="nav-link" href="/ui-assets/api/index.html">API</a>
-        </div>
-      </div>
+        </nav>
+      </header>
 
       <div class="glass hero">
         <div class="hero-orb orb1"></div>
@@ -375,7 +377,11 @@
       const el = byId(elId);
       el.className = 'status-pill' + (type?' '+type:'');
       const anim = type==='loading' ? ' anim' : '';
-      el.innerHTML = '<span class="pulse'+anim+'"></span>' + text;
+      el.textContent = '';
+      const pulse = document.createElement('span');
+      pulse.className = 'pulse' + anim;
+      el.appendChild(pulse);
+      el.appendChild(document.createTextNode(text));
     }
 
     function getHeaders() {
@@ -441,7 +447,7 @@
 
     function renderSuggestions(payload) {
       const cards = byId('cards');
-      cards.innerHTML = '';
+      cards.replaceChildren();
       const ctx = payload && payload.resolved_context;
       const suggestions = (payload&&payload.suggestions)||[];
 
@@ -459,28 +465,76 @@
           : '—';
         const contextCard = document.createElement('div');
         contextCard.className = 'context-card';
-        contextCard.innerHTML = `
-          <p class="context-title">Contexte OpenWeather</p>
-          <p><strong>Localisation :</strong> ${ctx.location || '—'}</p>
-          <p><strong>Condition :</strong> ${conditionText === '—' ? '—' : toTitleCase(toFrenchText(conditionText))}</p>
-          <p><strong>Description :</strong> ${descriptionText === '—' ? '—' : toSentenceCase(toFrenchText(descriptionText))}</p>
-          <p><strong>Température :</strong> ${openweather && typeof openweather.temperature_c === 'number' ? openweather.temperature_c.toFixed(1) + ' °C' : '—'}</p>
-          <p><strong>Ressenti :</strong> ${openweather && typeof openweather.feels_like_c === 'number' ? openweather.feels_like_c.toFixed(1) + ' °C' : '—'}</p>
-          <p><strong>Humidité :</strong> ${openweather && Number.isFinite(openweather.humidity_percent) ? openweather.humidity_percent + ' %' : '—'}</p>
-          <p><strong>Vent :</strong> ${openweather && typeof openweather.wind_speed_m_s === 'number' ? openweather.wind_speed_m_s.toFixed(1) + ' m/s' : '—'}</p>
-          <p><strong>Agenda interprété :</strong> ${agendaText}</p>
-        `;
+        const contextTitle = document.createElement('p');
+        contextTitle.className = 'context-title';
+        contextTitle.textContent = 'Contexte OpenWeather';
+        contextCard.appendChild(contextTitle);
+
+        const addContextRow = (label, value) => {
+          const row = document.createElement('p');
+          const strong = document.createElement('strong');
+          strong.textContent = label + ' :';
+          row.appendChild(strong);
+          row.appendChild(document.createTextNode(' ' + value));
+          contextCard.appendChild(row);
+        };
+
+        addContextRow('Localisation', ctx.location || '—');
+        addContextRow(
+          'Condition',
+          conditionText === '—' ? '—' : toTitleCase(toFrenchText(conditionText))
+        );
+        addContextRow(
+          'Description',
+          descriptionText === '—' ? '—' : toSentenceCase(toFrenchText(descriptionText))
+        );
+        addContextRow(
+          'Température',
+          openweather && typeof openweather.temperature_c === 'number'
+            ? openweather.temperature_c.toFixed(1) + ' °C'
+            : '—'
+        );
+        addContextRow(
+          'Ressenti',
+          openweather && typeof openweather.feels_like_c === 'number'
+            ? openweather.feels_like_c.toFixed(1) + ' °C'
+            : '—'
+        );
+        addContextRow(
+          'Humidité',
+          openweather && Number.isFinite(openweather.humidity_percent)
+            ? openweather.humidity_percent + ' %'
+            : '—'
+        );
+        addContextRow(
+          'Vent',
+          openweather && typeof openweather.wind_speed_m_s === 'number'
+            ? openweather.wind_speed_m_s.toFixed(1) + ' m/s'
+            : '—'
+        );
+        addContextRow('Agenda interprété', agendaText);
         cards.appendChild(contextCard);
       }
 
       if (!suggestions.length) {
-        cards.innerHTML = '<div class="card"><p>Aucune suggestion retournée.</p></div>';
+        cards.replaceChildren();
+        const emptyCard = document.createElement('div');
+        emptyCard.className = 'card';
+        const emptyText = document.createElement('p');
+        emptyText.textContent = 'Aucune suggestion retournée.';
+        emptyCard.appendChild(emptyText);
+        cards.appendChild(emptyCard);
         return;
       }
 
       const shapeSummary = document.createElement('p');
       shapeSummary.className = 'muted';
-      shapeSummary.innerHTML = '<strong>Morphologie interprétée :</strong> ' + bodyShapeLabel(payload.inferred_body_shape);
+      const shapeStrong = document.createElement('strong');
+      shapeStrong.textContent = 'Morphologie interprétée :';
+      shapeSummary.appendChild(shapeStrong);
+      shapeSummary.appendChild(
+        document.createTextNode(' ' + bodyShapeLabel(payload.inferred_body_shape))
+      );
       cards.appendChild(shapeSummary);
 
       for (const item of suggestions) {
@@ -488,20 +542,46 @@
           ? item.reasons.map((reason) => toSentenceCase(toFrenchText(reason))).join(', ')
           : '';
         const outfitItems = Array.isArray(item.outfit_items) ? item.outfit_items : [];
-        const outfitItemsHtml = outfitItems.length
-          ? `<ul class="outfit-items">${outfitItems.map(v => `<li>${v}</li>`).join('')}</ul>`
-          : '<p class="muted">Tenue détaillée non disponible</p>';
         const card = document.createElement('article');
         card.className = 'card';
-        card.innerHTML = `
-          <div class="card-header">
-            <h4>${item.outfit_label||item.outfit_id}</h4>
-            <span class="score-pill">${Number(item.score).toFixed(4)}</span>
-          </div>
-          <p><strong>Tenue proposée :</strong></p>
-          ${outfitItemsHtml}
-          ${reasons ? '<p class="reasons">'+reasons+'</p>' : ''}
-        `;
+        const header = document.createElement('div');
+        header.className = 'card-header';
+        const title = document.createElement('h4');
+        title.textContent = item.outfit_label || item.outfit_id;
+        const score = document.createElement('span');
+        score.className = 'score-pill';
+        score.textContent = Number(item.score).toFixed(4);
+        header.append(title, score);
+        card.appendChild(header);
+
+        const outfitLabel = document.createElement('p');
+        const outfitStrong = document.createElement('strong');
+        outfitStrong.textContent = 'Tenue proposée :';
+        outfitLabel.appendChild(outfitStrong);
+        card.appendChild(outfitLabel);
+
+        if (outfitItems.length) {
+          const list = document.createElement('ul');
+          list.className = 'outfit-items';
+          outfitItems.forEach((value) => {
+            const li = document.createElement('li');
+            li.textContent = String(value);
+            list.appendChild(li);
+          });
+          card.appendChild(list);
+        } else {
+          const empty = document.createElement('p');
+          empty.className = 'muted';
+          empty.textContent = 'Tenue détaillée non disponible';
+          card.appendChild(empty);
+        }
+
+        if (reasons) {
+          const reasonEl = document.createElement('p');
+          reasonEl.className = 'reasons';
+          reasonEl.textContent = reasons;
+          card.appendChild(reasonEl);
+        }
         cards.appendChild(card);
       }
     }
@@ -535,7 +615,7 @@
       const resultTitle = firstName ? 'Tenues recommandées pour ' + firstName : 'Tenues recommandées';
       const resultTitleEl = byId('resultTitle');
       if (resultTitleEl) resultTitleEl.textContent = resultTitle;
-      chipHost.innerHTML = '';
+      chipHost.replaceChildren();
       const chips = [];
       if (ctx) {
         if (ctx.location) chips.push('Lieu: ' + ctx.location);
@@ -571,7 +651,7 @@
       });
 
       const reasonHost = byId('reasonChips');
-      reasonHost.innerHTML = '';
+      reasonHost.replaceChildren();
       const reasonCounts = {};
       suggestions.forEach((item) => {
         if (!Array.isArray(item.reasons)) return;
@@ -602,8 +682,8 @@
     function resetSummary() {
       ['sumCount','sumTopScore','sumAvgScore','sumQuality','sumLatency','sumDiversity','sumOutfits','sumBody']
         .forEach((id) => { const el = byId(id); if (el) el.textContent = '—'; });
-      byId('contextChips').innerHTML = '';
-      byId('reasonChips').innerHTML = '';
+      byId('contextChips').replaceChildren();
+      byId('reasonChips').replaceChildren();
       const resultTitleEl = byId('resultTitle');
       if (resultTitleEl) resultTitleEl.textContent = 'Tenues recommandées';
     }
@@ -628,7 +708,7 @@
         if (!r.ok) {
           const msg = data&&(data.detail||data.message)?data.detail||data.message:'Erreur API';
           setStatus('status','Erreur '+r.status+': '+msg,'err');
-          byId('cards').innerHTML = '';
+          byId('cards').replaceChildren();
           resetSummary();
           return;
         }
@@ -637,7 +717,7 @@
         renderSuggestions(data);
       } catch(e) {
         setStatus('status','Erreur réseau : '+e,'err');
-        byId('cards').innerHTML = '';
+        byId('cards').replaceChildren();
         resetSummary();
       }
     }
