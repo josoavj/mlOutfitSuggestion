@@ -29,6 +29,34 @@ class OutfitRecommender:
     ) -> None:
         self.model = joblib.load(model_path)
         self.catalog: list[OutfitItem] = load_catalog(catalog_path)
+        self._catalog_cache = self._build_catalog_cache(self.catalog)
+
+    @staticmethod
+    def _build_catalog_cache(catalog: list[OutfitItem]) -> list[dict]:
+        cached: list[dict] = []
+        for item in catalog:
+            styles = {style.lower() for style in item.styles}
+            cached.append(
+                {
+                    "item": item,
+                    "styles": styles,
+                    "occasions": set(item.occasions),
+                    "weather": set(item.weather),
+                    "genders": set(item.genders),
+                    "body_shapes": set(item.body_shapes),
+                    "pref_clothing": preferred_size_for_item(item.id, "clothing"),
+                    "pref_top": preferred_size_for_item(item.id, "top"),
+                    "pref_bottom": preferred_size_for_item(item.id, "bottom"),
+                    "pref_shoe_bucket": preferred_shoe_bucket_for_item(item.id),
+                    "outfit_style_classic": int("classic" in styles),
+                    "outfit_style_minimalist": int("minimalist" in styles),
+                    "outfit_style_casual": int("casual" in styles),
+                    "outfit_style_sport": int("sport" in styles),
+                    "outfit_style_elegant": int("elegant" in styles),
+                    "outfit_style_practical": int("practical" in styles),
+                }
+            )
+        return cached
 
     @staticmethod
     def _items_for_gender(item: OutfitItem, gender: str) -> list[str]:
@@ -45,9 +73,13 @@ class OutfitRecommender:
         inferred_shape: str,
         occasion: str,
         weather: str,
-        item: OutfitItem,
+        pref_flags: dict[str, int],
+        pref_style_set: set[str],
+        normalized_sizes: tuple[str, str, str, str],
+        cache_row: dict,
     ) -> dict[str, int | str]:
-        pref_flags = encode_style_flags(request.style_preferences)
+        item: OutfitItem = cache_row["item"]
+        clothing_size, top_size, bottom_size, shoe_bucket = normalized_sizes
 
         row: dict[str, int | str] = {
             "age": request.age,
@@ -56,38 +88,28 @@ class OutfitRecommender:
             "body_shape": inferred_shape,
             "occasion": occasion,
             "weather": weather,
-            "clothing_size": normalize_size(request.clothing_size),
-            "top_size": normalize_size(request.top_size),
-            "bottom_size": normalize_size(request.bottom_size),
-            "shoe_bucket": shoe_size_bucket(request.shoe_size),
+            "clothing_size": clothing_size,
+            "top_size": top_size,
+            "bottom_size": bottom_size,
+            "shoe_bucket": shoe_bucket,
             "outfit_id": item.id,
-            "style_match": int(any(s in item.styles for s in request.style_preferences)),
-            "occasion_match": int(occasion in item.occasions),
-            "weather_match": int(weather in item.weather),
-            "shape_match": int(inferred_shape in item.body_shapes or inferred_shape == "unknown"),
-            "gender_match": int(request.gender in item.genders or "unisex" in item.genders),
-            "clothing_size_match": int(
-                normalize_size(request.clothing_size) == preferred_size_for_item(item.id, "clothing")
-            ),
-            "top_size_match": int(
-                normalize_size(request.top_size) == preferred_size_for_item(item.id, "top")
-            ),
-            "bottom_size_match": int(
-                normalize_size(request.bottom_size) == preferred_size_for_item(item.id, "bottom")
-            ),
-            "shoe_size_match": int(
-                shoe_size_bucket(request.shoe_size) == preferred_shoe_bucket_for_item(item.id)
-            ),
+            "style_match": int(any(style in cache_row["styles"] for style in pref_style_set)),
+            "occasion_match": int(occasion in cache_row["occasions"]),
+            "weather_match": int(weather in cache_row["weather"]),
+            "shape_match": int(inferred_shape in cache_row["body_shapes"] or inferred_shape == "unknown"),
+            "gender_match": int(request.gender in cache_row["genders"] or "unisex" in cache_row["genders"]),
+            "clothing_size_match": int(clothing_size == cache_row["pref_clothing"]),
+            "top_size_match": int(top_size == cache_row["pref_top"]),
+            "bottom_size_match": int(bottom_size == cache_row["pref_bottom"]),
+            "shoe_size_match": int(shoe_bucket == cache_row["pref_shoe_bucket"]),
             **pref_flags,
+            "outfit_style_classic": cache_row["outfit_style_classic"],
+            "outfit_style_minimalist": cache_row["outfit_style_minimalist"],
+            "outfit_style_casual": cache_row["outfit_style_casual"],
+            "outfit_style_sport": cache_row["outfit_style_sport"],
+            "outfit_style_elegant": cache_row["outfit_style_elegant"],
+            "outfit_style_practical": cache_row["outfit_style_practical"],
         }
-
-        styles = {style.lower() for style in item.styles}
-        row["outfit_style_classic"] = int("classic" in styles)
-        row["outfit_style_minimalist"] = int("minimalist" in styles)
-        row["outfit_style_casual"] = int("casual" in styles)
-        row["outfit_style_sport"] = int("sport" in styles)
-        row["outfit_style_elegant"] = int("elegant" in styles)
-        row["outfit_style_practical"] = int("practical" in styles)
 
         return row
 
@@ -122,10 +144,29 @@ class OutfitRecommender:
         occasion = dominant_occasion(request.agenda)
         weather = weather_bucket(request.weather.temperature_c, request.weather.condition)
         agenda_labels = self._agenda_labels(request.agenda)
+        pref_flags = encode_style_flags(request.style_preferences)
+        pref_style_set = {style.strip().lower() for style in request.style_preferences}
+        normalized_sizes = (
+            normalize_size(request.clothing_size),
+            normalize_size(request.top_size),
+            normalize_size(request.bottom_size),
+            shoe_size_bucket(request.shoe_size),
+        )
 
         rows: list[dict[str, int | str]] = []
-        for item in self.catalog:
-            rows.append(self._row_for_item(request, inferred_shape, occasion, weather, item))
+        for cache_row in self._catalog_cache:
+            rows.append(
+                self._row_for_item(
+                    request,
+                    inferred_shape,
+                    occasion,
+                    weather,
+                    pref_flags,
+                    pref_style_set,
+                    normalized_sizes,
+                    cache_row,
+                )
+            )
 
         features_df = pd.DataFrame(rows)
         scores = self.model.predict_proba(features_df)[:, 1]
