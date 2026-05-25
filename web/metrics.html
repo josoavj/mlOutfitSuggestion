@@ -4,6 +4,8 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Outfit Suggestion · Métriques</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="/ui-assets/styles.css?v=3" />
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23102149'/%3E%3Cpath d='M16 40c6-8 14-14 24-18 4-2 8 2 8 6 0 12-10 20-22 20-6 0-10-4-10-8z' fill='%2372b0ff'/%3E%3Cpath d='M20 24c2-6 6-10 12-12 2-1 4 0 4 2 0 4-4 10-10 12-4 2-6 0-6-2z' fill='%239bc7ff'/%3E%3C/svg%3E" />
 </head>
@@ -234,7 +236,11 @@
       const el = byId(elId);
       el.className = 'status-pill' + (type?' '+type:'');
       const anim = type==='loading' ? ' anim' : '';
-      el.innerHTML = '<span class="pulse'+anim+'"></span>' + text;
+      el.textContent = '';
+      const pulse = document.createElement('span');
+      pulse.className = 'pulse' + anim;
+      el.appendChild(pulse);
+      el.appendChild(document.createTextNode(text));
     }
 
     function renderPill(label) {
@@ -275,16 +281,34 @@
 
     function renderFeedbackBars(counts) {
       const host = byId('feedbackBars');
-      host.innerHTML = '';
+      host.replaceChildren();
       const entries = Object.entries(counts||{});
-      if (!entries.length) { host.innerHTML = '<p class="muted">Aucun événement feedback disponible.</p>'; return; }
+      if (!entries.length) {
+        const empty = document.createElement('p');
+        empty.className = 'muted';
+        empty.textContent = 'Aucun événement feedback disponible.';
+        host.appendChild(empty);
+        return;
+      }
       const maxVal = Math.max(...entries.map(([,v])=>Number(v)||0),1);
       for (const [label,rawVal] of entries.sort((a,b)=>Number(b[1])-Number(a[1]))) {
         const value = Number(rawVal)||0;
         const pct = Math.max(2, Math.round(value/maxVal*100));
         const row = document.createElement('div');
         row.className = 'bar-row';
-        row.innerHTML = `<span class="bar-label">${label}</span><div class="bar-track"><div class="bar-fill" style="width:${pct}%"></div></div><span class="bar-value">${value}</span>`;
+        const labelEl = document.createElement('span');
+        labelEl.className = 'bar-label';
+        labelEl.textContent = label;
+        const track = document.createElement('div');
+        track.className = 'bar-track';
+        const fill = document.createElement('div');
+        fill.className = 'bar-fill';
+        fill.style.width = pct + '%';
+        track.appendChild(fill);
+        const valueEl = document.createElement('span');
+        valueEl.className = 'bar-value';
+        valueEl.textContent = String(value);
+        row.append(labelEl, track, valueEl);
         host.appendChild(row);
       }
     }
@@ -340,12 +364,15 @@
 
     function renderModelMetrics(model) {
       const host = byId('modelMetrics');
-      host.innerHTML = '';
+      host.replaceChildren();
       const payload = model && (model.metrics || model.metrics_summary || model.metrics_snapshot || {});
       const metrics = payload && payload.metrics ? payload.metrics : payload;
       const entries = Object.entries(metrics || {}).filter(([, value]) => value !== null && value !== undefined);
       if (!entries.length) {
-        host.innerHTML = '<p class="muted">Aucune métrique détaillée disponible.</p>';
+        const empty = document.createElement('p');
+        empty.className = 'muted';
+        empty.textContent = 'Aucune métrique détaillée disponible.';
+        host.appendChild(empty);
         return;
       }
       const labelMap = {
@@ -370,8 +397,13 @@
       ordered.slice(0, 8).forEach(([key, value]) => {
         const row = document.createElement('div');
         row.className = 'metric-row';
-        row.innerHTML = '<span class="metric-label">' + (labelMap[key] || humanizeKey(key)) + '</span>' +
-          '<span class="metric-value">' + formatMetricValue(key, Number(value)) + '</span>';
+        const labelEl = document.createElement('span');
+        labelEl.className = 'metric-label';
+        labelEl.textContent = labelMap[key] || humanizeKey(key);
+        const valueEl = document.createElement('span');
+        valueEl.className = 'metric-value';
+        valueEl.textContent = formatMetricValue(key, Number(value));
+        row.append(labelEl, valueEl);
         host.appendChild(row);
       });
     }
@@ -420,16 +452,24 @@
 
     function fillMetricTable(hostId, entries) {
       const host = byId(hostId);
-      host.innerHTML = '';
+      host.replaceChildren();
       if (!entries.length) {
-        host.innerHTML = '<p class="muted">Aucune information disponible.</p>';
+        const empty = document.createElement('p');
+        empty.className = 'muted';
+        empty.textContent = 'Aucune information disponible.';
+        host.appendChild(empty);
         return;
       }
       entries.forEach((entry) => {
         const row = document.createElement('div');
         row.className = 'metric-row';
-        row.innerHTML = '<span class="metric-label">' + entry.label + '</span>' +
-          '<span class="metric-value">' + formatValue(entry.value) + '</span>';
+        const labelEl = document.createElement('span');
+        labelEl.className = 'metric-label';
+        labelEl.textContent = entry.label;
+        const valueEl = document.createElement('span');
+        valueEl.className = 'metric-value';
+        valueEl.textContent = formatValue(entry.value);
+        row.append(labelEl, valueEl);
         host.appendChild(row);
       });
     }
@@ -461,7 +501,7 @@
       if (splitMode) pills.push('Découpage: ' + normalizeSplitMode(splitMode));
       if (samples) pills.push('Échantillons: ' + formatNumber(Number(samples)));
       const pillHost = byId('modelPills');
-      pillHost.innerHTML = '';
+      pillHost.replaceChildren();
       if (!pills.length) {
         const chip = document.createElement('span');
         chip.className = 'chip';
@@ -514,12 +554,12 @@
           const msg=data&&(data.detail||data.message)?data.detail||data.message:'Erreur API';
           setStatus('dashStatus','Erreur '+r.status+': '+msg,'err');
           ['kpiService','kpiDataSource','kpiModel','kpiFeedback','kpiFreshness'].forEach(id=>byId(id).textContent='—');
-          byId('feedbackBars').innerHTML='';
-          byId('modelMetrics').innerHTML='';
+          byId('feedbackBars').replaceChildren();
+          byId('modelMetrics').replaceChildren();
           byId('modelSummaryText').textContent = '—';
-          byId('modelPills').innerHTML = '';
-          byId('learningDetails').innerHTML = '';
-          byId('modelDetails').innerHTML = '';
+          byId('modelPills').replaceChildren();
+          byId('learningDetails').replaceChildren();
+          byId('modelDetails').replaceChildren();
           return;
         }
         setStatus('dashStatus','OK','ok');
