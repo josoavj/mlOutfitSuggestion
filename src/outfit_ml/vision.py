@@ -3,6 +3,7 @@ from __future__ import annotations
 import base64
 import json
 import os
+import threading
 from io import BytesIO
 from pathlib import Path
 
@@ -70,6 +71,8 @@ class FaceRegistry:
     def __init__(self, registry_path: Path | None = None) -> None:
         raw = os.getenv("FACE_REGISTRY_PATH", "data/vision/face_registry.json")
         self.registry_path = registry_path or Path(raw)
+        self._lock = threading.Lock()
+        self._registry = self._load()
 
     def _load(self) -> dict[str, list[float]]:
         if not self.registry_path.exists():
@@ -96,9 +99,10 @@ class FaceRegistry:
 
     def enroll(self, user_id: str, image_base64: str) -> None:
         embedding = extract_face_embedding(image_base64)
-        registry = self._load()
-        registry[user_id] = embedding
-        self._save(registry)
+        with self._lock:
+            self._registry[user_id] = embedding
+            registry_snapshot = dict(self._registry)
+        self._save(registry_snapshot)
 
     def identify(
         self,
@@ -107,7 +111,8 @@ class FaceRegistry:
         max_results: int = 1,
     ) -> list[FaceMatch]:
         probe = np.array(extract_face_embedding(image_base64), dtype=np.float64)
-        registry = self._load()
+        with self._lock:
+            registry = dict(self._registry)
 
         if not registry:
             return []
