@@ -256,6 +256,9 @@ const historyList = el("historyList");
 const lastStatus = el("lastStatus");
 const clearHistory = el("clearHistory");
 
+const latencyClasses = ["latency-excellent", "latency-good", "latency-medium", "latency-bad"];
+const statusClasses = ["status-ok", "status-warn", "status-err"];
+
 const state = {
   selectedId: "health",
   history: [],
@@ -332,6 +335,36 @@ function setStatus(text, type) {
   lastStatus.style.color = type === "err" ? "#ff7a6e" : "#3ee29a";
 }
 
+function setLatency(duration) {
+  timePill.classList.remove(...latencyClasses);
+  if (typeof duration !== "number") {
+    return;
+  }
+  if (duration <= 120) {
+    timePill.classList.add("latency-excellent");
+  } else if (duration <= 300) {
+    timePill.classList.add("latency-good");
+  } else if (duration <= 800) {
+    timePill.classList.add("latency-medium");
+  } else {
+    timePill.classList.add("latency-bad");
+  }
+}
+
+function setHttpStatusColor(statusCode) {
+  httpStatus.classList.remove(...statusClasses);
+  if (typeof statusCode !== "number") {
+    return;
+  }
+  if (statusCode >= 200 && statusCode < 300) {
+    httpStatus.classList.add("status-ok");
+  } else if (statusCode >= 300 && statusCode < 400) {
+    httpStatus.classList.add("status-warn");
+  } else {
+    httpStatus.classList.add("status-err");
+  }
+}
+
 function addHistory(entry) {
   state.history.unshift(entry);
   state.history = state.history.slice(0, 12);
@@ -405,9 +438,11 @@ async function sendRequest() {
       .join("\n") || "-";
 
     httpStatus.textContent = `${response.status} ${response.statusText}`;
+    setHttpStatusColor(response.status);
     sizeStat.textContent = `${rawText.length} bytes`;
     typeStat.textContent = contentType;
     timePill.textContent = `${duration} ms`;
+    setLatency(duration);
 
     setStatus(response.ok ? "Success" : "Error", response.ok ? "ok" : "err");
     addHistory({ method, path, status: response.status, ok: response.ok, duration });
@@ -415,9 +450,11 @@ async function sendRequest() {
     responseOutput.textContent = String(err);
     headersOutput.textContent = "-";
     httpStatus.textContent = "-";
+    setHttpStatusColor(null);
     sizeStat.textContent = "-";
     typeStat.textContent = "-";
     timePill.textContent = "-";
+    setLatency(null);
     setStatus("Network error", "err");
     addHistory({ method, path, status: "ERR", ok: false, duration: 0 });
   }
@@ -450,9 +487,11 @@ function resetForm() {
   responseOutput.textContent = "-";
   headersOutput.textContent = "-";
   httpStatus.textContent = "-";
+  setHttpStatusColor(null);
   sizeStat.textContent = "-";
   typeStat.textContent = "-";
   timePill.textContent = "0 ms";
+  setLatency(null);
   setStatus("Idle", "ok");
 }
 
