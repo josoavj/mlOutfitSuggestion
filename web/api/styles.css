@@ -251,6 +251,30 @@ body.page-leave {
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
+.pill.latency-excellent {
+  background: rgba(62, 226, 154, 0.18);
+  border-color: rgba(62, 226, 154, 0.6);
+  color: #7cf0bd;
+}
+
+.pill.latency-good {
+  background: rgba(130, 217, 255, 0.18);
+  border-color: rgba(130, 217, 255, 0.6);
+  color: #b7e8ff;
+}
+
+.pill.latency-medium {
+  background: rgba(245, 199, 106, 0.2);
+  border-color: rgba(245, 199, 106, 0.6);
+  color: #ffe1a1;
+}
+
+.pill.latency-bad {
+  background: rgba(255, 122, 110, 0.18);
+  border-color: rgba(255, 122, 110, 0.6);
+  color: #ffb1aa;
+}
+
 .panel-head:hover .pill {
   transform: translateY(-1px);
   box-shadow: 0 8px 16px rgba(3, 12, 26, 0.45);
@@ -278,6 +302,10 @@ body.page-leave {
 
 .meta-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--accent-2); }
 .meta-value { font-weight: 600; }
+
+.meta-value.status-ok { color: #7cf0bd; }
+.meta-value.status-warn { color: #ffe1a1; }
+.meta-value.status-err { color: #ffb1aa; }
 
 .history { display: grid; gap: 8px; }
 .history-item {
