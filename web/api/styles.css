@@ -28,7 +28,7 @@ body {
   min-height: 100vh;
   opacity: 0;
   transform: translateY(6px);
-  transition: opacity 0.22s ease, transform 0.22s ease;
+  transition: opacity 0.14s ease, transform 0.14s ease;
 }
 
 body.page-ready {
