@@ -51,7 +51,7 @@
     </section>
 
     <main class="layout">
-      <aside class="panel">
+      <aside class="panel endpoints">
         <div class="panel-head">
           <h2>Endpoints</h2>
           <input id="searchInput" class="input" placeholder="Rechercher un endpoint" />
@@ -59,7 +59,7 @@
         <div class="endpoint-list" id="endpointList"></div>
       </aside>
 
-      <section class="panel stack">
+      <section class="panel stack request">
         <div class="panel-head">
           <h2>Request</h2>
           <div class="pill" id="methodPill">GET</div>
@@ -96,7 +96,7 @@
         </div>
       </section>
 
-      <section class="panel stack">
+      <section class="panel stack response">
         <div class="panel-head">
           <h2>Response</h2>
           <div class="pill" id="timePill">0 ms</div>
@@ -125,7 +125,7 @@
         </div>
       </section>
 
-      <section class="panel stack full">
+      <section class="panel stack full history">
         <div class="panel-head">
           <h2>History</h2>
           <button class="btn ghost" id="clearHistory">Clear</button>
