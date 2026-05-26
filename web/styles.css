@@ -33,6 +33,32 @@ body {
   background: radial-gradient(circle at 20% 20%, rgba(79, 178, 255, 0.25), transparent 55%),
               radial-gradient(circle at 80% 10%, rgba(130, 217, 255, 0.25), transparent 60%),
               linear-gradient(150deg, var(--bg) 0%, var(--bg2) 55%, var(--bg3) 100%);
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 0.14s ease, transform 0.14s ease;
+}
+
+body.page-ready {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+body.page-leave {
+  opacity: 0;
+  transform: translateY(6px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body {
+    transition: none;
+    transform: none;
+    opacity: 1;
+  }
+  body.page-ready,
+  body.page-leave {
+    transform: none;
+    opacity: 1;
+  }
 }
 
 .scene {
@@ -434,9 +460,11 @@ textarea {
 }
 
 @media (max-width: 900px) {
-  .summary-float {
-    right: 10px;
-  }
+  .top { position: sticky; top: 10px; z-index: 20; flex-direction: column; align-items: stretch; gap: 12px; }
+  .brand-title { font-size: 16px; }
+  .nav { width: 100%; justify-content: flex-start; gap: 6px; }
+  .nav-link { flex: 1 1 calc(50% - 6px); text-align: center; padding: 8px 10px; }
+  .hero h1 { font-size: 24px; }
 }
 
 body.has-summary-float .scene {
