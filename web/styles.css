@@ -434,9 +434,11 @@ textarea {
 }
 
 @media (max-width: 900px) {
-  .summary-float {
-    right: 10px;
-  }
+  .top { position: sticky; top: 10px; z-index: 20; flex-direction: column; align-items: stretch; gap: 12px; }
+  .brand-title { font-size: 16px; }
+  .nav { width: 100%; justify-content: flex-start; gap: 6px; }
+  .nav-link { flex: 1 1 calc(50% - 6px); text-align: center; padding: 8px 10px; }
+  .hero h1 { font-size: 24px; }
 }
 
 body.has-summary-float .scene {
