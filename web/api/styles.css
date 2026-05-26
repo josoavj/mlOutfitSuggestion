@@ -26,6 +26,32 @@ body {
               radial-gradient(circle at 80% 10%, rgba(130, 217, 255, 0.25), transparent 60%),
               linear-gradient(150deg, var(--bg) 0%, var(--bg2) 55%, var(--bg3) 100%);
   min-height: 100vh;
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 0.22s ease, transform 0.22s ease;
+}
+
+body.page-ready {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+body.page-leave {
+  opacity: 0;
+  transform: translateY(6px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body {
+    transition: none;
+    transform: none;
+    opacity: 1;
+  }
+  body.page-ready,
+  body.page-leave {
+    transform: none;
+    opacity: 1;
+  }
 }
 
 .page {
