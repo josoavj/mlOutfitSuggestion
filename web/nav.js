@@ -42,6 +42,6 @@
 
     window.setTimeout(function () {
       window.location.href = url.href;
-    }, 200);
+    }, 120);
   });
 })();
