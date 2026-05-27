@@ -431,18 +431,11 @@ curl -X POST "http://127.0.0.1:8000/recommend" \
   "user_id": "u-001",
   "outfit_id": "smart_casual",
   "event_type": "impression",
-  "position": 0,
-  "gender": "female",
-  "age": 29,
-  "height_cm": 168,
-  "clothing_size": "m",
-  "top_size": "m",
-  "bottom_size": "m",
-  "shoe_size": "40",
-  "body_shape": "hourglass",
-  "style_preferences": ["minimalist", "elegant"],
-  "dominant_occasion": "work",
-  "weather_bucket": "rainy"
+  "score": 0.8732,
+  "metadata": {
+    "rank_position": 0,
+    "source": "ui"
+  }
 }
 ```
 
@@ -456,32 +449,22 @@ curl -X POST "http://127.0.0.1:8000/recommend" \
       "user_id": "u-001",
       "outfit_id": "smart_casual",
       "event_type": "impression",
-      "position": 0,
-      "gender": "female",
-      "age": 29,
-      "height_cm": 168,
-      "clothing_size": "m",
-      "top_size": "m",
-      "bottom_size": "m",
-      "shoe_size": "40",
-      "body_shape": "hourglass",
-      "style_preferences": ["minimalist", "elegant"],
-      "dominant_occasion": "work",
-      "weather_bucket": "rainy"
+      "score": 0.8732,
+      "metadata": {
+        "rank_position": 0,
+        "source": "ui"
+      }
     },
     {
       "session_id": "s-001",
       "user_id": "u-001",
       "outfit_id": "smart_casual",
       "event_type": "selected",
-      "position": 0,
-      "gender": "female",
-      "age": 29,
-      "height_cm": 168,
-      "body_shape": "hourglass",
-      "style_preferences": ["minimalist", "elegant"],
-      "dominant_occasion": "work",
-      "weather_bucket": "rainy"
+      "score": 0.9921,
+      "metadata": {
+        "rank_position": 0,
+        "source": "ui"
+      }
     }
   ]
 }
@@ -491,7 +474,10 @@ curl -X POST "http://127.0.0.1:8000/recommend" \
 
 ## Entraînement avec données réelles
 
-Le trainer utilise les feedbacks réels et bascule automatiquement sur le synthétique si le volume est insuffisant.
+Le trainer utilise un log enrichi d'interactions et bascule automatiquement sur le synthétique si le volume est insuffisant.
+Les endpoints `/feedback/*` produisent un format minimal (utile pour analytics), mais pas assez riche pour l'entraînement réel.
+Pour l'entraînement, il faut un `events.jsonl` qui contient aussi `gender`, `age`, `height_cm`, `body_shape`,
+`style_preferences`, `dominant_occasion`, `weather_bucket` et `session_id` par impression.
 
 ```bash
 python -m src.outfit_ml.train \
