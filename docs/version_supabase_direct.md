@@ -53,7 +53,7 @@ Colonnes minimales:
 
 - user_id
 
-Colonnes recommandees:
+Colonnes recommandees (noms attendus par le code):
 
 - gender
 - age
@@ -92,29 +92,12 @@ Colonnes minimales:
 - preferer service ML backend uniquement
 - limiter les droits si utilisation ANON_KEY
 
-## Mapping recommande pour ton schema actuel
+## Mapping et limites actuelles
 
-Pour le schema que tu as partage (`profiles` + `agenda_events`), utilise ce mapping:
-
-```env
-MAGICMIRROR_DATA_SOURCE=supabase
-
-SUPABASE_PROFILE_TABLE=profiles
-SUPABASE_PROFILE_USER_ID_COLUMN=user_id
-SUPABASE_PROFILE_GENDER_COLUMN=gender
-SUPABASE_PROFILE_AGE_COLUMN=age
-SUPABASE_PROFILE_HEIGHT_COLUMN=height_cm
-SUPABASE_PROFILE_BODY_SHAPE_COLUMN=morphology
-SUPABASE_PROFILE_STYLE_PREFERENCES_COLUMN=preferred_styles
-SUPABASE_PROFILE_LOCATION_COLUMN=location
-
-SUPABASE_AGENDA_TABLE=agenda_events
-SUPABASE_AGENDA_USER_ID_COLUMN=user_id
-SUPABASE_AGENDA_DATE_COLUMN=start_time
-SUPABASE_AGENDA_TITLE_COLUMN=title
-SUPABASE_AGENDA_CATEGORY_COLUMN=event_type
-SUPABASE_AGENDA_TAGS_COLUMN=description
-```
+- Le mapping des colonnes **profil** via variables `SUPABASE_PROFILE_*_COLUMN` n'est pas encore applique.
+	Le code lit directement `gender`, `age`, `height_cm`, `body_shape`, `style_preferences`, etc.
+	Si ton schema differe, utilise une vue ou renomme les colonnes.
+- Le mapping **agenda** via `SUPABASE_AGENDA_*_COLUMN` est pris en charge.
 
 Notes:
 

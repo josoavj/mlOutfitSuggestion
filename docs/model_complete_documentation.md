@@ -103,10 +103,11 @@ signal = 0.35 × style_match
        + 0.25 × occasion_match
        + 0.20 × weather_match
        + 0.10 × shape_match
-       + 0.07 × gender_match
-       + 0.03 × top_size_match
-       + 0.03 × bottom_size_match
-       + 0.03 × shoe_size_match
+   + 0.10 × gender_match
+   + 0.04 × clothing_size_match
+   + 0.03 × top_size_match
+   + 0.03 × bottom_size_match
+   + 0.03 × shoe_size_match
 ```
 
 Puis :
@@ -198,15 +199,23 @@ models/
 
 ### Résultats actuels (`models/outfit_ranker_metrics.json`)
 
-| Métrique | Valeur |
-|---|---|
-| `best_model` | `random_forest` |
-| `roc_auc` | **0.9882** |
-| `average_precision` | **0.9881** |
-| `precision` | 0.9024 |
-| `recall` | 0.9571 |
-| `f1` | 0.9289 |
-| `samples` | 4 000 |
+Le fichier contient un objet `metrics` imbriqué. Exemple (format actuel) :
+
+```json
+{
+   "best_model": "extra_trees",
+   "metrics": {
+      "roc_auc": 0.9714,
+      "average_precision": 0.9661,
+      "precision": 0.8603,
+      "recall": 0.9512,
+      "f1": 0.9035
+   },
+   "samples": 4000,
+   "data_source": "synthetic",
+   "split_mode": "random"
+}
+```
 
 **Interprétation :**
 
@@ -422,6 +431,10 @@ GET  /feedback/stats   # Vérifier le volume et la répartition
 - Positif : `selected` (et `click`)
 - Négatif : tenues en `impression` non sélectionnées
 - Recalcul des features de matching depuis le catalogue
+
+> Note: les endpoints `/feedback/*` produisent un format minimal. Pour l'entraînement réel,
+> il faut un log enrichi contenant aussi `gender`, `age`, `height_cm`, `body_shape`,
+> `style_preferences`, `dominant_occasion`, `weather_bucket` par impression.
 
 ### Activation de l'entraînement réel
 

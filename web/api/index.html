@@ -27,7 +27,7 @@
     <section class="hero">
       <div class="hero-copy">
         <p class="eyebrow">Console unifiée</p>
-        <h1>Pilote l API et rejoue les flux en direct.</h1>
+        <h1>Pilote l'API et rejoue les flux en direct.</h1>
         <p class="subtitle">Choisis un endpoint, ajuste le payload, envoie la requête et inspecte la réponse sans quitter le navigateur.</p>
         <div class="hero-actions">
           <button class="btn" id="sendBtnTop">Envoyer la requête</button>
@@ -36,7 +36,7 @@
       </div>
       <div class="hero-card">
         <div class="stat">
-          <span class="stat-label">Base URL</span>
+          <span class="stat-label">URL de base</span>
           <input id="baseUrl" class="input" placeholder="http://127.0.0.1:8000" />
         </div>
         <div class="stat">
@@ -44,8 +44,8 @@
           <div class="stat-value" id="activeEndpoint">/health</div>
         </div>
         <div class="stat">
-          <span class="stat-label">Status</span>
-          <div class="stat-value" id="lastStatus">Idle</div>
+          <span class="stat-label">Statut</span>
+          <div class="stat-value" id="lastStatus">En attente</div>
         </div>
       </div>
     </section>
@@ -61,44 +61,44 @@
 
       <section class="panel stack request">
         <div class="panel-head">
-          <h2>Request</h2>
+          <h2>Requête</h2>
           <div class="pill" id="methodPill">GET</div>
         </div>
 
         <div class="row">
           <div class="field">
-           <label for="methodSelect">Method</label>
+           <label for="methodSelect">Méthode</label>
             <select id="methodSelect" class="input">
               <option>GET</option>
               <option>POST</option>
             </select>
           </div>
           <div class="field grow">
-            <label for="pathInput">Path</label>
+            <label for="pathInput">Chemin</label>
             <input id="pathInput" class="input" placeholder="/health" />
           </div>
         </div>
 
         <div class="field">
-          <label for="headersInput">Headers (JSON)</label>
+          <label for="headersInput">En-têtes (JSON)</label>
           <textarea id="headersInput" class="code" rows="4" placeholder='{"X-API-Key":""}'></textarea>
         </div>
 
         <div class="field" id="bodyField">
-          <label for="bodyInput">Body (JSON)</label>
+          <label for="bodyInput">Corps (JSON)</label>
           <textarea id="bodyInput" class="code" rows="14"></textarea>
         </div>
 
         <div class="actions">
-          <button class="btn" id="sendBtn">Send</button>
-          <button class="btn ghost" id="formatBtn">Format</button>
-          <button class="btn ghost" id="resetBtn">Reset</button>
+          <button class="btn" id="sendBtn">Envoyer</button>
+          <button class="btn ghost" id="formatBtn">Formater</button>
+          <button class="btn ghost" id="resetBtn">Réinitialiser</button>
         </div>
       </section>
 
       <section class="panel stack response">
         <div class="panel-head">
-          <h2>Response</h2>
+          <h2>Réponse</h2>
           <div class="pill" id="timePill">0 ms</div>
         </div>
         <div class="meta">
@@ -107,7 +107,7 @@
             <span class="meta-value" id="httpStatus">-</span>
           </div>
           <div>
-            <span class="meta-label">Size</span>
+            <span class="meta-label">Taille</span>
             <span class="meta-value" id="sizeStat">-</span>
           </div>
           <div>
@@ -116,19 +116,19 @@
           </div>
         </div>
         <div class="field">
-          <label>Response body</label>
+          <label>Corps de réponse</label>
           <pre id="responseOutput" class="code output">-</pre>
         </div>
         <div class="field">
-          <label>Response headers</label>
+          <label>En-têtes de réponse</label>
           <pre id="headersOutput" class="code output">-</pre>
         </div>
       </section>
 
       <section class="panel stack full history">
         <div class="panel-head">
-          <h2>History</h2>
-          <button class="btn ghost" id="clearHistory">Clear</button>
+          <h2>Historique</h2>
+          <button class="btn ghost" id="clearHistory">Effacer</button>
         </div>
         <div class="history" id="historyList"></div>
       </section>
