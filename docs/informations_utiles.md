@@ -76,6 +76,9 @@ uvicorn src.outfit_ml.api:app --reload
 | `SUPABASE_AGENDA_CATEGORY_COLUMN` | Colonne catégorie |
 | `SUPABASE_AGENDA_TAGS_COLUMN` | Colonne tags |
 
+> Note: le mapping des colonnes profil Supabase n'est pas appliqué par le code actuellement.
+> Le profil doit exposer directement `gender`, `age`, `height_cm`, `body_shape`, `style_preferences`, etc.
+
 ---
 
 ## Endpoints principaux
@@ -137,6 +140,10 @@ uvicorn src.outfit_ml.api:app --reload
   --min-real-samples 200 \
   --split-mode time
 ```
+
+> Pour l'entraînement réel, le log doit contenir des champs enrichis
+> (`gender`, `age`, `height_cm`, `body_shape`, `style_preferences`,
+> `dominant_occasion`, `weather_bucket`, `session_id`).
 
 **Export Parquet partitionné par date :**
 
