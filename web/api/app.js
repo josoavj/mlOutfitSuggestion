@@ -3,27 +3,27 @@ const endpoints = [
     id: "health",
     method: "GET",
     path: "/health",
-    name: "Health",
+    name: "Santé",
     category: "Core",
-    description: "Service health probe",
+    description: "Vérification de l'état du service",
     sample: "",
   },
   {
     id: "dashboard",
     method: "GET",
     path: "/dashboard/technical",
-    name: "Technical dashboard",
+    name: "Dashboard technique",
     category: "Dashboard",
-    description: "Model metrics, feedback, and service status",
+    description: "Métriques modèle, feedback et état du service",
     sample: "",
   },
   {
     id: "recommend",
     method: "POST",
     path: "/recommend",
-    name: "Recommend (manual)",
+    name: "Recommandation (manuel)",
     category: "Recommendations",
-    description: "Manual payload with weather and agenda",
+    description: "Payload manuel avec météo et agenda",
     sample: JSON.stringify(
       {
         user_id: "u-001",
@@ -49,9 +49,9 @@ const endpoints = [
     id: "recommend-context",
     method: "POST",
     path: "/recommend/context",
-    name: "Recommend (context)",
+    name: "Recommandation (contexte)",
     category: "Recommendations",
-    description: "Agenda entries + location resolved",
+    description: "Agenda structuré + localisation",
     sample: JSON.stringify(
       {
         user_id: "u-001",
@@ -79,9 +79,9 @@ const endpoints = [
     id: "recommend-auto",
     method: "POST",
     path: "/recommend/auto",
-    name: "Recommend (auto)",
+    name: "Recommandation (auto)",
     category: "Recommendations",
-    description: "Auto mode with overrides",
+    description: "Mode auto avec overrides",
     sample: JSON.stringify(
       {
         user_id: "u-001",
@@ -103,9 +103,9 @@ const endpoints = [
     id: "vision-enroll",
     method: "POST",
     path: "/vision/enroll",
-    name: "Vision enroll",
+    name: "Vision - Enrôlement",
     category: "Vision",
-    description: "Enroll a user face",
+    description: "Enrôler un visage utilisateur",
     sample: JSON.stringify(
       {
         user_id: "u-001",
@@ -119,9 +119,9 @@ const endpoints = [
     id: "vision-identify",
     method: "POST",
     path: "/vision/identify",
-    name: "Vision identify",
+    name: "Vision - Identification",
     category: "Vision",
-    description: "Identify a user face",
+    description: "Identifier un visage utilisateur",
     sample: JSON.stringify(
       {
         image_base64: "data:image/jpeg;base64,...",
@@ -136,9 +136,9 @@ const endpoints = [
     id: "mirror-recommend",
     method: "POST",
     path: "/mirror/recommend-from-camera",
-    name: "Mirror recommend",
+    name: "Miroir - Recommandation",
     category: "Vision",
-    description: "Camera flow with recommendation",
+    description: "Flux caméra avec recommandation",
     sample: JSON.stringify(
       {
         image_base64: "data:image/jpeg;base64,...",
@@ -154,13 +154,13 @@ const endpoints = [
     id: "feedback-event",
     method: "POST",
     path: "/feedback/event",
-    name: "Feedback event",
+    name: "Feedback - Événement",
     category: "Feedback",
-    description: "Send one event",
+    description: "Envoyer un événement",
     sample: JSON.stringify(
       {
         user_id: "u-001",
-        event_type: "like",
+        event_type: "impression",
         outfit_id: "outfit-001",
         score: 0.9,
         session_id: "session-001",
@@ -174,15 +174,15 @@ const endpoints = [
     id: "feedback-batch",
     method: "POST",
     path: "/feedback/batch",
-    name: "Feedback batch",
+    name: "Feedback - Batch",
     category: "Feedback",
-    description: "Send batch events",
+    description: "Envoyer des événements en batch",
     sample: JSON.stringify(
       {
         events: [
           {
             user_id: "u-001",
-            event_type: "view",
+            event_type: "click",
             outfit_id: "outfit-001",
             score: 0.5,
             session_id: "session-001",
@@ -198,15 +198,15 @@ const endpoints = [
     id: "feedback-events",
     method: "POST",
     path: "/feedback/events",
-    name: "Feedback events",
+    name: "Feedback - Events",
     category: "Feedback",
-    description: "Alias for batch events",
+    description: "Alias du batch d'événements",
     sample: JSON.stringify(
       {
         events: [
           {
             user_id: "u-001",
-            event_type: "dislike",
+            event_type: "dismissed",
             outfit_id: "outfit-002",
             score: 0.1,
             session_id: "session-001",
@@ -222,9 +222,9 @@ const endpoints = [
     id: "feedback-stats",
     method: "GET",
     path: "/feedback/stats",
-    name: "Feedback stats",
+    name: "Feedback - Statistiques",
     category: "Feedback",
-    description: "Aggregate feedback stats",
+    description: "Statistiques agrégées de feedback",
     sample: "",
   },
 ];
