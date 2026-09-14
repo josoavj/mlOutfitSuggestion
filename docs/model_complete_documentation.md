@@ -56,11 +56,14 @@ La solution comporte deux couches.
 - Conversion météo brute → bucket météo
 - Inférence de morphologie à partir des mensurations
 
-### Couche 2 — ML de ranking
+### Couche 2 — ML de ranking & Composition Dynamique (Phase 2)
 
-- Modèle de classification binaire (pipeline scikit-learn)
-- Évaluation de la probabilité positive par tenue
-- Tri descendant des probabilités
+- **Mode Classique :** Modèle de classification binaire (pipeline scikit-learn) évaluant la probabilité positive par tenue brute pré-générée du catalogue.
+- **Mode Composition Dynamique (Phase 2) :** Pipeline en 4 étapes combinant les items individuels de garde-robe (`wardrobe_store`) et les préférences utilisateur (`preferences_store`) :
+  1. *Filtres durs (déterministes) :* Élimination des pièces incohérentes avec le `weather_bucket` et la formalité de l'occasion.
+  2. *Règles de compatibilité de style :* Harmonie des couleurs, cohérence des motifs et écart maximal de formalité (alimenté par les règles métier).
+  3. *Scoring ML Hybride :* Heuristique de repli et scoring ML prenant en compte les styles/couleurs aimés ou évités et les bonus de favoris.
+  4. *Re-ranking Diversité MMR :* Pénalisation de la similarité avec les pièces récemment suggérées (`last_suggested_at`) pour garantir un roulement optimal.
 
 ### Fichiers clefs
 
@@ -69,7 +72,10 @@ src/outfit_ml/
 ├── features.py
 ├── data.py
 ├── train.py
-└── recommend.py
+├── recommend.py
+├── wardrobe/         — [NEW] Gestion de la garde-robe individuelle
+├── composition/      — [NEW] Moteur de génération et de composition dynamique
+└── preferences/      — [NEW] Questionnaires onboarding et micro-surveys
 ```
 
 ---

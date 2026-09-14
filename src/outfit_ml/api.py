@@ -554,3 +554,9 @@ def create_feedback_events(
 @limiter.limit(os.getenv("RATE_LIMIT_FEEDBACK", "30/minute"))
 def get_feedback_stats(request: Request, _: None = Depends(require_api_key)) -> FeedbackStatsResponse:
     return feedback_stats()
+
+from .wardrobe.router import router as wardrobe_router
+from .preferences.router import router as preferences_router
+
+app.include_router(wardrobe_router)
+app.include_router(preferences_router)

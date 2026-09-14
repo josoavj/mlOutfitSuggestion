@@ -1,43 +1,19 @@
 """Étape 2 du moteur de composition — cohérence entre pièces d'une tenue.
 
-Règles simples codées en dur pour l'instant (voir spec, section 4 étape 2
-et section 5 : ces règles sont candidates à être remplacées/enrichies par
-une interrogation du corpus RAG data/corpus_style/ plutôt que d'être
-figées ici).
+Désormais alimenté dynamiquement par le corpus RAG sous data/corpus_style/.
 """
 
 from __future__ import annotations
 
 from itertools import combinations
-
 from ..wardrobe.models import Color, Pattern, WardrobeItem
-
-NEUTRALS = {Color.noir, Color.blanc, Color.gris, Color.beige, Color.marron, Color.bleu_marine}
-
-# Paires de couleurs non-neutres considérées harmonieuses (complémentaires/analogues).
-# Symétrique : (A, B) implique (B, A).
-COMPLEMENTARY_PAIRS = {
-    (Color.bleu_marine, Color.rouge),
-    (Color.bleu_clair, Color.beige),
-    (Color.vert, Color.beige),
-    (Color.rose, Color.gris),
-    (Color.jaune, Color.bleu_marine),
-    (Color.violet, Color.gris),
-}
+from .rag import style_rag
 
 MAX_FORMALITY_GAP = 1
 
 
 def _colors_compatible(c1: Color, c2: Color) -> bool:
-    if c1 == c2:
-        return True
-    if Color.multicolore in (c1, c2):
-        # Un imprimé/multicolore ne se marie bien qu'avec un neutre.
-        other = c2 if c1 == Color.multicolore else c1
-        return other in NEUTRALS
-    if c1 in NEUTRALS or c2 in NEUTRALS:
-        return True
-    return (c1, c2) in COMPLEMENTARY_PAIRS or (c2, c1) in COMPLEMENTARY_PAIRS
+    return style_rag.check_color_harmony(c1.value, c2.value)
 
 
 def _patterns_compatible(p1: Pattern | None, p2: Pattern | None) -> bool:
