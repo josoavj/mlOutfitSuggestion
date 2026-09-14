@@ -15,6 +15,8 @@ Nouveautes importantes à connaître:
 - `version_locale.md`: configuration et usage en mode local (fichiers JSON).
 - `version_magicmirror.md`: configuration et usage en mode intégration backend MagicMirror.
 - `version_supabase_direct.md`: configuration directe Supabase (sans backend intermédiaire).
+- `updates/wardrobespec.md`: [NEW] Phase 2 - Spécifications de la garde-robe individuelle et composition dynamique.
+- `updates/preferencequestionnaire.md`: [NEW] Phase 2 - Spécifications des questionnaires de préférences et micro-questionnaires.
 
 Script utilitaire:
 
