@@ -140,102 +140,122 @@ class OutfitRecommender:
         return None
 
     def recommend(self, request: RecommendationRequest) -> RecommendationResponse:
+        from datetime import datetime
+        from .wardrobe.store import wardrobe_store
+        from .preferences.store import preferences_store
+        from .composition.engine import compose_outfits
+        from .composition.models import CompositionContext
+        from .wardrobe.models import WardrobeItem, Category, Color, Pattern, Season
+
         inferred_shape = request.body_shape or infer_body_shape(request.body_measurements)
         occasion = dominant_occasion(request.agenda)
         weather = weather_bucket(request.weather.temperature_c, request.weather.condition)
-        agenda_labels = self._agenda_labels(request.agenda)
-        pref_flags = encode_style_flags(request.style_preferences)
-        pref_style_set = {style.strip().lower() for style in request.style_preferences}
-        normalized_sizes = (
-            normalize_size(request.clothing_size),
-            normalize_size(request.top_size),
-            normalize_size(request.bottom_size),
-            shoe_size_bucket(request.shoe_size),
+
+        # 1. Determine CompositionContext
+        formality_map = {
+            "sport": 1,
+            "casual": 2,
+            "outdoor": 2,
+            "work": 3,
+            "date": 3,
+            "meeting": 4,
+            "event": 5
+        }
+        dom_formality = formality_map.get(occasion, 3)
+
+        warmth_map = {
+            "hot": 1,
+            "mild": 3,
+            "rainy": 3,
+            "cold": 5
+        }
+        target_w = warmth_map.get(weather, 3)
+
+        prefs = preferences_store.get(request.user_id)
+        if prefs:
+            if prefs.niveau_formalite_prefere is not None:
+                dom_formality = int((dom_formality + prefs.niveau_formalite_prefere) / 2)
+            if prefs.tolerance_meteo == "frileux":
+                target_w = min(5, target_w + 1)
+            elif prefs.tolerance_meteo == "resistant":
+                target_w = max(1, target_w - 1)
+
+        context = CompositionContext(
+            weather_bucket=weather,
+            target_warmth=target_w,
+            dominant_occasion_formality=dom_formality,
+            formality_tolerance=1
         )
 
-        rows: list[dict[str, int | str]] = []
-        for cache_row in self._catalog_cache:
-            rows.append(
-                self._row_for_item(
-                    request,
-                    inferred_shape,
-                    occasion,
-                    weather,
-                    pref_flags,
-                    pref_style_set,
-                    normalized_sizes,
-                    cache_row,
-                )
-            )
+        # 2. Get user items or bootstrap if empty
+        user_items = wardrobe_store.list_items(request.user_id)
+        if not user_items:
+            # Generate bootstrap items
+            user_items = []
+            categories = [Category.top, Category.bottom, Category.shoes, Category.outerwear]
+            subcategories = {
+                Category.top: ["chemise", "t_shirt", "pull", "sweat"],
+                Category.bottom: ["pantalon", "jean", "short", "jupe"],
+                Category.shoes: ["baskets", "mocassins", "bottines", "chaussures_habillees"],
+                Category.outerwear: ["veste", "manteau", "blazer", "doudoune"]
+            }
+            colors = [Color.noir, Color.blanc, Color.bleu_marine, Color.beige, Color.gris]
+            
+            idx = 0
+            for f in range(1, 6):
+                for w in range(1, 6):
+                    for cat in categories:
+                        sub = subcategories[cat][idx % len(subcategories[cat])]
+                        col = colors[idx % len(colors)]
+                        user_items.append(
+                            WardrobeItem(
+                                item_id=f"boot_{cat.value}_{f}_{w}",
+                                user_id=request.user_id,
+                                category=cat,
+                                subcategory=sub,
+                                color_primary=col,
+                                formality_level=f,
+                                warmth_rating=w,
+                                pattern=Pattern.uni,
+                                season_suitability=[Season.printemps, Season.ete, Season.automne, Season.hiver]
+                            )
+                        )
+                        idx += 1
 
-        features_df = pd.DataFrame(rows)
-        scores = self.model.predict_proba(features_df)[:, 1]
+        # 3. Filter out banned items
+        if prefs and prefs.items_bannis:
+            user_items = [item for item in user_items if item.item_id not in prefs.items_bannis]
 
-        ranked = sorted(
-            zip(self.catalog, scores, strict=True),
-            key=lambda pair: pair[1],
-            reverse=True,
+        # 4. Compose outfits
+        combinations = compose_outfits(
+            items=user_items,
+            context=context,
+            top_k=request.top_k
         )
 
-        selected: list[tuple[OutfitItem, float]] = []
-        selected_ids: set[str] = set()
-        for label in agenda_labels:
-            if len(selected) >= request.top_k:
-                break
-            match_both = self._select_best(
-                ranked,
-                selected_ids,
-                lambda item, lbl=label: lbl in item.occasions and weather in item.weather,
-            )
-            if match_both:
-                selected.append(match_both)
-                continue
-            match_label = self._select_best(
-                ranked,
-                selected_ids,
-                lambda item, lbl=label: lbl in item.occasions,
-            )
-            if match_label:
-                selected.append(match_label)
+        # 5. Mark suggested items
+        suggested_ids = [item.item_id for c in combinations for item in c.items]
+        if suggested_ids:
+            wardrobe_store.mark_suggested(request.user_id, suggested_ids)
 
-        if len(selected) < request.top_k and weather:
-            has_weather = any(weather in item.weather for item, _ in selected)
-            if not has_weather:
-                weather_pick = self._select_best(
-                    ranked,
-                    selected_ids,
-                    lambda item: weather in item.weather,
-                )
-                if weather_pick:
-                    selected.append(weather_pick)
-
-        for item, score in ranked:
-            if len(selected) >= request.top_k:
-                break
-            if item.id in selected_ids:
-                continue
-            selected_ids.add(item.id)
-            selected.append((item, score))
-
+        # 6. Map to OutfitSuggestion
         suggestions: list[OutfitSuggestion] = []
-        for item, score in selected:
-            reasons = []
-            if any(style in item.styles for style in request.style_preferences):
-                reasons.append("Correspond aux préférences de style")
-            if weather in item.weather:
-                reasons.append("Adapté à la météo")
-            agenda_matches = [label for label in agenda_labels if label in item.occasions]
-            if agenda_matches:
-                reasons.append("Cohérent avec l'agenda: " + ", ".join(agenda_matches))
-            if not reasons:
-                reasons.append("Bonne compatibilité globale")
+        for i, comb in enumerate(combinations):
+            item_descs = [f"{item.subcategory} ({item.color_primary.value})" for item in comb.items]
+            reasons = ["Bonne compatibilité globale et harmonie des couleurs"]
+            if weather in ["cold", "hot"]:
+                reasons.append("Adapté à la météo du jour")
+            if occasion != "casual":
+                reasons.append(f"Cohérent avec une occasion de type {occasion}")
+            if prefs and prefs.styles_aimes:
+                reasons.append("Correspond à vos préférences de style")
 
             suggestions.append(
                 OutfitSuggestion(
-                    outfit_id=item.id,
-                    outfit_label=item.label,
-                    outfit_items=self._items_for_gender(item, request.gender),
-                    score=float(round(score, 4)),
+                    outfit_id=f"comb_{request.user_id}_{i}_{int(datetime.utcnow().timestamp())}",
+                    outfit_label=f"Tenue composée de {', '.join([item.subcategory for item in comb.items])}",
+                    outfit_items=item_descs,
+                    score=float(round(comb.final_score, 4)),
                     reasons=reasons,
                 )
             )
