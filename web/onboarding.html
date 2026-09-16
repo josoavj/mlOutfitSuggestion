@@ -6,7 +6,7 @@
   <title>Outfit Suggestion · Onboarding</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link rel="stylesheet" href="/ui-assets/styles.css?v=3" />
+  <link rel="stylesheet" href="styles.css?v=3" />
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23102149'/%3E%3Cpath d='M16 40c6-8 14-14 24-18 4-2 8 2 8 6 0 12-10 20-22 20-6 0-10-4-10-8z' fill='%2372b0ff'/%3E%3Cpath d='M20 24c2-6 6-10 12-12 2-1 4 0 4 2 0 4-4 10-10 12-4 2-6 0-6-2z' fill='%239bc7ff'/%3E%3C/svg%3E" />
   <style>
     .color-grid {
@@ -69,12 +69,52 @@
     }
 
     .onboarding-card {
-      max-width: 800px;
-      margin: 0 auto;
+      width: 100%;
+      margin: 0;
+      background: transparent;
+      border: none;
+      box-shadow: none;
+      padding: 0;
+    }
+    .q-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      margin-bottom: 20px;
     }
     .q-section {
-      margin-bottom: 32px;
+      background: var(--panel-bg);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--panel-border);
+      border-radius: var(--radius-xl);
+      padding: 1.5rem;
       animation: fadeIn 0.4s ease both;
+      display: flex;
+      flex-direction: column;
+    }
+    .q-full {
+      grid-column: 1 / -1;
+    }
+    .progress-bar {
+      width: 100%;
+      height: 4px;
+      background: rgba(130, 188, 255, 0.1);
+      border-radius: 2px;
+      margin-bottom: 30px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      background: var(--accent);
+      width: 0%;
+      transition: width 0.4s ease;
+      box-shadow: 0 0 10px var(--accent);
+    }
+    @media (max-width: 1200px) {
+      .q-grid { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 850px) {
+      .q-grid { grid-template-columns: 1fr; }
     }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
   </style>
@@ -88,12 +128,12 @@
           <span class="brand-title">Questionnaire de style</span>
         </div>
         <nav class="nav">
-          <a class="nav-link" href="/ui">Présentation</a>
-          <a class="nav-link active" href="/ui-assets/onboarding.html" aria-current="page">Onboarding</a>
-          <a class="nav-link" href="/ui-assets/wardrobe.html">Garde-robe</a>
-          <a class="nav-link" href="/ui-assets/test.html">Test</a>
-          <a class="nav-link" href="/ui-assets/metrics.html">Métriques</a>
-          <a class="nav-link" href="/ui-assets/api/index.html">API</a>
+          <a class="nav-link" href="/index.html">Présentation</a>
+          <a class="nav-link active" href="onboarding.html" aria-current="page">Onboarding</a>
+          <a class="nav-link" href="wardrobe.html">Garde-robe</a>
+          <a class="nav-link" href="test.html">Test</a>
+          <a class="nav-link" href="metrics.html">Métriques</a>
+          <a class="nav-link" href="api/index.html">API</a>
         </nav>
       </header>
 
@@ -114,24 +154,24 @@
             <div class="q-section">
               <p class="section-title">1. Styles préférés</p>
               <div class="style-grid" id="likedStyles">
-                <label class="style-option"><input type="checkbox" value="classic" /> <span>Classique</span></label>
-                <label class="style-option"><input type="checkbox" value="minimalist" /> <span>Minimaliste</span></label>
-                <label class="style-option"><input type="checkbox" value="casual" /> <span>Décontracté</span></label>
-                <label class="style-option"><input type="checkbox" value="sport" /> <span>Sport</span></label>
-                <label class="style-option"><input type="checkbox" value="elegant" /> <span>Élégant</span></label>
-                <label class="style-option"><input type="checkbox" value="practical" /> <span>Pratique</span></label>
+                <label class="style-option" data-tooltip="Couleurs sobres, lignes classiques"><input type="checkbox" value="classic" /> <span>Classique</span></label>
+                <label class="style-option" data-tooltip="Silhouettes nettes, peu d'accessoires"><input type="checkbox" value="minimalist" /> <span>Minimaliste</span></label>
+                <label class="style-option" data-tooltip="Confort, quotidien, polyvalent"><input type="checkbox" value="casual" /> <span>Décontracté</span></label>
+                <label class="style-option" data-tooltip="Inspiré sport, matières techniques"><input type="checkbox" value="sport" /> <span>Sport</span></label>
+                <label class="style-option" data-tooltip="Coupe soignée, détails raffinés"><input type="checkbox" value="elegant" /> <span>Élégant</span></label>
+                <label class="style-option" data-tooltip="Pragmatique, utile, adapté météo"><input type="checkbox" value="practical" /> <span>Pratique</span></label>
               </div>
             </div>
 
             <div class="q-section">
               <p class="section-title">2. Styles à éviter</p>
               <div class="style-grid" id="avoidedStyles">
-                <label class="style-option"><input type="checkbox" value="classic" /> <span>Classique</span></label>
-                <label class="style-option"><input type="checkbox" value="minimalist" /> <span>Minimaliste</span></label>
-                <label class="style-option"><input type="checkbox" value="casual" /> <span>Décontracté</span></label>
-                <label class="style-option"><input type="checkbox" value="sport" /> <span>Sport</span></label>
-                <label class="style-option"><input type="checkbox" value="elegant" /> <span>Élégant</span></label>
-                <label class="style-option"><input type="checkbox" value="practical" /> <span>Pratique</span></label>
+                <label class="style-option" data-tooltip="Masquer les tenues classiques"><input type="checkbox" value="classic" /> <span>Classique</span></label>
+                <label class="style-option" data-tooltip="Masquer les tenues minimalistes"><input type="checkbox" value="minimalist" /> <span>Minimaliste</span></label>
+                <label class="style-option" data-tooltip="Masquer les tenues décontractées"><input type="checkbox" value="casual" /> <span>Décontracté</span></label>
+                <label class="style-option" data-tooltip="Masquer les tenues sportives"><input type="checkbox" value="sport" /> <span>Sport</span></label>
+                <label class="style-option" data-tooltip="Masquer les tenues élégantes"><input type="checkbox" value="elegant" /> <span>Élégant</span></label>
+                <label class="style-option" data-tooltip="Masquer les tenues pragmatiques"><input type="checkbox" value="practical" /> <span>Pratique</span></label>
               </div>
             </div>
 
@@ -181,19 +221,19 @@
   </div>
 
   <nav class="bottom-nav" aria-label="Navigation principale">
-    <a class="bottom-link" href="/ui">
+    <a class="bottom-link" href="/index.html">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11l8-7 8 7v8a1 1 0 0 1-1 1h-4v-6h-6v6H5a1 1 0 0 1-1-1z" fill="currentColor"/></svg>
       Accueil
     </a>
-    <a class="bottom-link" href="/ui-assets/onboarding.html" aria-current="page">
+    <a class="bottom-link" href="onboarding.html" aria-current="page">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" fill="currentColor"/></svg>
       Profil
     </a>
-    <a class="bottom-link" href="/ui-assets/wardrobe.html">
+    <a class="bottom-link" href="wardrobe.html">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6h-4V4c0-1.11-.89-2-2-2h-4c-1.11 0-2 .89-2 2v2H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zM10 4h4v2h-4V4z" fill="currentColor"/></svg>
       Dressing
     </a>
-    <a class="bottom-link" href="/ui-assets/test.html">
+    <a class="bottom-link" href="test.html">
       <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="4" width="14" height="16" rx="2" stroke="currentColor" stroke-width="2" fill="none"/><path d="M8 8h8M8 12h8M8 16h5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
       Test
     </a>
@@ -274,7 +314,7 @@
         if (r.ok) {
           status.textContent = 'Préférences enregistrées avec succès !';
           status.className = 'status-pill ok';
-          setTimeout(() => { window.location.href = '/ui-assets/wardrobe.html'; }, 1500);
+          setTimeout(() => { window.location.href = 'wardrobe.html'; }, 1500);
         } else {
           const err = await r.json();
           status.textContent = 'Erreur: ' + (err.detail || 'Inconnue');
@@ -288,6 +328,6 @@
 
     document.getElementById('submitBtn').addEventListener('click', submitOnboarding);
   </script>
-  <script src="/ui-assets/nav.js"></script>
+  <script src="nav.js"></script>
 </body>
 </html>
