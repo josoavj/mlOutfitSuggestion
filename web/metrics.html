@@ -6,7 +6,7 @@
   <title>Outfit Suggestion · Métriques</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link rel="stylesheet" href="/ui-assets/styles.css?v=3" />
+  <link rel="stylesheet" href="styles.css?v=3" />
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23102149'/%3E%3Cpath d='M16 40c6-8 14-14 24-18 4-2 8 2 8 6 0 12-10 20-22 20-6 0-10-4-10-8z' fill='%2372b0ff'/%3E%3Cpath d='M20 24c2-6 6-10 12-12 2-1 4 0 4 2 0 4-4 10-10 12-4 2-6 0-6-2z' fill='%239bc7ff'/%3E%3C/svg%3E" />
 </head>
 <body>
@@ -18,10 +18,12 @@
           <span class="brand-title">Observabilité et métriques</span>
         </div>
         <nav class="nav">
-          <a class="nav-link" href="/ui">Présentation</a>
-          <a class="nav-link" href="/ui-assets/test.html">Test</a>
-          <a class="nav-link" href="/ui-assets/metrics.html" aria-current="page">Métriques</a>
-          <a class="nav-link" href="/ui-assets/api/index.html">API</a>
+          <a class="nav-link" href="/index.html">Présentation</a>
+          <a class="nav-link" href="onboarding.html">Onboarding</a>
+          <a class="nav-link" href="wardrobe.html">Garde-robe</a>
+          <a class="nav-link" href="test.html">Test</a>
+          <a class="nav-link" href="metrics.html" aria-current="page">Métriques</a>
+          <a class="nav-link" href="api/index.html">API</a>
         </nav>
       </header>
 
@@ -129,17 +131,21 @@
   </div>
 
   <nav class="bottom-nav" aria-label="Navigation principale">
-    <a class="bottom-link" href="/ui">
+    <a class="bottom-link" href="/index.html">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11l8-7 8 7v8a1 1 0 0 1-1 1h-4v-6h-6v6H5a1 1 0 0 1-1-1z" fill="currentColor"/></svg>
-      Présentation
+      Accueil
     </a>
-    <a class="bottom-link" href="/ui-assets/test.html">
-      <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="4" width="14" height="16" rx="2" stroke="currentColor" stroke-width="2" fill="none"/><path d="M8 8h8M8 12h8M8 16h5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-      Test
+    <a class="bottom-link" href="onboarding.html">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" fill="currentColor"/></svg>
+      Profil
     </a>
-    <a class="bottom-link" href="/ui-assets/metrics.html" aria-current="page">
+    <a class="bottom-link" href="wardrobe.html">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6h-4V4c0-1.11-.89-2-2-2h-4c-1.11 0-2 .89-2 2v2H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zM10 4h4v2h-4V4z" fill="currentColor"/></svg>
+      Dressing
+    </a>
+    <a class="bottom-link" href="metrics.html" aria-current="page">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 18h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><rect x="6" y="10" width="3" height="6" fill="currentColor"/><rect x="11" y="7" width="3" height="9" fill="currentColor"/><rect x="16" y="4" width="3" height="12" fill="currentColor"/></svg>
-      Métriques
+      Stats
     </a>
   </nav>
 
@@ -574,6 +580,6 @@
     window.addEventListener('scroll', syncSummaryFloat, { passive: true });
     window.addEventListener('load', syncSummaryFloat);
   </script>
-  <script src="/ui-assets/nav.js"></script>
+  <script src="nav.js"></script>
 </body>
 </html>

@@ -1,0 +1,45 @@
+[
+  {
+    "item_id": "itm_73903231",
+    "user_id": "u-001",
+    "category": "top",
+    "subcategory": "chemise",
+    "color_primary": "bleu_marine",
+    "color_secondary": null,
+    "material": null,
+    "pattern": "uni",
+    "formality_level": 3,
+    "warmth_rating": 2,
+    "season_suitability": [
+      "printemps",
+      "automne"
+    ],
+    "occasion_tags": [],
+    "image_url": null,
+    "auto_tagged": false,
+    "is_favorite": false,
+    "created_at": "2026-09-16T09:45:38.962096",
+    "last_suggested_at": null,
+    "last_worn_at": null
+  },
+  {
+    "item_id": "itm_138fc4b5",
+    "user_id": "u-001",
+    "category": "bottom",
+    "subcategory": "Pantalon",
+    "color_primary": "blanc",
+    "color_secondary": null,
+    "material": null,
+    "pattern": null,
+    "formality_level": 5,
+    "warmth_rating": 3,
+    "season_suitability": [],
+    "occasion_tags": [],
+    "image_url": null,
+    "auto_tagged": false,
+    "is_favorite": false,
+    "created_at": "2026-09-16T10:24:31.459307",
+    "last_suggested_at": null,
+    "last_worn_at": null
+  }
+]

@@ -7,7 +7,7 @@
   <title>Outfit Suggestion · Présentation</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link rel="stylesheet" href="/ui-assets/styles.css?v=3" />
+  <link rel="stylesheet" href="styles.css?v=3" />
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23102149'/%3E%3Cpath d='M16 40c6-8 14-14 24-18 4-2 8 2 8 6 0 12-10 20-22 20-6 0-10-4-10-8z' fill='%2372b0ff'/%3E%3Cpath d='M20 24c2-6 6-10 12-12 2-1 4 0 4 2 0 4-4 10-10 12-4 2-6 0-6-2z' fill='%239bc7ff'/%3E%3C/svg%3E" />
 </head>
 <body>
@@ -19,10 +19,12 @@
           <span class="brand-title">Assistant ML pour des looks cohérents</span>
         </div>
         <nav class="nav">
-          <a class="nav-link" href="/ui" aria-current="page">Présentation</a>
-          <a class="nav-link" href="/ui-assets/test.html">Test</a>
-          <a class="nav-link" href="/ui-assets/metrics.html">Métriques</a>
-          <a class="nav-link" href="/ui-assets/api/index.html">API</a>
+          <a class="nav-link" href="/index.html" aria-current="page">Présentation</a>
+          <a class="nav-link" href="onboarding.html">Onboarding</a>
+          <a class="nav-link" href="wardrobe.html">Garde-robe</a>
+          <a class="nav-link" href="test.html">Test</a>
+          <a class="nav-link" href="metrics.html">Métriques</a>
+          <a class="nav-link" href="api/index.html">API</a>
         </nav>
       </header>
 
@@ -36,8 +38,8 @@
             <h1>Une expérience ML claire et actionnable</h1>
             <p class="subtitle">Centralise le profil, le contexte et les signaux météo pour proposer des tenues adaptées et mesurables.</p>
             <div class="hero-actions">
-              <a class="nav-link" href="/ui-assets/test.html">Lancer un test</a>
-              <a class="nav-link" href="/ui-assets/metrics.html">Voir les métriques</a>
+              <a class="nav-link" href="test.html">Lancer un test</a>
+              <a class="nav-link" href="metrics.html">Voir les métriques</a>
             </div>
           </div>
           <div class="panel">
@@ -141,21 +143,21 @@
         <p class="section-title">Entrées essentielles</p>
         <div class="info-grid">
           <div class="info-box">
-            <p class="info-title">Profil utilisateur</p>
-            <p class="info-text">Genre, âge, taille, pointure, morphologie et tailles de vêtements.</p>
+            <p class="info-title">Profil & Garde-robe</p>
+            <p class="info-text">Genre, mensurations, et surtout les **items individuels** possédés par l'utilisateur.</p>
             <div class="metric-table">
-              <div class="metric-row"><span class="metric-label">Tailles</span><span class="metric-value">Haut, Bas, Vêtement</span></div>
-              <div class="metric-row"><span class="metric-label">Styles</span><span class="metric-value">Classic, Minimalist, Casual, Sport, Elegant, Practical</span></div>
-              <div class="metric-row"><span class="metric-label">Morphologie</span><span class="metric-value">Sablier, Rectangle, Poire, Triangle inversé, Ovale</span></div>
+              <div class="metric-row"><span class="metric-label">Items</span><span class="metric-value">Haut, Bas, Chaussures, Manteaux</span></div>
+              <div class="metric-row"><span class="metric-label">Attributs</span><span class="metric-value">Couleur, Formalité, Chaleur, Motif</span></div>
+              <div class="metric-row"><span class="metric-label">Garde-robe</span><span class="metric-value">CRUD individuel et stockage JSON</span></div>
             </div>
           </div>
           <div class="info-box">
-            <p class="info-title">Contexte</p>
-            <p class="info-text">Localisation, météo et agenda pour adapter la tenue au moment.</p>
+            <p class="info-title">Contexte & Préférences</p>
+            <p class="info-text">Météo, agenda du jour et **préférences déclarées** (onboarding).</p>
             <div class="metric-table">
-              <div class="metric-row"><span class="metric-label">Météo</span><span class="metric-value">Température, Condition</span></div>
-              <div class="metric-row"><span class="metric-label">Agenda</span><span class="metric-value">Work, Sport, Event, Outdoor, Date, Casual</span></div>
-              <div class="metric-row"><span class="metric-label">Mode auto</span><span class="metric-value">Profil + Agenda + Météo résolus</span></div>
+              <div class="metric-row"><span class="metric-label">Styles</span><span class="metric-value">Aimés vs Évités (onboarding)</span></div>
+              <div class="metric-row"><span class="metric-label">RAG de Style</span><span class="metric-value">Base vectorielle ChromaDB locale</span></div>
+              <div class="metric-row"><span class="metric-label">Micro-surveys</span><span class="metric-value">Feedback explicite ponctuel</span></div>
             </div>
           </div>
         </div>
@@ -165,29 +167,33 @@
         <p class="section-title">Fonctionnement du modèle</p>
         <div class="info-grid">
           <div class="info-box">
-            <p class="info-title">Étapes</p>
+            <p class="info-title">Pipeline de composition (4 étapes)</p>
             <div class="step-list">
               <div class="step">
-                <span class="step-title">1. Normalisation</span>
-                <span class="step-text">Nettoyage des tailles, morphologie et agenda.</span>
+                <span class="step-title">1. Filtres durs</span>
+                <span class="step-text">Élimination par météo (chaleur) et formalité agenda.</span>
               </div>
               <div class="step">
-                <span class="step-title">2. Scoring</span>
-                <span class="step-text">Chaque tenue reçoit un score selon le contexte.</span>
+                <span class="step-title">2. RAG de compatibilité</span>
+                <span class="step-text">Validation sémantique des couleurs/motifs via ChromaDB.</span>
               </div>
               <div class="step">
-                <span class="step-title">3. Diversification</span>
-                <span class="step-text">Couverture des types d'agenda + météo avant tri final.</span>
+                <span class="step-title">3. Scoring ML</span>
+                <span class="step-text">Scoring de la pertinence globale de la combinaison.</span>
+              </div>
+              <div class="step">
+                <span class="step-title">4. Diversité MMR</span>
+                <span class="step-text">Rotation des items via pénalisation de la répétition.</span>
               </div>
             </div>
           </div>
           <div class="info-box">
-            <p class="info-title">Signaux utilisés</p>
+            <p class="info-title">Intelligence distribuée</p>
             <div class="metric-table">
-              <div class="metric-row"><span class="metric-label">Style</span><span class="metric-value">Match préférences vs tenue</span></div>
-              <div class="metric-row"><span class="metric-label">Agenda</span><span class="metric-value">Occasion et sous-type</span></div>
-              <div class="metric-row"><span class="metric-label">Météo</span><span class="metric-value">Froid, Doux, Chaud, Pluie</span></div>
-              <div class="metric-row"><span class="metric-label">Compatibilité</span><span class="metric-value">Genre, Tailles, Morphologie</span></div>
+              <div class="metric-row"><span class="metric-label">ChromaDB</span><span class="metric-value">Recherche sémantique locale</span></div>
+              <div class="metric-row"><span class="metric-label">Bootstrapping</span><span class="metric-value">Génération auto si garde-robe vide</span></div>
+              <div class="metric-row"><span class="metric-label">Tolerance</span><span class="metric-value">Ajustement frileux/résistant</span></div>
+              <div class="metric-row"><span class="metric-label">Feedback</span><span class="metric-value">Biais des styles aimés indexés</span></div>
             </div>
           </div>
         </div>
@@ -340,17 +346,21 @@
   </div>
 
   <nav class="bottom-nav" aria-label="Navigation principale">
-    <a class="bottom-link" href="/ui" aria-current="page">
+    <a class="bottom-link" href="/index.html" aria-current="page">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11l8-7 8 7v8a1 1 0 0 1-1 1h-4v-6h-6v6H5a1 1 0 0 1-1-1z" fill="currentColor"/></svg>
-      Présentation
+      Accueil
     </a>
-    <a class="bottom-link" href="/ui-assets/test.html">
+    <a class="bottom-link" href="onboarding.html">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" fill="currentColor"/></svg>
+      Profil
+    </a>
+    <a class="bottom-link" href="wardrobe.html">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6h-4V4c0-1.11-.89-2-2-2h-4c-1.11 0-2 .89-2 2v2H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zM10 4h4v2h-4V4z" fill="currentColor"/></svg>
+      Dressing
+    </a>
+    <a class="bottom-link" href="test.html">
       <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="4" width="14" height="16" rx="2" stroke="currentColor" stroke-width="2" fill="none"/><path d="M8 8h8M8 12h8M8 16h5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
       Test
-    </a>
-    <a class="bottom-link" href="/ui-assets/metrics.html">
-      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 18h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><rect x="6" y="10" width="3" height="6" fill="currentColor"/><rect x="11" y="7" width="3" height="9" fill="currentColor"/><rect x="16" y="4" width="3" height="12" fill="currentColor"/></svg>
-      Métriques
     </a>
   </nav>
 
@@ -433,6 +443,6 @@
     window.addEventListener('scroll', syncSummaryFloat, { passive: true });
     window.addEventListener('load', syncSummaryFloat);
   </script>
-  <script src="/ui-assets/nav.js"></script>
+  <script src="nav.js"></script>
 </body>
 </html>

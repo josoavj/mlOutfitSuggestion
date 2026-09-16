@@ -22,7 +22,7 @@ class LightTokenEmbeddingFunction(EmbeddingFunction):
     def __call__(self, input: Documents) -> Embeddings:
         embeddings: Embeddings = []
         # Vocabulaire cible pour notre domaine vestimentaire
-        vocab = ["noir", "blanc", "gris", "beige", "marron", "bleu_marine", "rouge", "jaune", "vert", "rose", "violet", "multicolore", "harmonie", "association", "occasion", "formalite", "sport", "casual", "work", "meeting", "event"]
+        vocab = ["noir", "blanc", "gris", "beige", "marron", "bleu_marine", "rouge", "jaune", "vert", "rose", "violet", "multicolore", "harmonie", "association", "occasion", "formalite", "sport", "casual", "work", "meeting", "event", "couleur", "meteo", "matiere", "chaleur"]
         
         for doc in input:
             tokens = doc.lower().split()

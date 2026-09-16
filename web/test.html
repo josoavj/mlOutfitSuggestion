@@ -6,7 +6,7 @@
   <title>Outfit Suggestion · Test</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link rel="stylesheet" href="/ui-assets/styles.css?v=3" />
+  <link rel="stylesheet" href="styles.css?v=3" />
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23102149'/%3E%3Cpath d='M16 40c6-8 14-14 24-18 4-2 8 2 8 6 0 12-10 20-22 20-6 0-10-4-10-8z' fill='%2372b0ff'/%3E%3Cpath d='M20 24c2-6 6-10 12-12 2-1 4 0 4 2 0 4-4 10-10 12-4 2-6 0-6-2z' fill='%239bc7ff'/%3E%3C/svg%3E" />
 </head>
 <body>
@@ -18,10 +18,12 @@
           <span class="brand-title">Test et validation du modèle ML</span>
         </div>
         <nav class="nav">
-          <a class="nav-link" href="/ui">Présentation</a>
-          <a class="nav-link" href="/ui-assets/test.html" aria-current="page">Test</a>
-          <a class="nav-link" href="/ui-assets/metrics.html">Métriques</a>
-          <a class="nav-link" href="/ui-assets/api/index.html">API</a>
+          <a class="nav-link" href="/index.html">Présentation</a>
+          <a class="nav-link" href="onboarding.html">Onboarding</a>
+          <a class="nav-link" href="wardrobe.html">Garde-robe</a>
+          <a class="nav-link" href="test.html" aria-current="page">Test</a>
+          <a class="nav-link" href="metrics.html">Métriques</a>
+          <a class="nav-link" href="api/index.html">API</a>
         </nav>
       </header>
 
@@ -31,7 +33,7 @@
         <div class="hero-orb orb3"></div>
         <p class="eyebrow">Test en direct</p>
         <h1>Simuler une recommandation</h1>
-        <p class="subtitle">Remplis le profil et le contexte pour analyser la sortie du modèle, avec une synthèse lisible et les raisons principales.</p>
+        <p class="subtitle">Analyse la sortie du moteur de **composition dynamique d'items**, avec scoring ML et validation sémantique par RAG ChromaDB.</p>
       </div>
 
       <div class="panel section" id="sommaire">
@@ -146,9 +148,12 @@
       <div class="panel" id="contexte">
         <p class="section-title">Contexte</p>
         <div class="grid g3">
-          <label>Location <input id="location" value="Lyon" /></label>
-          <label id="manualTempField">Température °C <input id="temperature" type="number" step="0.1" value="14" /></label>
-          <label id="manualConditionField">Météo (manuel) <input id="condition" value="Rain" /></label>
+          <label>Location (Ville) <input id="location" value="Lyon" placeholder="ex: Paris, London..." /></label>
+          <label id="manualTempField" class="hidden-field">Température °C <input id="temperature" type="number" step="0.1" value="14" /></label>
+          <label id="manualConditionField" class="hidden-field">Météo (manuel) <input id="condition" value="Clear" /></label>
+        </div>
+        <div class="run-row" style="margin-top: 10px;">
+          <button class="summary-toggle" id="toggleWeatherManual" style="display: inline-flex;">Forcer la météo manuellement</button>
         </div>
         <div class="divider"></div>
         <div class="run-row">
@@ -202,17 +207,21 @@
   </div>
 
   <nav class="bottom-nav" aria-label="Navigation principale">
-    <a class="bottom-link" href="/ui">
+    <a class="bottom-link" href="/index.html">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11l8-7 8 7v8a1 1 0 0 1-1 1h-4v-6h-6v6H5a1 1 0 0 1-1-1z" fill="currentColor"/></svg>
-      Présentation
+      Accueil
     </a>
-    <a class="bottom-link" href="/ui-assets/test.html" aria-current="page">
+    <a class="bottom-link" href="onboarding.html">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" fill="currentColor"/></svg>
+      Profil
+    </a>
+    <a class="bottom-link" href="wardrobe.html">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6h-4V4c0-1.11-.89-2-2-2h-4c-1.11 0-2 .89-2 2v2H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zM10 4h4v2h-4V4z" fill="currentColor"/></svg>
+      Dressing
+    </a>
+    <a class="bottom-link" href="test.html" aria-current="page">
       <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="4" width="14" height="16" rx="2" stroke="currentColor" stroke-width="2" fill="none"/><path d="M8 8h8M8 12h8M8 16h5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
       Test
-    </a>
-    <a class="bottom-link" href="/ui-assets/metrics.html">
-      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 18h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><rect x="6" y="10" width="3" height="6" fill="currentColor"/><rect x="11" y="7" width="3" height="9" fill="currentColor"/><rect x="16" y="4" width="3" height="12" fill="currentColor"/></svg>
-      Métriques
     </a>
   </nav>
 
@@ -300,17 +309,21 @@
       document.getElementById('modeManual').className = 'seg-btn' + (m==='manual'?' active':'');
       document.getElementById('modeAuto').className = 'seg-btn' + (m==='auto'?' active':'');
 
-      const isAuto = m === 'auto';
+      // En mode manuel, on cache aussi la météo par défaut car elle est résolue par la ville
+      // On ne l'affiche que si l'utilisateur clique sur "Forcer la météo"
+    }
+
+    function toggleWeatherFields() {
       const tempField = document.getElementById('manualTempField');
       const conditionField = document.getElementById('manualConditionField');
+      const isHidden = tempField.classList.contains('hidden-field');
 
-      if (tempField) {
-        tempField.classList.toggle('hidden-field', isAuto);
-      }
-      if (conditionField) {
-        conditionField.classList.toggle('hidden-field', isAuto);
-      }
+      tempField.classList.toggle('hidden-field', !isHidden);
+      conditionField.classList.toggle('hidden-field', !isHidden);
+      document.getElementById('toggleWeatherManual').textContent = isHidden ? 'Utiliser la météo auto (ville)' : 'Forcer la météo manuellement';
     }
+
+    document.getElementById('toggleWeatherManual').addEventListener('click', toggleWeatherFields);
 
     function byId(id) { return document.getElementById(id); }
     function parseCsv(s) { return s.split(',').map(v=>v.trim()).filter(Boolean); }
@@ -690,8 +703,32 @@
 
     async function runRecommendation() {
       const mode = currentMode;
-      const endpoint = mode==='auto'?'/recommend/auto':'/recommend';
-      const payload = mode==='auto'?buildAutoPayload():buildManualPayload();
+      const isWeatherForced = !document.getElementById('manualTempField').classList.contains('hidden-field');
+
+      let endpoint = '/recommend';
+      let payload = {};
+
+      if (mode === 'auto') {
+        endpoint = '/recommend/auto';
+        payload = buildAutoPayload();
+      } else {
+        // Mode Manuel
+        if (isWeatherForced) {
+          endpoint = '/recommend';
+          payload = buildManualPayload();
+        } else {
+          // On utilise l'endpoint /context car il résout la météo à partir de la ville
+          // tout en permettant de saisir le profil manuellement.
+          endpoint = '/recommend/context';
+          const manual = buildManualPayload();
+          payload = { ...manual };
+          // On transforme agenda (list de string) en agenda_entries (list d'objets) pour l'API
+          payload.agenda_entries = (payload.agenda || []).map(title => ({ title, category: 'casual' }));
+          delete payload.agenda;
+          delete payload.weather;
+        }
+      }
+
       setStatus('status','Chargement…','loading');
       resetSummary();
       byId('requestBox').textContent = JSON.stringify(payload, null, 2);
@@ -726,6 +763,6 @@
     window.addEventListener('scroll', syncSummaryFloat, { passive: true });
     window.addEventListener('load', syncSummaryFloat);
   </script>
-  <script src="/ui-assets/nav.js"></script>
+  <script src="nav.js"></script>
 </body>
 </html>

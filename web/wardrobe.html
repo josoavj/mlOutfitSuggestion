@@ -1,0 +1,324 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Outfit Suggestion · Garde-robe</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="styles.css?v=3" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23102149'/%3E%3Cpath d='M16 40c6-8 14-14 24-18 4-2 8 2 8 6 0 12-10 20-22 20-6 0-10-4-10-8z' fill='%2372b0ff'/%3E%3Cpath d='M20 24c2-6 6-10 12-12 2-1 4 0 4 2 0 4-4 10-10 12-4 2-6 0-6-2z' fill='%239bc7ff'/%3E%3C/svg%3E" />
+  <style>
+    .wardrobe-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 15px;
+      margin-top: 20px;
+    }
+    .item-card {
+      background: rgba(14, 33, 58, 0.7);
+      border: 1px solid rgba(130, 188, 255, 0.3);
+      border-radius: 18px;
+      padding: 15px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      transition: transform 0.2s, border-color 0.2s;
+      animation: panelIn 0.3s ease both;
+    }
+    .item-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--accent);
+    }
+    .item-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+    .item-cat {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--accent2);
+      font-weight: 700;
+    }
+    .item-title { font-size: 16px; font-weight: 600; text-transform: capitalize; }
+    .item-badges { display: flex; flex-wrap: wrap; gap: 6px; }
+    .badge {
+      font-size: 10px;
+      padding: 3px 8px;
+      border-radius: 8px;
+      background: rgba(130, 188, 255, 0.15);
+      border: 1px solid rgba(130, 188, 255, 0.2);
+      color: var(--ink2);
+    }
+    .btn-delete {
+      background: rgba(255, 122, 110, 0.15);
+      border: 1px solid rgba(255, 122, 110, 0.3);
+      color: #ffb1aa;
+      border-radius: 50%;
+      width: 24px;
+      height: 24px;
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-delete:hover { background: rgba(255, 122, 110, 0.3); transform: scale(1.1); }
+
+    .add-panel {
+      margin-bottom: 25px;
+    }
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 12px;
+    }
+    @keyframes panelIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  </style>
+</head>
+<body>
+  <div class="scene">
+    <div class="shell">
+      <header class="top">
+        <div class="brand">
+          <span class="brand-kicker">Outfit Suggestion</span>
+          <span class="brand-title">Votre dressing digital</span>
+        </div>
+        <nav class="nav">
+          <a class="nav-link" href="/index.html">Présentation</a>
+          <a class="nav-link" href="onboarding.html">Onboarding</a>
+          <a class="nav-link active" href="wardrobe.html" aria-current="page">Garde-robe</a>
+          <a class="nav-link" href="test.html">Test</a>
+          <a class="nav-link" href="metrics.html">Métriques</a>
+          <a class="nav-link" href="api/index.html">API</a>
+        </nav>
+      </header>
+
+      <div class="glass hero">
+        <div class="hero-orb orb2"></div>
+        <p class="eyebrow">Ma Garde-robe</p>
+        <h1>Gérez vos vêtements</h1>
+        <p class="subtitle">Ajoutez les pièces de votre dressing réel pour que l'IA puisse composer des tenues basées sur ce que vous possédez vraiment.</p>
+      </div>
+
+      <div class="panel" style="background: rgba(79, 178, 255, 0.1); border-color: rgba(79, 178, 255, 0.4); margin-bottom: 20px; display: flex; gap: 15px; align-items: flex-start;">
+        <div style="color: var(--accent); flex-shrink: 0; margin-top: 2px;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+        </div>
+        <div>
+          <p class="info-title" style="color: var(--accent); margin-bottom: 4px; font-size: 12px;">Comment ça marche ?</p>
+          <p class="info-text" style="font-size: 12.5px; line-height: 1.4;">
+            Votre garde-robe est le cœur du système. Chaque vêtement possède un niveau de <strong>Formalité</strong> (1=Sport, 5=Costume) et de <strong>Chaleur</strong> (1=Été, 5=Grand froid).
+            L'IA compose dynamiquement des tenues en respectant votre agenda et la météo.
+          </p>
+        </div>
+      </div>
+
+      <div class="panel add-panel">
+        <div class="row-head" style="margin-bottom: 15px;">
+          <p class="section-title" style="margin:0;">Ajouter un nouveau vêtement</p>
+          <button class="btn-refresh" id="bootstrapBtn" style="font-size: 11px; display: inline-flex; align-items: center; gap: 6px;">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 1.912 5.886 6.182.025-5.012 3.617 1.93 5.88-4.996-3.639-5.02 3.614 1.956-5.872L4.03 8.887l6.168.04L12 3Z"/></svg>
+            Générer des données de test
+          </button>
+        </div>
+        <div class="form-grid">
+          <label>Catégorie
+            <select id="catInput">
+              <option value="top">Haut (Top)</option>
+              <option value="bottom">Bas (Bottom)</option>
+              <option value="shoes">Chaussures</option>
+              <option value="outerwear">Manteau / Veste</option>
+              <option value="dress">Robe / Combinaison</option>
+              <option value="accessory">Accessoire</option>
+            </select>
+          </label>
+          <label>Type <input id="subInput" placeholder="ex: Chemise, Jean..." /></label>
+          <label>Couleur
+            <select id="colorInput">
+              <option value="noir">Noir</option>
+              <option value="blanc">Blanc</option>
+              <option value="gris">Gris</option>
+              <option value="bleu_marine">Bleu Marine</option>
+              <option value="bleu_clair">Bleu Clair</option>
+              <option value="beige">Beige</option>
+              <option value="marron">Marron</option>
+              <option value="vert">Vert</option>
+              <option value="rouge">Rouge</option>
+              <option value="rose">Rose</option>
+              <option value="jaune">Jaune</option>
+              <option value="orange">Orange</option>
+              <option value="violet">Violet</option>
+              <option value="multicolore">Multicolore</option>
+            </select>
+          </label>
+          <label>Formalité (1-5) <input type="number" id="formalityInput" value="3" min="1" max="5" /></label>
+          <label>Chaleur (1-5) <input type="number" id="warmthInput" value="3" min="1" max="5" /></label>
+          <div style="display: flex; align-items: flex-end;">
+            <button class="btn-run" id="addBtn" style="width: 100%;">Ajouter</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="row-head">
+          <p class="section-title" style="margin:0;">Mes vêtements</p>
+          <span class="status-pill" id="itemCount">0 items</span>
+        </div>
+        <div class="wardrobe-grid" id="wardrobeGrid">
+          <!-- Les items seront injectés ici -->
+        </div>
+        <div id="emptyMsg" class="muted" style="text-align: center; padding: 40px 0; display: none;">
+          Votre garde-robe est vide. Commencez par ajouter un vêtement ci-dessus !
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <nav class="bottom-nav" aria-label="Navigation principale">
+    <a class="bottom-link" href="/index.html">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11l8-7 8 7v8a1 1 0 0 1-1 1h-4v-6h-6v6H5a1 1 0 0 1-1-1z" fill="currentColor"/></svg>
+      Accueil
+    </a>
+    <a class="bottom-link" href="onboarding.html">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" fill="currentColor"/></svg>
+      Profil
+    </a>
+    <a class="bottom-link" href="wardrobe.html" aria-current="page">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6h-4V4c0-1.11-.89-2-2-2h-4c-1.11 0-2 .89-2 2v2H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zM10 4h4v2h-4V4z" fill="currentColor"/></svg>
+      Dressing
+    </a>
+    <a class="bottom-link" href="test.html">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="4" width="14" height="16" rx="2" stroke="currentColor" stroke-width="2" fill="none"/><path d="M8 8h8M8 12h8M8 16h5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      Test
+    </a>
+  </nav>
+
+  <script>
+    const USER_ID = "u-001";
+
+    async function loadWardrobe() {
+      try {
+        const r = await fetch(`/wardrobe/items?user_id=${USER_ID}`);
+        const items = await r.json();
+        renderWardrobe(items);
+      } catch (e) {
+        console.error("Failed to load wardrobe", e);
+      }
+    }
+
+    function renderWardrobe(items) {
+      const grid = document.getElementById('wardrobeGrid');
+      const countEl = document.getElementById('itemCount');
+      const emptyMsg = document.getElementById('emptyMsg');
+
+      grid.replaceChildren();
+      countEl.textContent = `${items.length} item${items.length > 1 ? 's' : ''}`;
+
+      if (items.length === 0) {
+        emptyMsg.style.display = 'block';
+        return;
+      }
+      emptyMsg.style.display = 'none';
+
+      items.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'item-card';
+        card.innerHTML = `
+          <div class="item-header">
+            <span class="item-cat">${item.category}</span>
+            <button class="btn-delete" onclick="deleteItem('${item.item_id}')">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
+            </button>
+          </div>
+          <span class="item-title">${item.subcategory.replace('_', ' ')}</span>
+          <div class="item-badges">
+            <span class="badge" style="display:inline-flex; align-items:center; gap:4px;">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2a1 1 0 0 1 1 1v4.5a2.5 2.5 0 0 0 5 0V7a1 1 0 0 1 1-1 2 2 0 0 1 2 2v4c0 5.523-4.477 10-10 10z"/></svg>
+              ${item.color_primary.replace('_', ' ')}
+            </span>
+            <span class="badge" style="display:inline-flex; align-items:center; gap:4px;">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 2H8a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2z"/><path d="M12 18V7"/><path d="M10 10l2 2 2-2"/></svg>
+              Formalité ${item.formality_level}
+            </span>
+            <span class="badge" style="display:inline-flex; align-items:center; gap:4px;">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3 1.07.19 1.93 1.05 2.25 2.1a2.5 2.5 0 0 1 3.25 2.4 2.5 2.5 0 0 1-5 0z"/><path d="M12 2c1.2 0 2.4.48 3.39 1.36a10.89 10.89 0 0 1 2.25 4.85C18.45 11.23 18 14.5 15.5 17c-1.4 1.4-3 2.1-4.5 2.1s-3.1-.7-4.5-2.1c-2.5-2.5-2.95-5.77-2.14-8.79a10.89 10.89 0 0 1 2.25-4.85C7.6 2.48 8.8 2 10 2z"/></svg>
+              Chaleur ${item.warmth_rating}
+            </span>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    async function addItem() {
+      const payload = {
+        category: document.getElementById('catInput').value,
+        subcategory: document.getElementById('subInput').value.trim() || "Vêtement",
+        color_primary: document.getElementById('colorInput').value,
+        formality_level: parseInt(document.getElementById('formalityInput').value),
+        warmth_rating: parseInt(document.getElementById('warmthInput').value),
+      };
+
+      try {
+        const r = await fetch(`/wardrobe/items?user_id=${USER_ID}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        if (r.ok) {
+          document.getElementById('subInput').value = "";
+          loadWardrobe();
+        }
+      } catch (e) {
+        console.error("Failed to add item", e);
+      }
+    }
+
+    async function deleteItem(id) {
+      if (!confirm("Supprimer cet article ?")) return;
+      try {
+        const r = await fetch(`/wardrobe/items/${id}?user_id=${USER_ID}`, { method: 'DELETE' });
+        if (r.ok) loadWardrobe();
+      } catch (e) {
+        console.error("Failed to delete item", e);
+      }
+    }
+
+    async function generateTestData() {
+      const items = [
+        { category: "top", subcategory: "Chemise Blanche", color_primary: "blanc", formality_level: 4, warmth_rating: 2 },
+        { category: "top", subcategory: "Pull en Laine", color_primary: "bleu_marine", formality_level: 3, warmth_rating: 4 },
+        { category: "top", subcategory: "T-shirt Casual", color_primary: "gris", formality_level: 2, warmth_rating: 1 },
+        { category: "bottom", subcategory: "Jean Brut", color_primary: "bleu_marine", formality_level: 2, warmth_rating: 3 },
+        { category: "bottom", subcategory: "Pantalon Chino", color_primary: "beige", formality_level: 3, warmth_rating: 2 },
+        { category: "shoes", subcategory: "Baskets Blanches", color_primary: "blanc", formality_level: 2, warmth_rating: 2 },
+        { category: "shoes", subcategory: "Mocassins", color_primary: "marron", formality_level: 4, warmth_rating: 2 },
+        { category: "outerwear", subcategory: "Manteau Long", color_primary: "noir", formality_level: 4, warmth_rating: 5 }
+      ];
+
+      const btn = document.getElementById('bootstrapBtn');
+      btn.textContent = "Génération...";
+      btn.disabled = true;
+
+      for (const item of items) {
+        await fetch(`/wardrobe/items?user_id=${USER_ID}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(item)
+        });
+      }
+
+      btn.textContent = "🪄 Générer des données de test";
+      btn.disabled = false;
+      loadWardrobe();
+    }
+
+    document.getElementById('addBtn').addEventListener('click', addItem);
+    document.getElementById('bootstrapBtn').addEventListener('click', generateTestData);
+    loadWardrobe();
+  </script>
+  <script src="nav.js"></script>
+</body>
+</html>
