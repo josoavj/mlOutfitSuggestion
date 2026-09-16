@@ -7,7 +7,7 @@ from random import Random
 
 import pandas as pd
 
-from .features import (
+from ..features import (
     KNOWN_OCCASIONS,
     KNOWN_SHOE_BUCKETS,
     KNOWN_SIZES,

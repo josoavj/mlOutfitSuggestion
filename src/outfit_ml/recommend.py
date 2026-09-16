@@ -6,7 +6,7 @@ from typing import Callable
 import joblib
 import pandas as pd
 
-from .data import OutfitItem, load_catalog
+from .dataset.data import OutfitItem, load_catalog
 from .features import (
     classify_agenda_text,
     dominant_occasion,

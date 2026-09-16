@@ -1,20 +1,16 @@
 import pytest
-from .composition.rag import style_rag
-from .composition.filters import passes_hard_filters
-from .composition.models import CompositionContext
-from .wardrobe.models import WardrobeItem, Category, Color, Pattern, Season
-from .recommend import OutfitRecommender
-from .schemas import RecommendationRequest, WeatherInput
+from ..composition.rag import style_rag
+from ..composition.filters import passes_hard_filters
+from ..composition.models import CompositionContext
+from ..wardrobe.models import WardrobeItem, Category, Color, Pattern, Season
+from ..recommend import OutfitRecommender
+from ..schemas import RecommendationRequest, WeatherInput
 
 
 def test_rag_color_harmony():
     """Vérifie le fonctionnement du moteur StyleRAG pour l'harmonie des couleurs."""
-    # Les neutres universels doivent s'accorder avec tout
     assert style_rag.check_color_harmony("noir", "rouge") is True
     assert style_rag.check_color_harmony("bleu_marine", "jaune") is True
-
-    # Deux couleurs vives non répertoriées ensemble ou non-neutres doivent échouer ou valider selon les paires
-    # 'bleu_marine' et 'rouge' est une paire complémentaire définie dans le corpus
     assert style_rag.check_color_harmony("bleu_marine", "rouge") is True
 
 
@@ -28,7 +24,6 @@ def test_composition_hard_filters():
         season=Season.hiver
     )
 
-    # Item adapté (chaud et niveau de formalité compatible)
     item_ok = WardrobeItem(
         item_id="test_1",
         user_id="u-test",
@@ -41,7 +36,6 @@ def test_composition_hard_filters():
     )
     assert passes_hard_filters(item_ok, context) is True
 
-    # Item inadapté (trop léger pour du grand froid)
     item_cold_fail = WardrobeItem(
         item_id="test_2",
         user_id="u-test",
@@ -59,7 +53,6 @@ def test_recommender_integration_and_bootstrap():
     """Vérifie l'intégration complète et la génération automatique d'items (bootstrap)."""
     recommender = OutfitRecommender()
     
-    # Requête pour un utilisateur sans garde-robe pré-existante (déclenche le bootstrap)
     request = RecommendationRequest(
         user_id="user_new_test",
         gender="male",

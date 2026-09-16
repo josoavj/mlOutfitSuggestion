@@ -14,7 +14,7 @@ from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.model_selection import train_test_split
 
-from .data import load_catalog, real_training_pairs_from_feedback, synthetic_training_pairs
+from .dataset.data import load_catalog, real_training_pairs_from_feedback, synthetic_training_pairs
 
 
 CATEGORICAL = [

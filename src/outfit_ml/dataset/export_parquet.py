@@ -5,6 +5,7 @@ from pathlib import Path
 
 import pandas as pd
 
+  # Relative import fix
 from .dataset_contract import ALL_CONTRACTS
 
 
@@ -37,7 +38,6 @@ def export_table_to_parquet(
 
     partition_col = PARTITION_TIME_COLUMNS.get(table_name)
     try:
-        # Trigger an explicit check before writing to fail with a clear message.
         __import__("pyarrow")
     except ModuleNotFoundError as exc:
         raise RuntimeError(
