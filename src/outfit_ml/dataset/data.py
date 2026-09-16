@@ -251,3 +251,94 @@ def real_training_pairs_from_feedback(
             rows.append(row)
 
     return pd.DataFrame(rows)
+
+
+def synthetic_combination_pairs(n_samples: int, seed: int = 42) -> pd.DataFrame:
+    """Génère un dataset synthétique de COMBINAISONS d'items (Phase 2).
+    Chaque ligne représente une tenue complète (Haut + Bas + Chaussures).
+    """
+    rng = Random(seed)
+    body_shapes = ["hourglass", "rectangle", "pear", "inverted_triangle", "oval"]
+    genders = ["female", "male", "non_binary"]
+    
+    # Pools d'items simplifiés pour la simulation
+    colors = ["noir", "blanc", "gris", "bleu_marine", "bleu_clair", "beige", "marron", "vert", "rouge", "jaune", "rose", "violet"]
+    neutrals = {"noir", "blanc", "gris", "beige", "marron", "bleu_marine"}
+    patterns = ["uni", "raye", "imprime", "carreaux", "a_pois"]
+    
+    rows: list[dict[str, int | float | str]] = []
+    
+    for _ in range(n_samples):
+        # Contexte utilisateur
+        age = rng.randint(16, 65)
+        height_cm = rng.randint(150, 200)
+        gender = rng.choice(genders)
+        body_shape = rng.choice(body_shapes)
+        occasion = rng.choice(KNOWN_OCCASIONS)
+        weather = rng.choice(KNOWN_WEATHER)
+        
+        # Cible de formalité selon l'occasion (même logique que recommend.py)
+        formality_map = {"sport": 1, "casual": 2, "outdoor": 2, "work": 3, "date": 3, "meeting": 4, "event": 5}
+        target_f = formality_map.get(occasion, 3)
+        
+        # Cible de chaleur selon la météo
+        warmth_map = {"hot": 1, "mild": 3, "rainy": 3, "cold": 5}
+        target_w = warmth_map.get(weather, 3)
+
+        # Génération des 3 items (Top, Bottom, Shoes)
+        items_data = []
+        for cat in ["top", "bottom", "shoes"]:
+            f = rng.randint(max(1, target_f - 1), min(5, target_f + 1))
+            w = rng.randint(max(1, target_w - 1), min(5, target_w + 1))
+            c = rng.choice(colors)
+            p = rng.choice(patterns)
+            items_data.append({"cat": cat, "color": c, "formality": f, "warmth": w, "pattern": p})
+            
+        top, bottom, shoes = items_data
+        
+        # Calcul des scores de cohérence pour le label
+        # 1. Harmonie des couleurs (simplifié : au moins 2 neutres ou paires connues)
+        c_set = {top["color"], bottom["color"], shoes["color"]}
+        n_neutrals = sum(1 for c in c_set if c in neutrals)
+        color_harmony = 1.0 if n_neutrals >= 2 else 0.5
+        
+        # 2. Écart de formalité
+        f_vals = [top["formality"], bottom["formality"], shoes["formality"]]
+        max_f_gap = max(f_vals) - min(f_vals)
+        f_score = 1.0 if max_f_gap <= 1 else (0.5 if max_f_gap == 2 else 0.0)
+        
+        # 3. Adéquation météo/occasion
+        avg_w = sum(i["warmth"] for i in items_data) / 3
+        w_score = 1.0 - abs(avg_w - target_w) * 0.2
+        
+        # Signal global pour le label
+        signal = (color_harmony * 0.4) + (f_score * 0.3) + (w_score * 0.3)
+        noisy_threshold = 0.6 + rng.uniform(-0.1, 0.1)
+        label = int(signal >= noisy_threshold)
+        
+        row = {
+            "age": age,
+            "height_cm": height_cm,
+            "gender": gender,
+            "body_shape": body_shape,
+            "occasion": occasion,
+            "weather": weather,
+            "top_color": top["color"],
+            "top_formality": top["formality"],
+            "top_warmth": top["warmth"],
+            "top_pattern": top["pattern"],
+            "bottom_color": bottom["color"],
+            "bottom_formality": bottom["formality"],
+            "bottom_warmth": bottom["warmth"],
+            "bottom_pattern": bottom["pattern"],
+            "shoes_color": shoes["color"],
+            "shoes_formality": shoes["formality"],
+            "shoes_warmth": shoes["warmth"],
+            "shoes_pattern": shoes["pattern"],
+            "max_formality_gap": max_f_gap,
+            "avg_warmth": avg_w,
+            "label": label
+        }
+        rows.append(row)
+        
+    return pd.DataFrame(rows)
