@@ -6,6 +6,7 @@ Nouveautes importantes à connaître:
 - Le mode auto supporte des overrides de profil/tailles/agenda.
 - Le modèle utilise des features de tailles (haut, bas, chaussures) pour le ranking.
 - Le dashboard technique (`/dashboard/technical`) inclut un bloc feedback.
+- L'interface web inclut désormais des pages dédiées à l'Onboarding et à la Gestion de la Garde-robe.
 
 - `quickstart.md`: démarrage complet en quelques minutes.
 - `flutter_android_integration.md`: guide complet d'intégration Flutter Android + camera + endpoint unifie.
