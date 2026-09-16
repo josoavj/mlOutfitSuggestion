@@ -1,0 +1,14 @@
+{
+  "version": 2,
+  "public": true,
+  "cleanUrls": true,
+  "rewrites": [
+    { "source": "/health", "destination": "https://ton-backend-render.onrender.com/health" },
+    { "source": "/wardrobe/:path*", "destination": "https://ton-backend-render.onrender.com/wardrobe/:path*" },
+    { "source": "/preferences/:path*", "destination": "https://ton-backend-render.onrender.com/preferences/:path*" },
+    { "source": "/recommend/:path*", "destination": "https://ton-backend-render.onrender.com/recommend/:path*" },
+    { "source": "/dashboard/:path*", "destination": "https://ton-backend-render.onrender.com/dashboard/:path*" },
+    { "source": "/ui", "destination": "/index.html" },
+    { "source": "/ui-assets/(.*)", "destination": "/$1" }
+  ]
+}
