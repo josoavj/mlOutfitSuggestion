@@ -146,9 +146,12 @@
       <div class="panel" id="contexte">
         <p class="section-title">Contexte</p>
         <div class="grid g3">
-          <label>Location <input id="location" value="Lyon" /></label>
-          <label id="manualTempField">Température °C <input id="temperature" type="number" step="0.1" value="14" /></label>
-          <label id="manualConditionField">Météo (manuel) <input id="condition" value="Rain" /></label>
+          <label>Location (Ville) <input id="location" value="Lyon" placeholder="ex: Paris, London..." /></label>
+          <label id="manualTempField" class="hidden-field">Température °C <input id="temperature" type="number" step="0.1" value="14" /></label>
+          <label id="manualConditionField" class="hidden-field">Météo (manuel) <input id="condition" value="Clear" /></label>
+        </div>
+        <div class="run-row" style="margin-top: 10px;">
+          <button class="summary-toggle" id="toggleWeatherManual" style="display: inline-flex;">Forcer la météo manuellement</button>
         </div>
         <div class="divider"></div>
         <div class="run-row">
@@ -300,17 +303,21 @@
       document.getElementById('modeManual').className = 'seg-btn' + (m==='manual'?' active':'');
       document.getElementById('modeAuto').className = 'seg-btn' + (m==='auto'?' active':'');
 
-      const isAuto = m === 'auto';
+      // En mode manuel, on cache aussi la météo par défaut car elle est résolue par la ville
+      // On ne l'affiche que si l'utilisateur clique sur "Forcer la météo"
+    }
+
+    function toggleWeatherFields() {
       const tempField = document.getElementById('manualTempField');
       const conditionField = document.getElementById('manualConditionField');
+      const isHidden = tempField.classList.contains('hidden-field');
 
-      if (tempField) {
-        tempField.classList.toggle('hidden-field', isAuto);
-      }
-      if (conditionField) {
-        conditionField.classList.toggle('hidden-field', isAuto);
-      }
+      tempField.classList.toggle('hidden-field', !isHidden);
+      conditionField.classList.toggle('hidden-field', !isHidden);
+      document.getElementById('toggleWeatherManual').textContent = isHidden ? 'Utiliser la météo auto (ville)' : 'Forcer la météo manuellement';
     }
+
+    document.getElementById('toggleWeatherManual').addEventListener('click', toggleWeatherFields);
 
     function byId(id) { return document.getElementById(id); }
     function parseCsv(s) { return s.split(',').map(v=>v.trim()).filter(Boolean); }
@@ -690,8 +697,32 @@
 
     async function runRecommendation() {
       const mode = currentMode;
-      const endpoint = mode==='auto'?'/recommend/auto':'/recommend';
-      const payload = mode==='auto'?buildAutoPayload():buildManualPayload();
+      const isWeatherForced = !document.getElementById('manualTempField').classList.contains('hidden-field');
+
+      let endpoint = '/recommend';
+      let payload = {};
+
+      if (mode === 'auto') {
+        endpoint = '/recommend/auto';
+        payload = buildAutoPayload();
+      } else {
+        // Mode Manuel
+        if (isWeatherForced) {
+          endpoint = '/recommend';
+          payload = buildManualPayload();
+        } else {
+          // On utilise l'endpoint /context car il résout la météo à partir de la ville
+          // tout en permettant de saisir le profil manuellement.
+          endpoint = '/recommend/context';
+          const manual = buildManualPayload();
+          payload = { ...manual };
+          // On transforme agenda (list de string) en agenda_entries (list d'objets) pour l'API
+          payload.agenda_entries = (payload.agenda || []).map(title => ({ title, category: 'casual' }));
+          delete payload.agenda;
+          delete payload.weather;
+        }
+      }
+
       setStatus('status','Chargement…','loading');
       resetSummary();
       byId('requestBox').textContent = JSON.stringify(payload, null, 2);
