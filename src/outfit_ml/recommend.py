@@ -184,7 +184,13 @@ class OutfitRecommender:
             weather_bucket=weather,
             target_warmth=target_w,
             dominant_occasion_formality=dom_formality,
-            formality_tolerance=1
+            formality_tolerance=1,
+            user_id=request.user_id,
+            gender=request.gender,
+            age=request.age,
+            height_cm=request.height_cm,
+            body_shape=inferred_shape,
+            occasion=occasion,
         )
 
         # 2. Get user items or bootstrap if empty
