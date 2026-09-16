@@ -102,8 +102,19 @@
         <p class="subtitle">Ajoutez les pièces de votre dressing réel pour que l'IA puisse composer des tenues basées sur ce que vous possédez vraiment.</p>
       </div>
 
+      <div class="panel" style="background: rgba(79, 178, 255, 0.1); border-color: rgba(79, 178, 255, 0.4); margin-bottom: 20px;">
+        <p class="info-title" style="color: var(--accent); margin-bottom: 8px;">ℹ️ Comment ça marche ?</p>
+        <p class="info-text" style="font-size: 12.5px; line-height: 1.4;">
+          Votre garde-robe est le cœur du système. Chaque vêtement possède un niveau de <strong>Formalité</strong> (1=Sport, 5=Costume) et de <strong>Chaleur</strong> (1=Été, 5=Grand froid).
+          L'IA compose dynamiquement des tenues en piochant ici pour respecter votre agenda et la météo du jour.
+        </p>
+      </div>
+
       <div class="panel add-panel">
-        <p class="section-title">Ajouter un nouveau vêtement</p>
+        <div class="row-head" style="margin-bottom: 15px;">
+          <p class="section-title" style="margin:0;">Ajouter un nouveau vêtement</p>
+          <button class="btn-refresh" id="bootstrapBtn" style="font-size: 11px;">🪄 Générer des données de test</button>
+        </div>
         <div class="form-grid">
           <label>Catégorie
             <select id="catInput">
@@ -256,7 +267,37 @@
       }
     }
 
+    async function generateTestData() {
+      const items = [
+        { category: "top", subcategory: "Chemise Blanche", color_primary: "blanc", formality_level: 4, warmth_rating: 2 },
+        { category: "top", subcategory: "Pull en Laine", color_primary: "bleu_marine", formality_level: 3, warmth_rating: 4 },
+        { category: "top", subcategory: "T-shirt Casual", color_primary: "gris", formality_level: 2, warmth_rating: 1 },
+        { category: "bottom", subcategory: "Jean Brut", color_primary: "bleu_marine", formality_level: 2, warmth_rating: 3 },
+        { category: "bottom", subcategory: "Pantalon Chino", color_primary: "beige", formality_level: 3, warmth_rating: 2 },
+        { category: "shoes", subcategory: "Baskets Blanches", color_primary: "blanc", formality_level: 2, warmth_rating: 2 },
+        { category: "shoes", subcategory: "Mocassins", color_primary: "marron", formality_level: 4, warmth_rating: 2 },
+        { category: "outerwear", subcategory: "Manteau Long", color_primary: "noir", formality_level: 4, warmth_rating: 5 }
+      ];
+
+      const btn = document.getElementById('bootstrapBtn');
+      btn.textContent = "Génération...";
+      btn.disabled = true;
+
+      for (const item of items) {
+        await fetch(`/wardrobe/items?user_id=${USER_ID}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(item)
+        });
+      }
+
+      btn.textContent = "🪄 Générer des données de test";
+      btn.disabled = false;
+      loadWardrobe();
+    }
+
     document.getElementById('addBtn').addEventListener('click', addItem);
+    document.getElementById('bootstrapBtn').addEventListener('click', generateTestData);
     loadWardrobe();
   </script>
   <script src="/ui-assets/nav.js"></script>

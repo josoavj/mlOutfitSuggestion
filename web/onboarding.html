@@ -106,72 +106,75 @@
       </div>
 
       <div class="panel onboarding-card">
+        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+
         <div id="onboardingForm">
-          <!-- Question 1 -->
-          <div class="q-section">
-            <p class="section-title">1. Quels styles te correspondent le mieux ?</p>
-            <div class="style-grid" id="likedStyles">
-              <label class="style-option"><input type="checkbox" value="classic" /> <span>Classique</span></label>
-              <label class="style-option"><input type="checkbox" value="minimalist" /> <span>Minimaliste</span></label>
-              <label class="style-option"><input type="checkbox" value="casual" /> <span>Décontracté</span></label>
-              <label class="style-option"><input type="checkbox" value="sport" /> <span>Sport</span></label>
-              <label class="style-option"><input type="checkbox" value="elegant" /> <span>Élégant</span></label>
-              <label class="style-option"><input type="checkbox" value="practical" /> <span>Pratique</span></label>
+          <div class="q-grid">
+            <!-- Bloc Styles -->
+            <div class="q-section">
+              <p class="section-title">1. Styles préférés</p>
+              <div class="style-grid" id="likedStyles">
+                <label class="style-option"><input type="checkbox" value="classic" /> <span>Classique</span></label>
+                <label class="style-option"><input type="checkbox" value="minimalist" /> <span>Minimaliste</span></label>
+                <label class="style-option"><input type="checkbox" value="casual" /> <span>Décontracté</span></label>
+                <label class="style-option"><input type="checkbox" value="sport" /> <span>Sport</span></label>
+                <label class="style-option"><input type="checkbox" value="elegant" /> <span>Élégant</span></label>
+                <label class="style-option"><input type="checkbox" value="practical" /> <span>Pratique</span></label>
+              </div>
+            </div>
+
+            <div class="q-section">
+              <p class="section-title">2. Styles à éviter</p>
+              <div class="style-grid" id="avoidedStyles">
+                <label class="style-option"><input type="checkbox" value="classic" /> <span>Classique</span></label>
+                <label class="style-option"><input type="checkbox" value="minimalist" /> <span>Minimaliste</span></label>
+                <label class="style-option"><input type="checkbox" value="casual" /> <span>Décontracté</span></label>
+                <label class="style-option"><input type="checkbox" value="sport" /> <span>Sport</span></label>
+                <label class="style-option"><input type="checkbox" value="elegant" /> <span>Élégant</span></label>
+                <label class="style-option"><input type="checkbox" value="practical" /> <span>Pratique</span></label>
+              </div>
+            </div>
+
+            <!-- Bloc Couleurs -->
+            <div class="q-section">
+              <p class="section-title">3. Couleurs préférées</p>
+              <div class="color-grid" id="likedColors"></div>
+            </div>
+
+            <div class="q-section">
+              <p class="section-title">4. Couleurs à éviter</p>
+              <div class="color-grid" id="avoidedColors"></div>
+            </div>
+
+            <!-- Bloc Paramètres -->
+            <div class="q-section q-full">
+              <p class="section-title">5. Niveau de formalité & 6. Météo</p>
+              <div class="grid g2" style="gap: 40px;">
+                <div>
+                  <p class="muted" style="margin-bottom: 10px;">Formalité par défaut (1-5)</p>
+                  <input type="range" min="1" max="5" step="1" value="3" class="formality-slider" id="prefFormality" />
+                  <div class="slider-labels">
+                    <span>Casual</span>
+                    <span>Smart</span>
+                    <span>Formel</span>
+                  </div>
+                </div>
+                <div>
+                  <p class="muted" style="margin-bottom: 10px;">Sensibilité météo</p>
+                  <div class="mode-seg">
+                    <button class="seg-btn" data-value="frileux">Frileux</button>
+                    <button class="seg-btn active" data-value="neutre">Neutre</button>
+                    <button class="seg-btn" data-value="resistant">Résistant</button>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
-          <!-- Question 2 -->
-          <div class="q-section">
-            <p class="section-title">2. Y a-t-il des styles que tu ne veux JAMAIS voir ?</p>
-            <div class="style-grid" id="avoidedStyles">
-              <label class="style-option"><input type="checkbox" value="classic" /> <span>Classique</span></label>
-              <label class="style-option"><input type="checkbox" value="minimalist" /> <span>Minimaliste</span></label>
-              <label class="style-option"><input type="checkbox" value="casual" /> <span>Décontracté</span></label>
-              <label class="style-option"><input type="checkbox" value="sport" /> <span>Sport</span></label>
-              <label class="style-option"><input type="checkbox" value="elegant" /> <span>Élégant</span></label>
-              <label class="style-option"><input type="checkbox" value="practical" /> <span>Pratique</span></label>
-            </div>
+          <div style="text-align: center; margin-top: 30px;">
+            <button class="btn-run" id="submitBtn" style="padding: 12px 40px; font-size: 16px;">Finaliser mon profil</button>
           </div>
-
-          <!-- Question 3 -->
-          <div class="q-section">
-            <p class="section-title">3. Quelles couleurs portes-tu le plus volontiers ?</p>
-            <div class="color-grid" id="likedColors"></div>
-          </div>
-
-          <!-- Question 4 -->
-          <div class="q-section">
-            <p class="section-title">4. Quelles couleurs sont à éviter ?</p>
-            <div class="color-grid" id="avoidedColors"></div>
-          </div>
-
-          <!-- Question 5 -->
-          <div class="q-section">
-            <p class="section-title">5. Niveau de formalité préféré par défaut</p>
-            <p class="muted">De très décontracté (1) à très formel (5)</p>
-            <input type="range" min="1" max="5" step="1" value="3" class="formality-slider" id="prefFormality" />
-            <div class="slider-labels">
-              <span>Décontracté</span>
-              <span>Smart Casual</span>
-              <span>Formel</span>
-            </div>
-          </div>
-
-          <!-- Question 6 -->
-          <div class="q-section">
-            <p class="section-title">6. Sensibilité à la météo</p>
-            <div class="mode-seg">
-              <button class="seg-btn" data-value="frileux">Frileux</button>
-              <button class="seg-btn active" data-value="neutre">Neutre</button>
-              <button class="seg-btn" data-value="resistant">Résistant</button>
-            </div>
-          </div>
-
-          <div class="divider"></div>
-          <div style="text-align: right;">
-            <button class="btn-run" id="submitBtn">Enregistrer mes préférences</button>
-          </div>
-          <div id="status" class="status-pill" style="margin-top: 15px; display: none;"></div>
+          <div id="status" class="status-pill" style="margin: 20px auto; display: none; justify-content: center;"></div>
         </div>
       </div>
     </div>
