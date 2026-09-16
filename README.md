@@ -36,13 +36,13 @@ Le système est composé de 3 parties :
 
 Si l'utilisateur fournit ses mesures (épaules, taille, hanches), la morphologie est déduite automatiquement.
 
-### 2. Scoring ML de tenue
+### 2. Moteur de composition dynamique (Phase 2)
 
-Un modèle de classification binaire évalue la compatibilité utilisateur / contexte / tenue. Les tenues sont triées par probabilité de pertinence.
+Pipeline en 4 étapes utilisant ChromaDB pour la validation sémantique du style (RAG) et un modèle de ranking réentraîné sur des combinaisons d'items (Haut, Bas, Chaussures).
 
 ### 3. API de recommandation
 
-Endpoint FastAPI qui retourne un top-k de tenues.
+Endpoint FastAPI retournant un classement d'ensembles composés dynamiquement.
 
 ---
 
@@ -58,6 +58,7 @@ Endpoint FastAPI qui retourne un top-k de tenues.
 python -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
+# ChromaDB initialisera son index au premier démarrage
 ```
 
 ---
@@ -76,16 +77,16 @@ models/
 └── outfit_ranker_metrics.json
 ```
 
-**Validation du dataset avant entraînement** *(recommandé)* :
+**Validation du dataset avant entraînement** (recommandé) :
 
 ```bash
-python -m src.outfit_ml.validate_dataset --dataset-root data/dataset
+python -m src.outfit_ml.dataset.validate_dataset --dataset-root data/dataset
 ```
 
 **Conversion CSV → Parquet partitionné par date :**
 
 ```bash
-python -m src.outfit_ml.export_parquet \
+python -m src.outfit_ml.dataset.export_parquet \
   --dataset-root data/dataset \
   --output-root data/parquet
 ```
@@ -117,19 +118,15 @@ uvicorn src.outfit_ml.api:app --reload
 
 URL : `http://127.0.0.1:8000/ui`
 
-| Mode | Endpoint appelé |
-|---|---|
-| Manuel | `POST /recommend` |
-| Auto | `POST /recommend/auto` |
+L'interface se décompose en plusieurs modules :
+- **Présentation** : Vue d'ensemble du système.
+- **Onboarding** : Questionnaire de définition du profil de style utilisateur.
+- **Garde-robe** : Gestion du dressing digital (ajout et suppression d'items).
+- **Test** : Simulateur de recommandation avec résolution météo automatique.
+- **Métriques** : Dashboard technique (fraîcheur du modèle et feedback).
+- **API Console** : Console interactive pour tester tous les endpoints.
 
-L'interface permet de :
-
-- saisir les champs du profil et du contexte
-- envoyer une clé API via `X-API-Key` si `API_AUTH_ENABLED=true`
-- visualiser les suggestions et la réponse JSON brute
-- consulter un dashboard technique via `GET /dashboard/technical` *(état service, source de données, métriques modèle, stats feedback)*
-
-> En mode auto, les champs météo manuels sont masqués et les détails OpenWeather sont affichés dans les résultats.
+> En mode manuel dans l'onglet Test, la météo est résolue par la ville via OpenWeather. Il est possible de forcer des valeurs spécifiques pour simuler des cas extrêmes.
 
 ---
 
