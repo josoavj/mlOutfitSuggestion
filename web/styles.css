@@ -25,6 +25,10 @@
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
+@view-transition {
+  navigation: auto;
+}
+
 body {
   font-family: "Space Grotesk", sans-serif;
   font-size: 15px;
@@ -34,8 +38,8 @@ body {
               radial-gradient(circle at 80% 10%, rgba(130, 217, 255, 0.25), transparent 60%),
               linear-gradient(150deg, var(--bg) 0%, var(--bg2) 55%, var(--bg3) 100%);
   opacity: 0;
-  transform: translateY(6px);
-  transition: opacity 0.14s ease, transform 0.14s ease;
+  transform: translateY(4px);
+  transition: opacity 0.2s ease, transform 0.2s ease;
 }
 
 body.page-ready {
@@ -701,6 +705,10 @@ input:focus, select:focus {
 
 .btn-run:hover { opacity: 0.92; }
 .btn-run:active { transform: scale(0.97); }
+
+.nav-link:active, .summary-link:active, .btn:active {
+  transform: scale(0.96);
+}
 
 .btn-refresh {
   display: inline-flex; align-items: center; gap: 6px;

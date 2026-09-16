@@ -19,6 +19,10 @@
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
+@view-transition {
+  navigation: auto;
+}
+
 body {
   font-family: "Space Grotesk", sans-serif;
   color: var(--ink);
@@ -27,8 +31,8 @@ body {
               linear-gradient(150deg, var(--bg) 0%, var(--bg2) 55%, var(--bg3) 100%);
   min-height: 100vh;
   opacity: 0;
-  transform: translateY(6px);
-  transition: opacity 0.14s ease, transform 0.14s ease;
+  transform: translateY(4px);
+  transition: opacity 0.2s ease, transform 0.2s ease;
 }
 
 body.page-ready {
