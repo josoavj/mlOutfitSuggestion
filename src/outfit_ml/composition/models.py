@@ -19,6 +19,14 @@ class CompositionContext(BaseModel):
     dominant_occasion_formality: int  # 1-5, dérivé de l'agenda du jour
     formality_tolerance: int = 1  # écart toléré autour de dominant_occasion_formality
     season: Optional[Season] = None
+    
+    # Profil utilisateur pour le scoring ML
+    user_id: str = ""
+    gender: str = "unknown"
+    age: int = 30
+    height_cm: int = 170
+    body_shape: str = "unknown"
+    occasion: str = "casual"
 
 
 class OutfitCombination(BaseModel):

@@ -14,7 +14,12 @@ from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.model_selection import train_test_split
 
-from .data import load_catalog, real_training_pairs_from_feedback, synthetic_training_pairs
+from .dataset.data import (
+    load_catalog,
+    real_training_pairs_from_feedback,
+    synthetic_combination_pairs,
+    synthetic_training_pairs,
+)
 
 
 CATEGORICAL = [
@@ -22,36 +27,24 @@ CATEGORICAL = [
     "body_shape",
     "occasion",
     "weather",
-    "clothing_size",
-    "top_size",
-    "bottom_size",
-    "shoe_bucket",
-    "outfit_id",
+    "top_color",
+    "top_pattern",
+    "bottom_color",
+    "bottom_pattern",
+    "shoes_color",
+    "shoes_pattern",
 ]
 NUMERIC = [
     "age",
     "height_cm",
-    "style_match",
-    "occasion_match",
-    "weather_match",
-    "shape_match",
-    "gender_match",
-    "clothing_size_match",
-    "top_size_match",
-    "bottom_size_match",
-    "shoe_size_match",
-    "pref_classic",
-    "pref_minimalist",
-    "pref_casual",
-    "pref_sport",
-    "pref_elegant",
-    "pref_practical",
-    "outfit_style_classic",
-    "outfit_style_minimalist",
-    "outfit_style_casual",
-    "outfit_style_sport",
-    "outfit_style_elegant",
-    "outfit_style_practical",
+    "top_formality",
+    "top_warmth",
+    "bottom_formality",
+    "bottom_warmth",
+    "shoes_formality",
+    "shoes_warmth",
+    "max_formality_gap",
+    "avg_warmth",
 ]
 
 
@@ -223,9 +216,11 @@ def main() -> None:
             data = real_data
             data_source = "real_feedback"
         else:
-            data = synthetic_training_pairs(catalog, n_samples=args.samples)
+            # Fallback sur les combinaisons synthétiques (Phase 2)
+            data = synthetic_combination_pairs(n_samples=args.samples)
     else:
-        data = synthetic_training_pairs(catalog, n_samples=args.samples)
+        # Mode par défaut : combinaisons synthétiques d'items
+        data = synthetic_combination_pairs(n_samples=args.samples)
 
     X_train, X_test, y_train, y_test = split_dataset(data, split_mode=args.split_mode)
 

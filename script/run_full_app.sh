@@ -69,7 +69,9 @@ ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 cd "$ROOT_DIR"
 
 if [[ -z "$PYTHON_BIN" ]]; then
-  if [[ -x "/home/shadowcraft/.pyenv/bin/python" ]]; then
+  if [[ -x "/home/shadowcraft/.venv/bin/python" ]]; then
+    PYTHON_BIN="/home/shadowcraft/.venv/bin/python"
+  elif [[ -x "/home/shadowcraft/.pyenv/bin/python" ]]; then
     PYTHON_BIN="/home/shadowcraft/.pyenv/bin/python"
   elif command -v python3 >/dev/null 2>&1; then
     PYTHON_BIN="$(command -v python3)"
