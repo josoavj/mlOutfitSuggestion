@@ -227,6 +227,83 @@ const endpoints = [
     description: "Statistiques agrégées de feedback",
     sample: "",
   },
+  {
+    id: "wardrobe-create",
+    method: "POST",
+    path: "/wardrobe/items",
+    name: "Garde-robe - Créer",
+    category: "Wardrobe",
+    description: "Ajouter un item à la garde-robe individuelle",
+    sample: JSON.stringify(
+      {
+        user_id: "u-001",
+        category: "top",
+        subcategory: "chemise",
+        color_primary: "bleu_marine",
+        formality_level: 3,
+        warmth_rating: 2,
+        pattern: "uni",
+        season_suitability: ["printemps", "automne"]
+      },
+      null,
+      2
+    ),
+  },
+  {
+    id: "wardrobe-list",
+    method: "GET",
+    path: "/wardrobe/items",
+    name: "Garde-robe - Lister",
+    category: "Wardrobe",
+    description: "Lister les items (ajouter ?user_id=...)",
+    sample: "",
+  },
+  {
+    id: "preferences-get",
+    method: "GET",
+    path: "/preferences/u-001",
+    name: "Préférences - Récupérer",
+    category: "Preferences",
+    description: "Récupérer le profil de préférences complet",
+    sample: "",
+  },
+  {
+    id: "preferences-onboarding",
+    method: "PUT",
+    path: "/preferences/u-001",
+    name: "Préférences - Onboarding",
+    category: "Preferences",
+    description: "Soumettre le questionnaire initial",
+    sample: JSON.stringify(
+      {
+        styles_aimes: ["minimalist", "elegant"],
+        styles_evites: ["sport"],
+        couleurs_aimees: ["bleu_marine", "noir"],
+        couleurs_evitees: ["orange"],
+        niveau_formalite_prefere: 3,
+        tolerance_meteo: "neutre"
+      },
+      null,
+      2
+    ),
+  },
+  {
+    id: "preferences-micro-survey",
+    method: "POST",
+    path: "/preferences/u-001/micro-survey",
+    name: "Préférences - Micro-survey",
+    category: "Preferences",
+    description: "Répondre à un micro-questionnaire ponctuel",
+    sample: JSON.stringify(
+      {
+        kind: "ban_item",
+        item_id: "itm_8f3a1c",
+        accepted: true
+      },
+      null,
+      2
+    ),
+  },
 ];
 
 const el = (id) => document.getElementById(id);
