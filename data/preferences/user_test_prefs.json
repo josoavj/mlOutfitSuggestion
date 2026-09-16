@@ -1,0 +1,23 @@
+{
+  "user_id": "user_test_prefs",
+  "styles_aimes": [
+    "classic",
+    "minimalist"
+  ],
+  "styles_evites": [
+    "sport"
+  ],
+  "couleurs_aimees": [
+    "noir",
+    "bleu_marine"
+  ],
+  "couleurs_evitees": [
+    "orange"
+  ],
+  "niveau_formalite_prefere": 3,
+  "items_bannis": [],
+  "tolerance_meteo": "neutre",
+  "onboarding_completed_at": "2026-09-16T09:11:46.178859",
+  "last_micro_survey_at": null,
+  "preferences_version": 1
+}
