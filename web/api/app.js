@@ -230,13 +230,12 @@ const endpoints = [
   {
     id: "wardrobe-create",
     method: "POST",
-    path: "/wardrobe/items",
+    path: "/wardrobe/items?user_id=u-001",
     name: "Garde-robe - Créer",
     category: "Wardrobe",
     description: "Ajouter un item à la garde-robe individuelle",
     sample: JSON.stringify(
       {
-        user_id: "u-001",
         category: "top",
         subcategory: "chemise",
         color_primary: "bleu_marine",
@@ -252,10 +251,10 @@ const endpoints = [
   {
     id: "wardrobe-list",
     method: "GET",
-    path: "/wardrobe/items",
+    path: "/wardrobe/items?user_id=u-001",
     name: "Garde-robe - Lister",
     category: "Wardrobe",
-    description: "Lister les items (ajouter ?user_id=...)",
+    description: "Lister les items d'un utilisateur",
     sample: "",
   },
   {
