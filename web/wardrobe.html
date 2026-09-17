@@ -102,16 +102,66 @@
         <p class="subtitle">Ajoutez les pièces de votre dressing réel pour que l'IA puisse composer des tenues basées sur ce que vous possédez vraiment.</p>
       </div>
 
-      <div class="panel" style="background: rgba(79, 178, 255, 0.1); border-color: rgba(79, 178, 255, 0.4); margin-bottom: 20px; display: flex; gap: 15px; align-items: flex-start;">
-        <div style="color: var(--accent); flex-shrink: 0; margin-top: 2px;">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+      <div class="panel" style="background: rgba(79, 178, 255, 0.08); border-color: rgba(79, 178, 255, 0.3); margin-bottom: 25px; display: grid; gap: 20px;">
+        <div style="display: flex; gap: 15px; align-items: flex-start;">
+          <div style="color: var(--accent); flex-shrink: 0; margin-top: 2px;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+          </div>
+          <div style="display: grid; gap: 12px;">
+            <p class="info-title" style="color: var(--accent); font-size: 14px; font-weight: 600;">Guide d'utilisation de la garde-robe digitale</p>
+
+            <div class="grid g2" style="gap: 20px;">
+              <div>
+                <p class="info-text" style="font-size: 12.5px; line-height: 1.5; color: var(--ink);">
+                  <strong>1. Le coeur du système</strong><br>
+                  L'IA ne "rêve" pas vos vêtements : elle compose des tenues uniquement à partir des pièces que vous ajoutez ici. Pour une tenue complète, le moteur nécessite au moins un <em>Haut</em>, un <em>Bas</em> et des <em>Chaussures</em>.
+                </p>
+              </div>
+              <div>
+                <p class="info-text" style="font-size: 12.5px; line-height: 1.5; color: var(--ink);">
+                  <strong>2. Intelligence Contextuelle</strong><br>
+                  Le niveau de <strong>Formalité</strong> (1 à 5) permet de filtrer les tenues selon votre agenda (ex: 1 pour le sport, 4 pour une réunion). La <strong>Chaleur</strong> (1 à 5) ajuste les suggestions aux données météo réelles.
+                </p>
+              </div>
+              <div>
+                <p class="info-text" style="font-size: 12.5px; line-height: 1.5; color: var(--ink);">
+                  <strong>3. Harmonie RAG & ML</strong><br>
+                  Le moteur utilise une base vectorielle <em>ChromaDB</em> pour valider l'harmonie des couleurs et un modèle ML réentraîné pour garantir que les pièces sélectionnées forment un ensemble cohérent et stylé.
+                </p>
+              </div>
+              <div>
+                <p class="info-text" style="font-size: 12.5px; line-height: 1.5; color: var(--ink);">
+                  <strong>4. Anti-répétition (MMR)</strong><br>
+                  Chaque fois qu'un vêtement est suggéré, sa date de dernière apparition est mise à jour. L'IA pénalise les pièces trop souvent vues pour forcer une rotation naturelle de votre dressing.
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
-        <div>
-          <p class="info-title" style="color: var(--accent); margin-bottom: 4px; font-size: 12px;">Comment ça marche ?</p>
-          <p class="info-text" style="font-size: 12.5px; line-height: 1.4;">
-            Votre garde-robe est le cœur du système. Chaque vêtement possède un niveau de <strong>Formalité</strong> (1=Sport, 5=Costume) et de <strong>Chaleur</strong> (1=Été, 5=Grand froid).
-            L'IA compose dynamiquement des tenues en respectant votre agenda et la météo.
-          </p>
+
+        <div class="divider" style="opacity: 0.15;"></div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+          <div>
+            <p class="info-title" style="color: var(--accent2); font-size: 11px; margin-bottom: 10px;">Légende : Formalité (1-5)</p>
+            <div class="metric-table" style="font-size: 11px;">
+              <div class="metric-row"><span><strong>1</strong> - Très décontracté (Sport, Maison)</span></div>
+              <div class="metric-row"><span><strong>2</strong> - Décontracté (Weekend, Casual)</span></div>
+              <div class="metric-row"><span><strong>3</strong> - Smart Casual (Bureau, Restaurant)</span></div>
+              <div class="metric-row"><span><strong>4</strong> - Formel (Réunion, Entretien)</span></div>
+              <div class="metric-row"><span><strong>5</strong> - Très Formel (Cérémonie, Gala)</span></div>
+            </div>
+          </div>
+          <div>
+            <p class="info-title" style="color: var(--accent2); font-size: 11px; margin-bottom: 10px;">Légende : Chaleur (1-5)</p>
+            <div class="metric-table" style="font-size: 11px;">
+              <div class="metric-row"><span><strong>1</strong> - Très léger (Été chaud)</span></div>
+              <div class="metric-row"><span><strong>2</strong> - Léger (Printemps doux)</span></div>
+              <div class="metric-row"><span><strong>3</strong> - Modéré (Mi-saison)</span></div>
+              <div class="metric-row"><span><strong>4</strong> - Chaud (Automne/Hiver)</span></div>
+              <div class="metric-row"><span><strong>5</strong> - Très chaud (Grand froid)</span></div>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -152,6 +202,32 @@
               <option value="violet">Violet</option>
               <option value="multicolore">Multicolore</option>
             </select>
+          </label>
+          <label>Matière
+            <input list="materials" id="materialInput" placeholder="ex: Coton, Soie..." />
+            <datalist id="materials">
+              <option value="Coton">
+              <option value="Laine">
+              <option value="Lin">
+              <option value="Soie">
+              <option value="Cachemire">
+              <option value="Denim">
+              <option value="Cuir">
+              <option value="Daim">
+              <option value="Satin">
+              <option value="Velours">
+              <option value="Viscose">
+              <option value="Nylon">
+              <option value="Polyester">
+              <option value="Élasthanne">
+              <option value="Acrylique">
+              <option value="Maille">
+              <option value="Flanelle">
+              <option value="Tweed">
+              <option value="Jersey">
+              <option value="Polaire">
+              <option value="Toile">
+            </datalist>
           </label>
           <label>Formalité (1-5) <input type="number" id="formalityInput" value="3" min="1" max="5" /></label>
           <label>Chaleur (1-5) <input type="number" id="warmthInput" value="3" min="1" max="5" /></label>
@@ -239,6 +315,10 @@
               ${item.color_primary.replace('_', ' ')}
             </span>
             <span class="badge" style="display:inline-flex; align-items:center; gap:4px;">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.42 4.58a5.4 5.4 0 0 0-7.65 0l-.77.78-.77-.78a5.4 5.4 0 0 0-7.65 0C1.46 6.7 1.33 10.28 4 13l8 8 8-8c2.67-2.72 2.54-6.3.42-8.42z"/></svg>
+              ${item.material || 'Coton'}
+            </span>
+            <span class="badge" style="display:inline-flex; align-items:center; gap:4px;">
               <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 2H8a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2z"/><path d="M12 18V7"/><path d="M10 10l2 2 2-2"/></svg>
               Formalité ${item.formality_level}
             </span>
@@ -257,6 +337,7 @@
         category: document.getElementById('catInput').value,
         subcategory: document.getElementById('subInput').value.trim() || "Vêtement",
         color_primary: document.getElementById('colorInput').value,
+        material: document.getElementById('materialInput').value.trim() || "Coton",
         formality_level: parseInt(document.getElementById('formalityInput').value),
         warmth_rating: parseInt(document.getElementById('warmthInput').value),
       };
