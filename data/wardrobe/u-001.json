@@ -19,17 +19,17 @@
     "auto_tagged": false,
     "is_favorite": false,
     "created_at": "2026-09-16T09:45:38.962096",
-    "last_suggested_at": null,
+    "last_suggested_at": "2026-09-17T07:38:45.238252",
     "last_worn_at": null
   },
   {
-    "item_id": "itm_138fc4b5",
+    "item_id": "itm_a40c64ee",
     "user_id": "u-001",
     "category": "bottom",
-    "subcategory": "Pantalon",
-    "color_primary": "blanc",
+    "subcategory": "Jupe",
+    "color_primary": "bleu_clair",
     "color_secondary": null,
-    "material": null,
+    "material": "Soie",
     "pattern": null,
     "formality_level": 5,
     "warmth_rating": 3,
@@ -38,7 +38,7 @@
     "image_url": null,
     "auto_tagged": false,
     "is_favorite": false,
-    "created_at": "2026-09-16T10:24:31.459307",
+    "created_at": "2026-09-17T07:48:25.893513",
     "last_suggested_at": null,
     "last_worn_at": null
   }
