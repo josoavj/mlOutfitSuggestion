@@ -193,33 +193,47 @@ class OutfitRecommender:
             occasion=occasion,
         )
 
-        # 2. Get user items or bootstrap if empty
+        # 2. Get user items or bootstrap if incomplete
         user_items = wardrobe_store.list_items(request.user_id)
-        if not user_items:
-            # Generate bootstrap items
-            user_items = []
+        
+        has_top = any(i.category.value == "top" or i.category.value == "dress" for i in user_items)
+        has_bottom = any(i.category.value == "bottom" or i.category.value == "dress" for i in user_items)
+        has_shoes = any(i.category.value == "shoes" for i in user_items)
+
+        if not (has_top and has_bottom and has_shoes):
+            # La garde-robe est incomplète, on génère des items de complément variés
+            bootstrap_items = []
             categories = [Category.top, Category.bottom, Category.shoes, Category.outerwear]
-            subcategories = {
-                Category.top: ["chemise", "t_shirt", "pull", "sweat"],
-                Category.bottom: ["pantalon", "jean", "short", "jupe"],
-                Category.shoes: ["baskets", "mocassins", "bottines", "chaussures_habillees"],
-                Category.outerwear: ["veste", "manteau", "blazer", "doudoune"]
+            
+            # Pools variés pour éviter la répétition structurelle
+            sub_pools = {
+                Category.top: ["chemise", "t_shirt", "pull", "sweat", "polo", "debardeur"],
+                Category.bottom: ["pantalon", "jean", "short", "jupe", "chino"],
+                Category.shoes: ["baskets", "mocassins", "bottines", "chaussures_habillees", "sandales"],
+                Category.outerwear: ["veste", "manteau", "blazer", "doudoune", "trench"]
             }
-            colors = [Color.noir, Color.blanc, Color.bleu_marine, Color.beige, Color.gris]
+            
+            from .wardrobe.models import Material
+            materials = [Material.coton, Material.denim, Material.laine, Material.synthetique]
+            colors = [Color.noir, Color.blanc, Color.bleu_marine, Color.beige, Color.gris, Color.marron]
             
             idx = 0
             for f in range(1, 6):
                 for w in range(1, 6):
                     for cat in categories:
-                        sub = subcategories[cat][idx % len(subcategories[cat])]
+                        pool = sub_pools[cat]
+                        sub = pool[idx % len(pool)]
                         col = colors[idx % len(colors)]
-                        user_items.append(
+                        mat = materials[idx % len(materials)]
+                        
+                        bootstrap_items.append(
                             WardrobeItem(
-                                item_id=f"boot_{cat.value}_{f}_{w}",
+                                item_id=f"boot_{cat.value}_{f}_{w}_{idx}",
                                 user_id=request.user_id,
                                 category=cat,
                                 subcategory=sub,
                                 color_primary=col,
+                                material=mat,
                                 formality_level=f,
                                 warmth_rating=w,
                                 pattern=Pattern.uni,
@@ -227,6 +241,8 @@ class OutfitRecommender:
                             )
                         )
                         idx += 1
+            # On mélange les items réels et les items bootstrap
+            user_items = user_items + bootstrap_items
 
         # 3. Filter out banned items
         if prefs and prefs.items_bannis:
