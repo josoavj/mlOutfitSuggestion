@@ -13,14 +13,22 @@ WARMTH_TOLERANCE = 1  # écart toléré entre warmth_rating de l'item et target_
 
 
 def passes_hard_filters(item: WardrobeItem, context: CompositionContext) -> bool:
-    if abs(item.warmth_rating - context.target_warmth) > WARMTH_TOLERANCE:
+    # Filtre chaleur (si au moins une note de l'item est dans la plage de tolérance)
+    if not any(abs(w - context.target_warmth) <= WARMTH_TOLERANCE for w in item.warmth_ratings):
         return False
 
-    if abs(item.formality_level - context.dominant_occasion_formality) > context.formality_tolerance:
+    # Filtre formalité (si au moins une note est dans la plage de tolérance)
+    if not any(abs(f - context.dominant_occasion_formality) <= context.formality_tolerance for f in item.formality_levels):
         return False
 
     if context.season and item.season_suitability and context.season not in item.season_suitability:
         return False
+
+    # Filtre par sexe
+    if context.gender != "unknown":
+        item_target = "masculin" if context.gender == "male" else "feminin"
+        if item.gender.value != "unisex" and item.gender.value != item_target:
+            return False
 
     return True
 
