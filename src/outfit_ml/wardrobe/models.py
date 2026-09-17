@@ -40,14 +40,37 @@ class Color(str, Enum):
 
 
 class Material(str, Enum):
+    # Naturels
     coton = "coton"
     laine = "laine"
     lin = "lin"
     soie = "soie"
-    denim = "denim"
+    cachemire = "cachemire"
+    chanvre = "chanvre"
     cuir = "cuir"
+    daim = "daim"
+    fourrure = "fourrure"
+    
+    # Synthétiques & Artificiels
+    denim = "denim"
     synthetique = "synthetique"
+    polyester = "polyester"
+    nylon = "nylon"
+    viscose = "viscose"
+    lycra = "elashanne"
+    acrylic = "acrylique"
+    
+    # Textures & Tissages
     maille = "maille"
+    velours = "velours"
+    satin = "satin"
+    tulle = "tulle"
+    dentelle = "dentelle"
+    flanelle = "flanelle"
+    tweed = "tweed"
+    jersey = "jersey"
+    polaire = "polaire"
+    canvas = "toile"
 
 
 class Pattern(str, Enum):
@@ -80,7 +103,7 @@ class WardrobeItemCreate(BaseModel):
     warmth_rating: int = Field(..., ge=1, le=5)
 
     color_secondary: Optional[Color] = None
-    material: Optional[Material] = None
+    material: Optional[str] = "coton"  # Changé en str pour permettre le manuel
     pattern: Optional[Pattern] = None
     season_suitability: list[Season] = Field(default_factory=list)
     occasion_tags: list[str] = Field(default_factory=list)
@@ -97,7 +120,7 @@ class WardrobeItemUpdate(BaseModel):
     subcategory: Optional[str] = None
     color_primary: Optional[Color] = None
     color_secondary: Optional[Color] = None
-    material: Optional[Material] = None
+    material: Optional[str] = None
     pattern: Optional[Pattern] = None
     formality_level: Optional[int] = Field(None, ge=1, le=5)
     warmth_rating: Optional[int] = Field(None, ge=1, le=5)
@@ -117,11 +140,11 @@ class WardrobeItem(BaseModel):
     subcategory: str
     color_primary: Color
     color_secondary: Optional[Color] = None
-    material: Optional[Material] = None
-    pattern: Optional[Pattern] = None
+    material: Optional[str] = "coton"
+    pattern: Optional[Pattern] = Pattern.uni
     formality_level: int
     warmth_rating: int
-    season_suitability: list[Season] = Field(default_factory=list)
+    season_suitability: list[Season] = Field(default_factory=lambda: [Season.printemps, Season.ete, Season.automne, Season.hiver])
     occasion_tags: list[str] = Field(default_factory=list)
 
     image_url: Optional[str] = None
