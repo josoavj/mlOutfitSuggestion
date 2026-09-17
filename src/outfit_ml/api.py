@@ -102,8 +102,7 @@ app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 app.add_middleware(SlowAPIMiddleware)
 
-if WEB_DIR.exists():
-    app.mount("/ui-assets", StaticFiles(directory=str(WEB_DIR)), name="ui-assets")
+# Le montage des fichiers statiques est déplacé en fin de fichier pour éviter les conflits avec l'API
 
 app.add_middleware(
     CORSMiddleware,
@@ -248,41 +247,13 @@ def health() -> dict[str, str]:
 # UI routes
 # ---------------------------------------------------------------------------
 
+# ---------------------------------------------------------------------------
+# UI redirection (compatibilité locale)
+# ---------------------------------------------------------------------------
+
 @app.get("/ui")
-def ui_page() -> FileResponse:
-    if not WEB_DIR.exists():
-        raise HTTPException(status_code=404, detail="UI non disponible")
+def ui_page():
     return FileResponse(WEB_DIR / "index.html")
-
-
-@app.get("/test.html")
-def ui_test_page() -> FileResponse:
-    if not WEB_DIR.exists():
-        raise HTTPException(status_code=404, detail="UI non disponible")
-    test_path = WEB_DIR / "test.html"
-    if not test_path.exists():
-        raise HTTPException(status_code=404, detail="Page test introuvable")
-    return FileResponse(test_path)
-
-
-@app.get("/metrics.html")
-def ui_metrics_page() -> FileResponse:
-    if not WEB_DIR.exists():
-        raise HTTPException(status_code=404, detail="UI non disponible")
-    metrics_path = WEB_DIR / "metrics.html"
-    if not metrics_path.exists():
-        raise HTTPException(status_code=404, detail="Page métriques introuvable")
-    return FileResponse(metrics_path)
-
-
-@app.get("/styles.css")
-def ui_styles() -> FileResponse:
-    if not WEB_DIR.exists():
-        raise HTTPException(status_code=404, detail="UI non disponible")
-    css_path = WEB_DIR / "styles.css"
-    if not css_path.exists():
-        raise HTTPException(status_code=404, detail="Feuille de style introuvable")
-    return FileResponse(css_path)
 
 
 @app.get("/favicon.ico")
@@ -560,3 +531,7 @@ from .preferences.router import router as preferences_router
 
 app.include_router(wardrobe_router)
 app.include_router(preferences_router)
+
+# Montage du dossier web à la racine pour la compatibilité locale et Vercel
+if WEB_DIR.exists():
+    app.mount("/", StaticFiles(directory=str(WEB_DIR), html=True), name="static")

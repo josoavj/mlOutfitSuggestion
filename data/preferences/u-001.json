@@ -1,0 +1,31 @@
+{
+  "user_id": "u-001",
+  "styles_aimes": [
+    "classic",
+    "sport",
+    "elegant"
+  ],
+  "styles_evites": [
+    "casual",
+    "practical"
+  ],
+  "couleurs_aimees": [
+    "noir",
+    "blanc",
+    "bleu_marine",
+    "bleu_clair",
+    "beige"
+  ],
+  "couleurs_evitees": [
+    "rose",
+    "jaune",
+    "orange",
+    "violet"
+  ],
+  "niveau_formalite_prefere": 3,
+  "items_bannis": [],
+  "tolerance_meteo": "neutre",
+  "onboarding_completed_at": "2026-09-17T07:20:03.023863",
+  "last_micro_survey_at": null,
+  "preferences_version": 1
+}
