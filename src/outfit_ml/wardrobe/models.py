@@ -88,6 +88,12 @@ class Season(str, Enum):
     hiver = "hiver"
 
 
+class ItemGender(str, Enum):
+    masculin = "masculin"
+    feminin = "feminin"
+    unisex = "unisex"
+
+
 class WardrobeItemCreate(BaseModel):
     """Payload attendu par POST /wardrobe/items.
 
@@ -99,8 +105,9 @@ class WardrobeItemCreate(BaseModel):
     category: Category
     subcategory: str = Field(..., min_length=1, max_length=50)
     color_primary: Color
-    formality_level: int = Field(..., ge=1, le=5)
-    warmth_rating: int = Field(..., ge=1, le=5)
+    gender: ItemGender = ItemGender.unisex
+    formality_levels: list[int] = Field(default_factory=lambda: [3], min_items=1)
+    warmth_ratings: list[int] = Field(default_factory=lambda: [3], min_items=1)
 
     color_secondary: Optional[Color] = None
     material: Optional[str] = "coton"  # Changé en str pour permettre le manuel
@@ -119,11 +126,10 @@ class WardrobeItemUpdate(BaseModel):
 
     subcategory: Optional[str] = None
     color_primary: Optional[Color] = None
+    gender: Optional[ItemGender] = None
+    formality_levels: Optional[list[int]] = None
+    warmth_ratings: Optional[list[int]] = None
     color_secondary: Optional[Color] = None
-    material: Optional[str] = None
-    pattern: Optional[Pattern] = None
-    formality_level: Optional[int] = Field(None, ge=1, le=5)
-    warmth_rating: Optional[int] = Field(None, ge=1, le=5)
     season_suitability: Optional[list[Season]] = None
     occasion_tags: Optional[list[str]] = None
     image_url: Optional[str] = None
@@ -139,11 +145,12 @@ class WardrobeItem(BaseModel):
     category: Category
     subcategory: str
     color_primary: Color
+    gender: ItemGender = ItemGender.unisex
     color_secondary: Optional[Color] = None
     material: Optional[str] = "coton"
     pattern: Optional[Pattern] = Pattern.uni
-    formality_level: int
-    warmth_rating: int
+    formality_levels: list[int] = Field(default_factory=lambda: [3])
+    warmth_ratings: list[int] = Field(default_factory=lambda: [3])
     season_suitability: list[Season] = Field(default_factory=lambda: [Season.printemps, Season.ete, Season.automne, Season.hiver])
     occasion_tags: list[str] = Field(default_factory=list)
 
@@ -162,11 +169,12 @@ class WardrobeItem(BaseModel):
             category=payload.category,
             subcategory=payload.subcategory,
             color_primary=payload.color_primary,
+            gender=payload.gender,
             color_secondary=payload.color_secondary,
             material=payload.material,
             pattern=payload.pattern,
-            formality_level=payload.formality_level,
-            warmth_rating=payload.warmth_rating,
+            formality_levels=payload.formality_levels,
+            warmth_ratings=payload.warmth_ratings,
             season_suitability=payload.season_suitability,
             occasion_tags=payload.occasion_tags,
             image_url=image_url,

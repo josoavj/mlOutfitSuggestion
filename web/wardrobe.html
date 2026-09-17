@@ -119,20 +119,20 @@
               </div>
               <div>
                 <p class="info-text" style="font-size: 12.5px; line-height: 1.5; color: var(--ink);">
-                  <strong>2. Intelligence Contextuelle</strong><br>
-                  Le niveau de <strong>Formalité</strong> (1 à 5) permet de filtrer les tenues selon votre agenda (ex: 1 pour le sport, 4 pour une réunion). La <strong>Chaleur</strong> (1 à 5) ajuste les suggestions aux données météo réelles.
+                  <strong>2. Polyvalence & Intelligence</strong><br>
+                  Un vêtement peut être adapté à plusieurs contextes : n'hésitez pas à cocher <strong>plusieurs cases</strong> pour la Formalité, la Chaleur ou les Saisons. Un Jean peut être à la fois "Décontracté" et "Smart Casual", et se porter en toute saison.
                 </p>
               </div>
               <div>
                 <p class="info-text" style="font-size: 12.5px; line-height: 1.5; color: var(--ink);">
-                  <strong>3. Harmonie RAG & ML</strong><br>
-                  Le moteur utilise une base vectorielle <em>ChromaDB</em> pour valider l'harmonie des couleurs et un modèle ML réentraîné pour garantir que les pièces sélectionnées forment un ensemble cohérent et stylé.
+                  <strong>3. Sexe & Morphologie</strong><br>
+                  Le <strong>Sexe</strong> (Masculin, Féminin, Unisex) aide l'IA à filtrer les coupes. La <strong>Morphologie</strong> est calculée à partir de vos mensurations pour suggérer des silhouettes flatteuses.
                 </p>
               </div>
               <div>
                 <p class="info-text" style="font-size: 12.5px; line-height: 1.5; color: var(--ink);">
                   <strong>4. Anti-répétition (MMR)</strong><br>
-                  Chaque fois qu'un vêtement est suggéré, sa date de dernière apparition est mise à jour. L'IA pénalise les pièces trop souvent vues pour forcer une rotation naturelle de votre dressing.
+                  L'IA suit la date de suggestion de chaque pièce. Elle pénalise les vêtements vus trop récemment pour garantir une rotation naturelle de votre dressing digital.
                 </p>
               </div>
             </div>
@@ -141,25 +141,35 @@
 
         <div class="divider" style="opacity: 0.15;"></div>
 
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
           <div>
             <p class="info-title" style="color: var(--accent2); font-size: 11px; margin-bottom: 10px;">Légende : Formalité (1-5)</p>
             <div class="metric-table" style="font-size: 11px;">
-              <div class="metric-row"><span><strong>1</strong> - Très décontracté (Sport, Maison)</span></div>
-              <div class="metric-row"><span><strong>2</strong> - Décontracté (Weekend, Casual)</span></div>
-              <div class="metric-row"><span><strong>3</strong> - Smart Casual (Bureau, Restaurant)</span></div>
-              <div class="metric-row"><span><strong>4</strong> - Formel (Réunion, Entretien)</span></div>
-              <div class="metric-row"><span><strong>5</strong> - Très Formel (Cérémonie, Gala)</span></div>
+              <div class="metric-row"><span><strong>1</strong> - Très décontracté (Maison, Sport)</span></div>
+              <div class="metric-row"><span><strong>2</strong> - Décontracté (Sortie ville, Weekend)</span></div>
+              <div class="metric-row"><span><strong>3</strong> - Smart Casual (Bureau, RDV pro léger)</span></div>
+              <div class="metric-row"><span><strong>4</strong> - Formel (Réunion client, Entretien)</span></div>
+              <div class="metric-row"><span><strong>5</strong> - Très Formel (Soirée, Cérémonie)</span></div>
             </div>
           </div>
           <div>
             <p class="info-title" style="color: var(--accent2); font-size: 11px; margin-bottom: 10px;">Légende : Chaleur (1-5)</p>
             <div class="metric-table" style="font-size: 11px;">
-              <div class="metric-row"><span><strong>1</strong> - Très léger (Été chaud)</span></div>
-              <div class="metric-row"><span><strong>2</strong> - Léger (Printemps doux)</span></div>
-              <div class="metric-row"><span><strong>3</strong> - Modéré (Mi-saison)</span></div>
-              <div class="metric-row"><span><strong>4</strong> - Chaud (Automne/Hiver)</span></div>
-              <div class="metric-row"><span><strong>5</strong> - Très chaud (Grand froid)</span></div>
+              <div class="metric-row"><span><strong>1</strong> - Très léger (Canicule, > 30°C)</span></div>
+              <div class="metric-row"><span><strong>2</strong> - Léger (Été normal, 25-30°C)</span></div>
+              <div class="metric-row"><span><strong>3</strong> - Modéré (Mi-saison, 15-25°C)</span></div>
+              <div class="metric-row"><span><strong>4</strong> - Chaud (Hiver doux, 5-15°C)</span></div>
+              <div class="metric-row"><span><strong>5</strong> - Très chaud (Grand froid, < 5°C)</span></div>
+            </div>
+          </div>
+          <div>
+            <p class="info-title" style="color: var(--accent2); font-size: 11px; margin-bottom: 10px;">Attributs & Sexe</p>
+            <div class="metric-table" style="font-size: 11px;">
+              <div class="metric-row"><span><strong>Masculin</strong> - Coupes pour homme</span></div>
+              <div class="metric-row"><span><strong>Féminin</strong> - Coupes pour femme</span></div>
+              <div class="metric-row"><span><strong>Unisex</strong> - Mixte (T-shirts, Sweats...)</span></div>
+              <div class="metric-row"><span><strong>Matière</strong> - Influence la texture et le confort</span></div>
+              <div class="metric-row"><span><strong>Catégorie</strong> - Rôle du vêtement dans la tenue</span></div>
             </div>
           </div>
         </div>
@@ -229,8 +239,39 @@
               <option value="Toile">
             </datalist>
           </label>
-          <label>Formalité (1-5) <input type="number" id="formalityInput" value="3" min="1" max="5" /></label>
-          <label>Chaleur (1-5) <input type="number" id="warmthInput" value="3" min="1" max="5" /></label>
+          <label>Sexe
+            <select id="genderInput">
+              <option value="unisex">Unisex</option>
+              <option value="masculin">Masculin</option>
+              <option value="feminin">Féminin</option>
+            </select>
+          </label>
+          <label>Formalité (Multi-sélection)
+            <div class="style-grid" style="grid-template-columns: repeat(5, 1fr); gap: 4px; margin-top: 5px;" id="formalityCheckboxes">
+              <label style="display:flex; flex-direction:column; align-items:center; gap:2px; font-size:9px;"><input type="checkbox" value="1"> 1</label>
+              <label style="display:flex; flex-direction:column; align-items:center; gap:2px; font-size:9px;"><input type="checkbox" value="2"> 2</label>
+              <label style="display:flex; flex-direction:column; align-items:center; gap:2px; font-size:9px;"><input type="checkbox" value="3" checked> 3</label>
+              <label style="display:flex; flex-direction:column; align-items:center; gap:2px; font-size:9px;"><input type="checkbox" value="4"> 4</label>
+              <label style="display:flex; flex-direction:column; align-items:center; gap:2px; font-size:9px;"><input type="checkbox" value="5"> 5</label>
+            </div>
+          </label>
+          <label>Chaleur (Multi-sélection)
+            <div class="style-grid" style="grid-template-columns: repeat(5, 1fr); gap: 4px; margin-top: 5px;" id="warmthCheckboxes">
+              <label style="display:flex; flex-direction:column; align-items:center; gap:2px; font-size:9px;"><input type="checkbox" value="1"> 1</label>
+              <label style="display:flex; flex-direction:column; align-items:center; gap:2px; font-size:9px;"><input type="checkbox" value="2"> 2</label>
+              <label style="display:flex; flex-direction:column; align-items:center; gap:2px; font-size:9px;"><input type="checkbox" value="3" checked> 3</label>
+              <label style="display:flex; flex-direction:column; align-items:center; gap:2px; font-size:9px;"><input type="checkbox" value="4"> 4</label>
+              <label style="display:flex; flex-direction:column; align-items:center; gap:2px; font-size:9px;"><input type="checkbox" value="5"> 5</label>
+            </div>
+          </label>
+          <label>Saisons (Multi-sélection)
+            <div class="style-grid" style="grid-template-columns: repeat(2, 1fr); gap: 4px; margin-top: 5px;" id="seasonCheckboxes">
+              <label style="display:flex; align-items:center; gap:6px; font-size:10px;"><input type="checkbox" value="printemps" checked> Printemps</label>
+              <label style="display:flex; align-items:center; gap:6px; font-size:10px;"><input type="checkbox" value="ete" checked> Été</label>
+              <label style="display:flex; align-items:center; gap:6px; font-size:10px;"><input type="checkbox" value="automne" checked> Automne</label>
+              <label style="display:flex; align-items:center; gap:6px; font-size:10px;"><input type="checkbox" value="hiver" checked> Hiver</label>
+            </div>
+          </label>
           <div style="display: flex; align-items: flex-end;">
             <button class="btn-run" id="addBtn" style="width: 100%;">Ajouter</button>
           </div>
@@ -284,6 +325,11 @@
       }
     }
 
+    function capitalize(str) {
+      if (!str) return "";
+      return str.charAt(0).toUpperCase() + str.slice(1);
+    }
+
     function renderWardrobe(items) {
       const grid = document.getElementById('wardrobeGrid');
       const countEl = document.getElementById('itemCount');
@@ -303,28 +349,36 @@
         card.className = 'item-card';
         card.innerHTML = `
           <div class="item-header">
-            <span class="item-cat">${item.category}</span>
+            <span class="item-cat">${capitalize(item.category)}</span>
             <button class="btn-delete" onclick="deleteItem('${item.item_id}')">
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
             </button>
           </div>
-          <span class="item-title">${item.subcategory.replace('_', ' ')}</span>
+          <span class="item-title">${capitalize(item.subcategory.replace('_', ' '))}</span>
           <div class="item-badges">
             <span class="badge" style="display:inline-flex; align-items:center; gap:4px;">
               <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2a1 1 0 0 1 1 1v4.5a2.5 2.5 0 0 0 5 0V7a1 1 0 0 1 1-1 2 2 0 0 1 2 2v4c0 5.523-4.477 10-10 10z"/></svg>
-              ${item.color_primary.replace('_', ' ')}
+              ${capitalize(item.color_primary.replace('_', ' '))}
+            </span>
+            <span class="badge" style="display:inline-flex; align-items:center; gap:4px;">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2v20M2 12h20"/></svg>
+              ${capitalize(item.gender)}
             </span>
             <span class="badge" style="display:inline-flex; align-items:center; gap:4px;">
               <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.42 4.58a5.4 5.4 0 0 0-7.65 0l-.77.78-.77-.78a5.4 5.4 0 0 0-7.65 0C1.46 6.7 1.33 10.28 4 13l8 8 8-8c2.67-2.72 2.54-6.3.42-8.42z"/></svg>
-              ${item.material || 'Coton'}
+              ${capitalize(item.material || 'Coton')}
             </span>
             <span class="badge" style="display:inline-flex; align-items:center; gap:4px;">
               <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 2H8a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2z"/><path d="M12 18V7"/><path d="M10 10l2 2 2-2"/></svg>
-              Formalité ${item.formality_level}
+              Formalités: ${item.formality_levels.join(', ')}
             </span>
             <span class="badge" style="display:inline-flex; align-items:center; gap:4px;">
-              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3 1.07.19 1.93 1.05 2.25 2.1a2.5 2.5 0 0 1 3.25 2.4 2.5 2.5 0 0 1-5 0z"/><path d="M12 2c1.2 0 2.4.48 3.39 1.36a10.89 10.89 0 0 1 2.25 4.85C18.45 11.23 18 14.5 15.5 17c-1.4 1.4-3 2.1-4.5 2.1s-3.1-.7-4.5-2.1c-2.5-2.5-2.95-5.77-2.14-8.79a10.89 10.89 0 0 1 2.25-4.85C7.6 2.48 8.8 2 10 2z"/></svg>
-              Chaleur ${item.warmth_rating}
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2c1.2 0 2.4.48 3.39 1.36a10.89 10.89 0 0 1 2.25 4.85C18.45 11.23 18 14.5 15.5 17c-1.4 1.4-3 2.1-4.5 2.1s-3.1-.7-4.5-2.1c-2.5-2.5-2.95-5.77-2.14-8.79a10.89 10.89 0 0 1 2.25-4.85C7.6 2.48 8.8 2 10 2z"/></svg>
+              Chaleurs: ${item.warmth_ratings.join(', ')}
+            </span>
+            <span class="badge" style="display:inline-flex; align-items:center; gap:4px;">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              Saisons: ${item.season_suitability.map(s => capitalize(s)).join(', ')}
             </span>
           </div>
         `;
@@ -333,14 +387,24 @@
     }
 
     async function addItem() {
+      const getSelected = (id) => Array.from(document.querySelectorAll(`${id} input:checked`)).map(el => parseInt(el.value));
+      const getSelectedText = (id) => Array.from(document.querySelectorAll(`${id} input:checked`)).map(el => el.value);
+
       const payload = {
         category: document.getElementById('catInput').value,
         subcategory: document.getElementById('subInput').value.trim() || "Vêtement",
         color_primary: document.getElementById('colorInput').value,
         material: document.getElementById('materialInput').value.trim() || "Coton",
-        formality_level: parseInt(document.getElementById('formalityInput').value),
-        warmth_rating: parseInt(document.getElementById('warmthInput').value),
+        gender: document.getElementById('genderInput').value,
+        formality_levels: getSelected('#formalityCheckboxes'),
+        warmth_ratings: getSelected('#warmthCheckboxes'),
+        season_suitability: getSelectedText('#seasonCheckboxes'),
       };
+
+      if (payload.formality_levels.length === 0 || payload.warmth_ratings.length === 0 || payload.season_suitability.length === 0) {
+        alert("Veuillez sélectionner au moins un niveau de formalité, de chaleur et une saison.");
+        return;
+      }
 
       try {
         const r = await fetch(`/wardrobe/items?user_id=${USER_ID}`, {
@@ -369,14 +433,14 @@
 
     async function generateTestData() {
       const items = [
-        { category: "top", subcategory: "Chemise Blanche", color_primary: "blanc", formality_level: 4, warmth_rating: 2 },
-        { category: "top", subcategory: "Pull en Laine", color_primary: "bleu_marine", formality_level: 3, warmth_rating: 4 },
-        { category: "top", subcategory: "T-shirt Casual", color_primary: "gris", formality_level: 2, warmth_rating: 1 },
-        { category: "bottom", subcategory: "Jean Brut", color_primary: "bleu_marine", formality_level: 2, warmth_rating: 3 },
-        { category: "bottom", subcategory: "Pantalon Chino", color_primary: "beige", formality_level: 3, warmth_rating: 2 },
-        { category: "shoes", subcategory: "Baskets Blanches", color_primary: "blanc", formality_level: 2, warmth_rating: 2 },
-        { category: "shoes", subcategory: "Mocassins", color_primary: "marron", formality_level: 4, warmth_rating: 2 },
-        { category: "outerwear", subcategory: "Manteau Long", color_primary: "noir", formality_level: 4, warmth_rating: 5 }
+        { category: "top", subcategory: "Chemise Blanche", color_primary: "blanc", gender: "masculin", formality_levels: [3, 4], warmth_ratings: [2, 3] },
+        { category: "top", subcategory: "Pull en Laine", color_primary: "bleu_marine", gender: "unisex", formality_levels: [2, 3], warmth_ratings: [4, 5] },
+        { category: "top", subcategory: "T-shirt Casual", color_primary: "gris", gender: "unisex", formality_levels: [1, 2], warmth_ratings: [1, 2] },
+        { category: "bottom", subcategory: "Jean Brut", color_primary: "bleu_marine", gender: "masculin", formality_levels: [2, 3], warmth_ratings: [2, 3, 4] },
+        { category: "bottom", subcategory: "Pantalon Chino", color_primary: "beige", gender: "masculin", formality_levels: [3, 4], warmth_ratings: [2, 3] },
+        { category: "shoes", subcategory: "Baskets Blanches", color_primary: "blanc", gender: "unisex", formality_levels: [1, 2, 3], warmth_ratings: [2, 3] },
+        { category: "shoes", subcategory: "Mocassins", color_primary: "marron", gender: "masculin", formality_levels: [4, 5], warmth_ratings: [2, 3] },
+        { category: "outerwear", subcategory: "Manteau Long", color_primary: "noir", gender: "unisex", formality_levels: [3, 4, 5], warmth_ratings: [4, 5] }
       ];
 
       const btn = document.getElementById('bootstrapBtn');

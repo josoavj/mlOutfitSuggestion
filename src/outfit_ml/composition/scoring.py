@@ -26,11 +26,14 @@ def get_model():
 
 def heuristic_score(combination: OutfitCombination, context: CompositionContext) -> float:
     favorite_bonus = sum(0.1 for item in combination.items if item.is_favorite)
-    formality_penalty = sum(
-        abs(item.formality_level - context.dominant_occasion_formality) * 0.05
-        for item in combination.items
-    )
-    return max(0.0, combination.compatibility_score + favorite_bonus - formality_penalty)
+    
+    total_formality_penalty = 0.0
+    for item in combination.items:
+        # On prend la formalité la plus proche de la cible parmi celles de l'item
+        closest_f = min(item.formality_levels, key=lambda x: abs(x - context.dominant_occasion_formality))
+        total_formality_penalty += abs(closest_f - context.dominant_occasion_formality) * 0.05
+        
+    return max(0.0, combination.compatibility_score + favorite_bonus - total_formality_penalty)
 
 
 def ml_combination_score(combination: OutfitCombination, context: CompositionContext) -> float:
@@ -48,9 +51,12 @@ def ml_combination_score(combination: OutfitCombination, context: CompositionCon
     if not (top and bottom and shoes):
         return heuristic_score(combination, context)
 
-    f_vals = [i.formality_level for i in combination.items]
+    # Agrégats pour le modèle
+    f_vals = [min(i.formality_levels, key=lambda x: abs(x - context.dominant_occasion_formality)) for i in combination.items]
     max_f_gap = max(f_vals) - min(f_vals)
-    avg_w = sum(i.warmth_rating for i in combination.items) / len(combination.items)
+    
+    w_vals = [min(i.warmth_ratings, key=lambda x: abs(x - context.target_warmth)) for i in combination.items]
+    avg_w = sum(w_vals) / len(w_vals)
 
     row = {
         "age": context.age,
@@ -60,16 +66,16 @@ def ml_combination_score(combination: OutfitCombination, context: CompositionCon
         "occasion": context.occasion,
         "weather": context.weather_bucket,
         "top_color": top.color_primary.value,
-        "top_formality": top.formality_level,
-        "top_warmth": top.warmth_rating,
+        "top_formality": min(top.formality_levels, key=lambda x: abs(x - context.dominant_occasion_formality)),
+        "top_warmth": min(top.warmth_ratings, key=lambda x: abs(x - context.target_warmth)),
         "top_pattern": top.pattern.value if top.pattern else "uni",
         "bottom_color": bottom.color_primary.value,
-        "bottom_formality": bottom.formality_level,
-        "bottom_warmth": bottom.warmth_rating,
+        "bottom_formality": min(bottom.formality_levels, key=lambda x: abs(x - context.dominant_occasion_formality)),
+        "bottom_warmth": min(bottom.warmth_ratings, key=lambda x: abs(x - context.target_warmth)),
         "bottom_pattern": bottom.pattern.value if bottom.pattern else "uni",
         "shoes_color": shoes.color_primary.value,
-        "shoes_formality": shoes.formality_level,
-        "shoes_warmth": shoes.warmth_rating,
+        "shoes_formality": min(shoes.formality_levels, key=lambda x: abs(x - context.dominant_occasion_formality)),
+        "shoes_warmth": min(shoes.warmth_ratings, key=lambda x: abs(x - context.target_warmth)),
         "shoes_pattern": shoes.pattern.value if shoes.pattern else "uni",
         "max_formality_gap": max_f_gap,
         "avg_warmth": avg_w,

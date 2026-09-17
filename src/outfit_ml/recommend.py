@@ -213,9 +213,10 @@ class OutfitRecommender:
                 Category.outerwear: ["veste", "manteau", "blazer", "doudoune", "trench"]
             }
             
-            from .wardrobe.models import Material
+            from .wardrobe.models import Material, ItemGender
             materials = [Material.coton, Material.denim, Material.laine, Material.synthetique]
             colors = [Color.noir, Color.blanc, Color.bleu_marine, Color.beige, Color.gris, Color.marron]
+            genders = [ItemGender.masculin, ItemGender.feminin, ItemGender.unisex]
             
             idx = 0
             for f in range(1, 6):
@@ -225,6 +226,7 @@ class OutfitRecommender:
                         sub = pool[idx % len(pool)]
                         col = colors[idx % len(colors)]
                         mat = materials[idx % len(materials)]
+                        gen = genders[idx % len(genders)]
                         
                         bootstrap_items.append(
                             WardrobeItem(
@@ -234,8 +236,9 @@ class OutfitRecommender:
                                 subcategory=sub,
                                 color_primary=col,
                                 material=mat,
-                                formality_level=f,
-                                warmth_rating=w,
+                                gender=gen,
+                                formality_levels=[f], # Simple pour le bootstrap initial
+                                warmth_ratings=[w],
                                 pattern=Pattern.uni,
                                 season_suitability=[Season.printemps, Season.ete, Season.automne, Season.hiver]
                             )

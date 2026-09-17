@@ -60,7 +60,7 @@ def load_catalog(path: Path) -> list[OutfitItem]:
 def synthetic_training_pairs(catalog: list[OutfitItem], n_samples: int, seed: int = 42) -> pd.DataFrame:
     rng = Random(seed)
     body_shapes = ["hourglass", "rectangle", "pear", "inverted_triangle", "oval"]
-    genders = ["female", "male", "non_binary"]
+    genders = ["female", "male"]
     clothing_sizes = ["xs", "s", "m", "l", "xl", "xxl"]
 
     rows: list[dict[str, int | float | str]] = []
@@ -259,7 +259,7 @@ def synthetic_combination_pairs(n_samples: int, seed: int = 42) -> pd.DataFrame:
     """
     rng = Random(seed)
     body_shapes = ["hourglass", "rectangle", "pear", "inverted_triangle", "oval"]
-    genders = ["female", "male", "non_binary"]
+    genders = ["female", "male"]
     
     # Pools d'items simplifiés pour la simulation
     colors = ["noir", "blanc", "gris", "bleu_marine", "bleu_clair", "beige", "marron", "vert", "rouge", "jaune", "rose", "violet"]
@@ -285,31 +285,31 @@ def synthetic_combination_pairs(n_samples: int, seed: int = 42) -> pd.DataFrame:
         warmth_map = {"hot": 1, "mild": 3, "rainy": 3, "cold": 5}
         target_w = warmth_map.get(weather, 3)
 
-        # Génération des 3 items (Top, Bottom, Shoes)
+        # Génération des 3 items (Top, Bottom, Shoes) avec multi-niveaux
         items_data = []
         for cat in ["top", "bottom", "shoes"]:
-            f = rng.randint(max(1, target_f - 1), min(5, target_f + 1))
-            w = rng.randint(max(1, target_w - 1), min(5, target_w + 1))
+            # On génère 1 à 3 niveaux de formalité/chaleur centrés sur la cible
+            fs = list(set([rng.randint(max(1, target_f - 1), min(5, target_f + 1)) for _ in range(rng.randint(1, 2))]))
+            ws = list(set([rng.randint(max(1, target_w - 1), min(5, target_w + 1)) for _ in range(rng.randint(1, 2))]))
             c = rng.choice(colors)
             p = rng.choice(patterns)
-            items_data.append({"cat": cat, "color": c, "formality": f, "warmth": w, "pattern": p})
+            items_data.append({"cat": cat, "color": c, "formalities": fs, "warmths": ws, "pattern": p})
             
         top, bottom, shoes = items_data
         
-        # Calcul des scores de cohérence pour le label
-        # 1. Harmonie des couleurs (simplifié : au moins 2 neutres ou paires connues)
-        c_set = {top["color"], bottom["color"], shoes["color"]}
-        n_neutrals = sum(1 for c in c_set if c in neutrals)
-        color_harmony = 1.0 if n_neutrals >= 2 else 0.5
-        
-        # 2. Écart de formalité
-        f_vals = [top["formality"], bottom["formality"], shoes["formality"]]
+        # Calcul des scores de cohérence pour le label (basé sur le niveau le plus proche)
+        f_vals = [min(i["formalities"], key=lambda x: abs(x - target_f)) for i in items_data]
         max_f_gap = max(f_vals) - min(f_vals)
         f_score = 1.0 if max_f_gap <= 1 else (0.5 if max_f_gap == 2 else 0.0)
         
-        # 3. Adéquation météo/occasion
-        avg_w = sum(i["warmth"] for i in items_data) / 3
+        w_vals = [min(i["warmths"], key=lambda x: abs(x - target_w)) for i in items_data]
+        avg_w = sum(w_vals) / 3
         w_score = 1.0 - abs(avg_w - target_w) * 0.2
+        
+        # 1. Harmonie des couleurs (simplifié)
+        c_set = {top["color"], bottom["color"], shoes["color"]}
+        n_neutrals = sum(1 for c in c_set if c in neutrals)
+        color_harmony = 1.0 if n_neutrals >= 2 else 0.5
         
         # Signal global pour le label
         signal = (color_harmony * 0.4) + (f_score * 0.3) + (w_score * 0.3)
@@ -324,16 +324,16 @@ def synthetic_combination_pairs(n_samples: int, seed: int = 42) -> pd.DataFrame:
             "occasion": occasion,
             "weather": weather,
             "top_color": top["color"],
-            "top_formality": top["formality"],
-            "top_warmth": top["warmth"],
+            "top_formality": min(top["formalities"], key=lambda x: abs(x - target_f)),
+            "top_warmth": min(top["warmths"], key=lambda x: abs(x - target_w)),
             "top_pattern": top["pattern"],
             "bottom_color": bottom["color"],
-            "bottom_formality": bottom["formality"],
-            "bottom_warmth": bottom["warmth"],
+            "bottom_formality": min(bottom["formalities"], key=lambda x: abs(x - target_f)),
+            "bottom_warmth": min(bottom["warmths"], key=lambda x: abs(x - target_w)),
             "bottom_pattern": bottom["pattern"],
             "shoes_color": shoes["color"],
-            "shoes_formality": shoes["formality"],
-            "shoes_warmth": shoes["warmth"],
+            "shoes_formality": min(shoes["formalities"], key=lambda x: abs(x - target_f)),
+            "shoes_warmth": min(shoes["warmths"], key=lambda x: abs(x - target_w)),
             "shoes_pattern": shoes["pattern"],
             "max_formality_gap": max_f_gap,
             "avg_warmth": avg_w,

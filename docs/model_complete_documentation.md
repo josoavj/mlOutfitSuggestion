@@ -93,7 +93,7 @@ Le dataset d'entraînement est **synthétique** (bootstrapping), généré dans 
 |---|---|
 | `age` | Entier [16, 65] |
 | `height_cm` | Entier [150, 200] |
-| `gender` | `female` · `male` · `non_binary` |
+| `gender` | `female` · `male` |
 | `top_size` / `bottom_size` | `xs` · `s` · `m` · `l` · `xl` · `xxl` · `unknown` |
 | `shoe_size` | Valeur numérique simulée puis bucketisée |
 | `body_shape` | `hourglass` · `rectangle` · `pear` · `inverted_triangle` · `oval` |

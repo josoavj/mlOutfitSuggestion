@@ -6,7 +6,7 @@ from typing import Literal
 from pydantic import BaseModel, Field
 
 
-Gender = Literal["female", "male", "non_binary", "unknown"]
+Gender = Literal["female", "male", "unknown"]
 ClothingSize = Literal["xs", "s", "m", "l", "xl", "xxl", "unknown"]
 BodyShape = Literal[
     "hourglass",
