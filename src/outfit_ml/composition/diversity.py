@@ -40,6 +40,18 @@ def _recency_penalty(combination: OutfitCombination) -> float:
     return sum(penalties) / len(penalties) if penalties else 0.0
 
 
+def _structural_similarity(a: OutfitCombination, b: OutfitCombination) -> float:
+    """Mesure la similarité basée sur les sous-catégories (évite d'avoir 5 fois 'Jean + Chemise')."""
+    subs_a = sorted([i.subcategory for i in a.items])
+    subs_b = sorted([i.subcategory for i in b.items])
+    
+    if not subs_a or not subs_b:
+        return 0.0
+        
+    matches = sum(1 for s in subs_a if s in subs_b)
+    return matches / max(len(subs_a), len(subs_b))
+
+
 def diversify(candidates: list[OutfitCombination], top_k: int) -> list[OutfitCombination]:
     remaining = sorted(candidates, key=lambda c: c.final_score, reverse=True)
     selected: list[OutfitCombination] = []
@@ -47,9 +59,18 @@ def diversify(candidates: list[OutfitCombination], top_k: int) -> list[OutfitCom
     while remaining and len(selected) < top_k:
         best, best_mmr = None, float("-inf")
         for candidate in remaining:
-            max_similarity = max((_jaccard(candidate, s) for s in selected), default=0.0)
+            # Similarité exacte (ID)
+            max_id_sim = max((_jaccard(candidate, s) for s in selected), default=0.0)
+            
+            # Similarité structurelle (Type de vêtement)
+            max_struct_sim = max((_structural_similarity(candidate, s) for s in selected), default=0.0)
+            
             recency = _recency_penalty(candidate)
-            mmr = candidate.final_score - DIVERSITY_LAMBDA * max(max_similarity, recency)
+            
+            # On pénalise fortement la répétition du même TYPE de tenue
+            penalty = max(max_id_sim, max_struct_sim * 0.8, recency)
+            mmr = candidate.final_score - DIVERSITY_LAMBDA * penalty
+            
             if mmr > best_mmr:
                 best, best_mmr = candidate, mmr
 
