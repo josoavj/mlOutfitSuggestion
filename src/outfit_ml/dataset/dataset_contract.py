@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-ALLOWED_GENDERS = {"female", "male", "non_binary", "unknown"}
+ALLOWED_GENDERS = {"female", "male", "unknown"}
 ALLOWED_BODY_SHAPES = {
     "hourglass",
     "rectangle",
