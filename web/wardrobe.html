@@ -119,8 +119,8 @@
               </div>
               <div>
                 <p class="info-text" style="font-size: 12.5px; line-height: 1.5; color: var(--ink);">
-                  <strong>2. Intelligence Contextuelle</strong><br>
-                  Les niveaux de <strong>Formalité</strong> et de <strong>Chaleur</strong> permettent de filtrer les tenues. Un vêtement peut être adapté à plusieurs contextes (ex: un jean pour le weekend et le bureau).
+                  <strong>2. Polyvalence & Intelligence</strong><br>
+                  Un vêtement peut être adapté à plusieurs contextes : n'hésitez pas à cocher <strong>plusieurs cases</strong> pour la Formalité, la Chaleur ou les Saisons. Un Jean peut être à la fois "Décontracté" et "Smart Casual", et se porter en toute saison.
                 </p>
               </div>
               <div>
@@ -246,8 +246,32 @@
               <option value="feminin">Féminin</option>
             </select>
           </label>
-          <label>Formalité (1-5) <input type="number" id="formalityInput" value="3" min="1" max="5" /></label>
-          <label>Chaleur (1-5) <input type="number" id="warmthInput" value="3" min="1" max="5" /></label>
+          <label>Formalité (Multi-sélection)
+            <div class="style-grid" style="grid-template-columns: repeat(5, 1fr); gap: 4px; margin-top: 5px;" id="formalityCheckboxes">
+              <label style="display:flex; flex-direction:column; align-items:center; gap:2px; font-size:9px;"><input type="checkbox" value="1"> 1</label>
+              <label style="display:flex; flex-direction:column; align-items:center; gap:2px; font-size:9px;"><input type="checkbox" value="2"> 2</label>
+              <label style="display:flex; flex-direction:column; align-items:center; gap:2px; font-size:9px;"><input type="checkbox" value="3" checked> 3</label>
+              <label style="display:flex; flex-direction:column; align-items:center; gap:2px; font-size:9px;"><input type="checkbox" value="4"> 4</label>
+              <label style="display:flex; flex-direction:column; align-items:center; gap:2px; font-size:9px;"><input type="checkbox" value="5"> 5</label>
+            </div>
+          </label>
+          <label>Chaleur (Multi-sélection)
+            <div class="style-grid" style="grid-template-columns: repeat(5, 1fr); gap: 4px; margin-top: 5px;" id="warmthCheckboxes">
+              <label style="display:flex; flex-direction:column; align-items:center; gap:2px; font-size:9px;"><input type="checkbox" value="1"> 1</label>
+              <label style="display:flex; flex-direction:column; align-items:center; gap:2px; font-size:9px;"><input type="checkbox" value="2"> 2</label>
+              <label style="display:flex; flex-direction:column; align-items:center; gap:2px; font-size:9px;"><input type="checkbox" value="3" checked> 3</label>
+              <label style="display:flex; flex-direction:column; align-items:center; gap:2px; font-size:9px;"><input type="checkbox" value="4"> 4</label>
+              <label style="display:flex; flex-direction:column; align-items:center; gap:2px; font-size:9px;"><input type="checkbox" value="5"> 5</label>
+            </div>
+          </label>
+          <label>Saisons (Multi-sélection)
+            <div class="style-grid" style="grid-template-columns: repeat(2, 1fr); gap: 4px; margin-top: 5px;" id="seasonCheckboxes">
+              <label style="display:flex; align-items:center; gap:6px; font-size:10px;"><input type="checkbox" value="printemps" checked> Printemps</label>
+              <label style="display:flex; align-items:center; gap:6px; font-size:10px;"><input type="checkbox" value="ete" checked> Été</label>
+              <label style="display:flex; align-items:center; gap:6px; font-size:10px;"><input type="checkbox" value="automne" checked> Automne</label>
+              <label style="display:flex; align-items:center; gap:6px; font-size:10px;"><input type="checkbox" value="hiver" checked> Hiver</label>
+            </div>
+          </label>
           <div style="display: flex; align-items: flex-end;">
             <button class="btn-run" id="addBtn" style="width: 100%;">Ajouter</button>
           </div>
@@ -349,8 +373,12 @@
               Formalités: ${item.formality_levels.join(', ')}
             </span>
             <span class="badge" style="display:inline-flex; align-items:center; gap:4px;">
-              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3 1.07.19 1.93 1.05 2.25 2.1a2.5 2.5 0 0 1 3.25 2.4 2.5 2.5 0 0 1-5 0z"/><path d="M12 2c1.2 0 2.4.48 3.39 1.36a10.89 10.89 0 0 1 2.25 4.85C18.45 11.23 18 14.5 15.5 17c-1.4 1.4-3 2.1-4.5 2.1s-3.1-.7-4.5-2.1c-2.5-2.5-2.95-5.77-2.14-8.79a10.89 10.89 0 0 1 2.25-4.85C7.6 2.48 8.8 2 10 2z"/></svg>
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2c1.2 0 2.4.48 3.39 1.36a10.89 10.89 0 0 1 2.25 4.85C18.45 11.23 18 14.5 15.5 17c-1.4 1.4-3 2.1-4.5 2.1s-3.1-.7-4.5-2.1c-2.5-2.5-2.95-5.77-2.14-8.79a10.89 10.89 0 0 1 2.25-4.85C7.6 2.48 8.8 2 10 2z"/></svg>
               Chaleurs: ${item.warmth_ratings.join(', ')}
+            </span>
+            <span class="badge" style="display:inline-flex; align-items:center; gap:4px;">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              Saisons: ${item.season_suitability.map(s => capitalize(s)).join(', ')}
             </span>
           </div>
         `;
@@ -360,6 +388,7 @@
 
     async function addItem() {
       const getSelected = (id) => Array.from(document.querySelectorAll(`${id} input:checked`)).map(el => parseInt(el.value));
+      const getSelectedText = (id) => Array.from(document.querySelectorAll(`${id} input:checked`)).map(el => el.value);
 
       const payload = {
         category: document.getElementById('catInput').value,
@@ -369,10 +398,11 @@
         gender: document.getElementById('genderInput').value,
         formality_levels: getSelected('#formalityCheckboxes'),
         warmth_ratings: getSelected('#warmthCheckboxes'),
+        season_suitability: getSelectedText('#seasonCheckboxes'),
       };
 
-      if (payload.formality_levels.length === 0 || payload.warmth_ratings.length === 0) {
-        alert("Veuillez sélectionner au moins un niveau de formalité et de chaleur.");
+      if (payload.formality_levels.length === 0 || payload.warmth_ratings.length === 0 || payload.season_suitability.length === 0) {
+        alert("Veuillez sélectionner au moins un niveau de formalité, de chaleur et une saison.");
         return;
       }
 
