@@ -692,16 +692,23 @@ input:focus, select:focus {
 
 .btn-run {
   display: inline-flex; align-items: center; gap: 7px;
-  padding: 9px 20px; border: none; border-radius: var(--radius-pill);
-  font: inherit; font-size: 14px; font-weight: 600; cursor: pointer; color: #fff;
-  background: linear-gradient(135deg, #4f8fdf 0%, #2f71c6 52%, #1c4d90 100%);
-  box-shadow: 0 4px 18px rgba(20,64,122,0.55), 0 1px 0 rgba(205,230,255,0.34) inset;
-  transition: opacity 0.15s, transform 0.1s;
+  padding: 9px 24px; border: 1px solid rgba(162, 207, 255, 0.46); border-radius: var(--radius-pill);
+  font: inherit; font-size: 14px; font-weight: 600; cursor: pointer;
+  color: var(--accent2);
+  background: rgba(60, 117, 196, 0.32);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  transition: all 0.15s ease;
   letter-spacing: -0.1px;
 }
 
-.btn-run:hover { opacity: 0.92; }
-.btn-run:active { transform: scale(0.97); }
+.btn-run:hover {
+  background: rgba(88, 146, 226, 0.45);
+  border-color: rgba(162, 207, 255, 0.6);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+.btn-run:active { transform: scale(0.96); }
 
 .nav-link:active, .summary-link:active, .btn:active {
   transform: scale(0.96);
