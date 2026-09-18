@@ -241,8 +241,15 @@ body {
 }
 
 .btn.ghost {
-  background: rgba(30, 68, 112, 0.6);
-  border: 1px solid rgba(130, 188, 255, 0.35);
+  border: 1px solid rgba(255, 122, 110, 0.46);
+  background: rgba(196, 60, 60, 0.25);
+  color: #ffb1aa;
+}
+
+.btn.ghost:hover {
+  background: rgba(226, 88, 88, 0.35);
+  border-color: rgba(255, 162, 162, 0.6);
+  box-shadow: 0 4px 15px rgba(255, 0, 0, 0.15);
 }
 
 .btn:active { transform: scale(0.98); }
