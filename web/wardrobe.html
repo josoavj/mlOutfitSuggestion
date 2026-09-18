@@ -71,22 +71,20 @@
     }
     .form-grid {
       display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      gap: 15px;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
     }
-    .form-grid-multi {
-      display: grid;
-      grid-template-columns: 2fr 2fr 1fr; /* On groupe formalité/chaleur sur les 4 premières colonnes */
-      gap: 15px;
-      margin-top: 20px;
-    }
-    /* Ajustement précis pour aligner le bas avec le haut */
-    .multi-layout {
+    .multi-row {
        display: grid;
-       grid-template-columns: repeat(5, 1fr);
-       gap: 15px;
+       grid-template-columns: repeat(4, 1fr);
+       gap: 20px;
        margin-top: 25px;
-       align-items: end;
+       align-items: start;
+    }
+    .add-footer {
+      margin-top: 25px;
+      display: flex;
+      justify-content: flex-end;
     }
     .toggle-pill {
       display: inline-flex;
@@ -285,44 +283,49 @@
               <option value="Toile">
             </datalist>
           </label>
-          <label>Sexe
+        </div>
+
+        <div class="multi-row">
+          <label>Genre ciblé
             <select id="genderInput">
               <option value="unisex">Unisex</option>
               <option value="masculin">Masculin</option>
               <option value="feminin">Féminin</option>
             </select>
           </label>
+
+          <label>Formalité (Multi-sélection)
+            <div style="display: flex; flex-wrap: wrap; gap: 4px; margin-top: 5px;" id="formalityCheckboxes">
+              <label class="toggle-pill" data-tooltip="Très décontracté (Maison, Sport)"><input type="checkbox" value="1"> 1</label>
+              <label class="toggle-pill" data-tooltip="Décontracté (Sortie ville, Weekend)"><input type="checkbox" value="2"> 2</label>
+              <label class="toggle-pill" data-tooltip="Smart Casual (Bureau, RDV pro léger)"><input type="checkbox" value="3" checked> 3</label>
+              <label class="toggle-pill" data-tooltip="Formel (Réunion client, Entretien)"><input type="checkbox" value="4"> 4</label>
+              <label class="toggle-pill" data-tooltip="Très Formel (Soirée, Cérémonie)"><input type="checkbox" value="5"> 5</label>
+            </div>
+          </label>
+
+          <label>Chaleur (Multi-sélection)
+            <div style="display: flex; flex-wrap: wrap; gap: 4px; margin-top: 5px;" id="warmthCheckboxes">
+              <label class="toggle-pill" data-tooltip="Très léger (Canicule, > 30°C)"><input type="checkbox" value="1"> 1</label>
+              <label class="toggle-pill" data-tooltip="Léger (Été normal, 25-30°C)"><input type="checkbox" value="2"> 2</label>
+              <label class="toggle-pill" data-tooltip="Modéré (Mi-saison, 15-25°C)"><input type="checkbox" value="3" checked> 3</label>
+              <label class="toggle-pill" data-tooltip="Chaud (Hiver doux, 5-15°C)"><input type="checkbox" value="4"> 4</label>
+              <label class="toggle-pill" data-tooltip="Très chaud (Grand froid, < 5°C)"><input type="checkbox" value="5"> 5</label>
+            </div>
+          </label>
+
+          <label>Saisons (Multi-sélection)
+            <div style="display: flex; flex-wrap: wrap; gap: 4px; margin-top: 5px;" id="seasonCheckboxes">
+              <label class="toggle-pill wide" style="padding: 6px 8px; font-size: 10px;"><input type="checkbox" value="printemps" checked> Printemps</label>
+              <label class="toggle-pill wide" style="padding: 6px 8px; font-size: 10px;"><input type="checkbox" value="ete" checked> Été</label>
+              <label class="toggle-pill wide" style="padding: 6px 8px; font-size: 10px;"><input type="checkbox" value="automne" checked> Automne</label>
+              <label class="toggle-pill wide" style="padding: 6px 8px; font-size: 10px;"><input type="checkbox" value="hiver" checked> Hiver</label>
+            </div>
+          </label>
         </div>
 
-        <div class="multi-layout">
-          <label style="grid-column: span 2;">Formalité (Multi-sélection)
-            <div style="display: flex; gap: 6px; margin-top: 5px;" id="formalityCheckboxes">
-              <label class="toggle-pill"><input type="checkbox" value="1"> 1</label>
-              <label class="toggle-pill"><input type="checkbox" value="2"> 2</label>
-              <label class="toggle-pill"><input type="checkbox" value="3" checked> 3</label>
-              <label class="toggle-pill"><input type="checkbox" value="4"> 4</label>
-              <label class="toggle-pill"><input type="checkbox" value="5"> 5</label>
-            </div>
-          </label>
-          <label style="grid-column: span 2;">Chaleur (Multi-sélection)
-            <div style="display: flex; gap: 6px; margin-top: 5px;" id="warmthCheckboxes">
-              <label class="toggle-pill"><input type="checkbox" value="1"> 1</label>
-              <label class="toggle-pill"><input type="checkbox" value="2"> 2</label>
-              <label class="toggle-pill"><input type="checkbox" value="3" checked> 3</label>
-              <label class="toggle-pill"><input type="checkbox" value="4"> 4</label>
-              <label class="toggle-pill"><input type="checkbox" value="5"> 5</label>
-            </div>
-          </label>
-          <button class="btn-run" id="addBtn" style="height: 38px; width: 100%;">Ajouter</button>
-
-          <label style="grid-column: 1 / -1; margin-top: 10px;">Saisons (Multi-sélection)
-            <div style="display: flex; gap: 8px; margin-top: 5px;" id="seasonCheckboxes">
-              <label class="toggle-pill wide"><input type="checkbox" value="printemps" checked> Printemps</label>
-              <label class="toggle-pill wide"><input type="checkbox" value="ete" checked> Été</label>
-              <label class="toggle-pill wide"><input type="checkbox" value="automne" checked> Automne</label>
-              <label class="toggle-pill wide"><input type="checkbox" value="hiver" checked> Hiver</label>
-            </div>
-          </label>
+        <div class="add-footer">
+          <button class="btn-run" id="addBtn" style="padding: 10px 50px;">Ajouter au dressing</button>
         </div>
       </div>
 
@@ -503,7 +506,7 @@
         });
       }
 
-      btn.textContent = "🪄 Générer des données de test";
+      btn.textContent = "Générer des données de test";
       btn.disabled = false;
       loadWardrobe();
     }
