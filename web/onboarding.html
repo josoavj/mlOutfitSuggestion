@@ -196,10 +196,11 @@
             </div>
           </div>
 
-          <div style="text-align: center; margin-top: 30px;">
+          <div style="display: flex; justify-content: flex-end; gap: 15px; margin-top: 30px;">
+            <button class="btn-refresh" id="resetBtn" style="padding: 10px 25px;">Réinitialiser</button>
             <button class="btn-run" id="submitBtn" style="padding: 12px 40px; font-size: 16px;">Finaliser mon profil</button>
           </div>
-          <div id="status" class="status-pill" style="margin: 20px auto; display: none; justify-content: center;"></div>
+          <div id="status" class="status-pill" style="margin: 20px 0 20px auto; display: none; justify-content: center;"></div>
         </div>
       </div>
     </div>
@@ -275,7 +276,7 @@
     }
 
     async function submitOnboarding() {
-      const userId = "u-001"; // Hardcoded for demo/test
+      const userId = "u-001";
       const payload = {
         styles_aimes: getChecked('#likedStyles'),
         styles_evites: getChecked('#avoidedStyles'),
@@ -311,7 +312,56 @@
       }
     }
 
+    async function resetPreferences() {
+      if (!confirm("Voulez-vous vraiment réinitialiser vos préférences ?")) return;
+
+      const userId = "u-001";
+      const status = document.getElementById('status');
+      status.style.display = 'inline-flex';
+      status.textContent = 'Réinitialisation...';
+      status.className = 'status-pill loading';
+
+      try {
+        // Pour réinitialiser, on envoie un objet vide ou avec les valeurs par défaut au PUT
+        const payload = {
+          styles_aimes: [],
+          styles_evites: [],
+          couleurs_aimees: [],
+          couleurs_evitees: [],
+          niveau_formalite_prefere: 3,
+          tolerance_meteo: "neutre"
+        };
+
+        const r = await fetch(`/preferences/${userId}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (r.ok) {
+          status.textContent = 'Préférences réinitialisées !';
+          status.className = 'status-pill ok';
+          // Décocher tout dans l'UI
+          document.querySelectorAll('#onboardingForm input[type="checkbox"]').forEach(el => el.checked = false);
+          document.getElementById('prefFormality').value = 3;
+          toleranceValue = 'neutre';
+          document.querySelectorAll('.mode-seg .seg-btn').forEach(btn => {
+            btn.classList.remove('active');
+            if (btn.dataset.value === 'neutre') btn.classList.add('active');
+          });
+          setTimeout(() => { status.style.display = 'none'; }, 2000);
+        } else {
+          status.textContent = 'Erreur lors de la réinitialisation';
+          status.className = 'status-pill err';
+        }
+      } catch (e) {
+        status.textContent = 'Erreur réseau';
+        status.className = 'status-pill err';
+      }
+    }
+
     document.getElementById('submitBtn').addEventListener('click', submitOnboarding);
+    document.getElementById('resetBtn').addEventListener('click', resetPreferences);
   </script>
   <script src="nav.js"></script>
 </body>
