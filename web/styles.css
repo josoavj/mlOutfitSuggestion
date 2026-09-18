@@ -631,7 +631,11 @@ body.has-summary-float .scene {
   position: relative;
 }
 
-.style-option::after {
+[data-tooltip] {
+  position: relative;
+}
+
+[data-tooltip]::after {
   content: attr(data-tooltip);
   position: absolute;
   left: 50%;
@@ -652,7 +656,7 @@ body.has-summary-float .scene {
   z-index: 50;
 }
 
-.style-option[data-tooltip]:hover::after {
+[data-tooltip]:hover::after {
   display: block;
   opacity: 1;
   transform: translateX(-50%) translateY(-2px);
