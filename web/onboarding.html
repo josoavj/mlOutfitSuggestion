@@ -71,14 +71,16 @@
     .onboarding-card {
       width: 100%;
       margin: 0;
-      background: transparent;
-      border: none;
-      box-shadow: none;
-      padding: 0;
+      background: transparent !important;
+      border: none !important;
+      box-shadow: none !important;
+      padding: 0 !important;
+      backdrop-filter: none !important;
+      -webkit-backdrop-filter: none !important;
     }
     .q-grid {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: 1fr 1fr;
       gap: 20px;
       margin-bottom: 20px;
     }
@@ -94,21 +96,6 @@
     }
     .q-full {
       grid-column: 1 / -1;
-    }
-    .progress-bar {
-      width: 100%;
-      height: 4px;
-      background: rgba(130, 188, 255, 0.1);
-      border-radius: 2px;
-      margin-bottom: 30px;
-      overflow: hidden;
-    }
-    .progress-fill {
-      height: 100%;
-      background: var(--accent);
-      width: 0%;
-      transition: width 0.4s ease;
-      box-shadow: 0 0 10px var(--accent);
     }
     @media (max-width: 1200px) {
       .q-grid { grid-template-columns: 1fr 1fr; }
@@ -145,9 +132,7 @@
         <p class="subtitle">Aidez l'IA à comprendre vos goûts pour des recommandations ultra-personnalisées dès la première utilisation.</p>
       </div>
 
-      <div class="panel onboarding-card">
-        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
-
+      <div class="onboarding-card">
         <div id="onboardingForm">
           <div class="q-grid">
             <!-- Bloc Styles -->
@@ -188,20 +173,31 @@
 
             <!-- Bloc Paramètres -->
             <div class="q-section q-full">
-              <p class="section-title">5. Niveau de formalité & 6. Météo</p>
+              <p class="section-title">5. Niveau de formalité & Météo</p>
+              <p class="info-text" style="font-size: 12px; margin-bottom: 20px; color: var(--ink2); line-height: 1.4; background: rgba(255,255,255,0.03); padding: 10px; border-radius: 8px;">
+                <strong>Quelle est la différence ?</strong><br>
+                • La <strong>Formalité</strong> définit votre style social (préférez-vous être en costume ou en jean par défaut ?).<br>
+                • La <strong>Sensibilité météo</strong> définit votre confort physique (êtes-vous du genre à mettre un pull dès qu'il fait 20°C ou à rester en T-shirt à 10°C ?).
+              </p>
               <div class="grid g2" style="gap: 40px;">
                 <div>
                   <p class="muted" style="margin-bottom: 10px;">Formalité par défaut (1-5)</p>
-                  <input type="range" min="1" max="5" step="1" value="3" class="formality-slider" id="prefFormality" />
-                  <div class="slider-labels">
-                    <span>Casual</span>
-                    <span>Smart</span>
-                    <span>Formel</span>
+                  <div class="mode-seg" id="formalitySeg">
+                    <button class="seg-btn" data-value="1" data-tooltip="Très décontracté (Maison, Sport)">1</button>
+                    <button class="seg-btn" data-value="2" data-tooltip="Décontracté (Sortie ville, Weekend)">2</button>
+                    <button class="seg-btn active" data-value="3" data-tooltip="Smart Casual (Bureau, RDV pro léger)">3</button>
+                    <button class="seg-btn" data-value="4" data-tooltip="Formel (Réunion client, Entretien)">4</button>
+                    <button class="seg-btn" data-value="5" data-tooltip="Très Formel (Soirée, Cérémonie)">5</button>
+                  </div>
+                  <div style="display: grid; grid-template-columns: repeat(5, 1fr); margin-top: 8px; text-align: center;">
+                    <span style="font-size: 10px; color: var(--ink2); grid-column: 1;">Décontracté</span>
+                    <span style="font-size: 10px; color: var(--accent2); grid-column: 3; font-weight: 600;">Smart</span>
+                    <span style="font-size: 10px; color: var(--ink2); grid-column: 5;">Formel</span>
                   </div>
                 </div>
                 <div>
                   <p class="muted" style="margin-bottom: 10px;">Sensibilité météo</p>
-                  <div class="mode-seg">
+                  <div class="mode-seg" id="weatherSeg">
                     <button class="seg-btn" data-value="frileux">Frileux</button>
                     <button class="seg-btn active" data-value="neutre">Neutre</button>
                     <button class="seg-btn" data-value="resistant">Résistant</button>
@@ -211,10 +207,11 @@
             </div>
           </div>
 
-          <div style="text-align: center; margin-top: 30px;">
+          <div style="display: flex; justify-content: flex-end; gap: 15px; margin-top: 30px;">
+            <button class="btn-refresh" id="resetBtn" style="padding: 10px 25px;">Réinitialiser</button>
             <button class="btn-run" id="submitBtn" style="padding: 12px 40px; font-size: 16px;">Finaliser mon profil</button>
           </div>
-          <div id="status" class="status-pill" style="margin: 20px auto; display: none; justify-content: center;"></div>
+          <div id="status" class="status-pill" style="margin: 20px 0 20px auto; display: none; justify-content: center;"></div>
         </div>
       </div>
     </div>
@@ -274,29 +271,38 @@
     renderColorGrid('likedColors');
     renderColorGrid('avoidedColors');
 
-    // Handle tolerance buttons
+    // Handle segmented buttons (Formality & Weather)
+    let formalityValue = 3;
     let toleranceValue = 'neutre';
-    const toleranceBtns = document.querySelectorAll('.mode-seg .seg-btn');
-    toleranceBtns.forEach(btn => {
-      btn.addEventListener('click', () => {
-        toleranceBtns.forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        toleranceValue = btn.dataset.value;
+
+    function setupSegmentedControl(containerId, initialValue, callback) {
+      const container = document.getElementById(containerId);
+      const btns = container.querySelectorAll('.seg-btn');
+
+      btns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          btns.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          callback(btn.dataset.value);
+        });
       });
-    });
+    }
+
+    setupSegmentedControl('formalitySeg', 3, (val) => { formalityValue = parseInt(val); });
+    setupSegmentedControl('weatherSeg', 'neutre', (val) => { toleranceValue = val; });
 
     function getChecked(selector) {
       return Array.from(document.querySelectorAll(`${selector} input:checked`)).map(el => el.value);
     }
 
     async function submitOnboarding() {
-      const userId = "u-001"; // Hardcoded for demo/test
+      const userId = "u-001";
       const payload = {
         styles_aimes: getChecked('#likedStyles'),
         styles_evites: getChecked('#avoidedStyles'),
         couleurs_aimees: getChecked('#likedColors'),
         couleurs_evitees: getChecked('#avoidedColors'),
-        niveau_formalite_prefere: parseInt(document.getElementById('prefFormality').value),
+        niveau_formalite_prefere: formalityValue,
         tolerance_meteo: toleranceValue
       };
 
@@ -326,7 +332,63 @@
       }
     }
 
+    async function resetPreferences() {
+      if (!confirm("Voulez-vous vraiment réinitialiser vos préférences ?")) return;
+
+      const userId = "u-001";
+      const status = document.getElementById('status');
+      status.style.display = 'inline-flex';
+      status.textContent = 'Réinitialisation...';
+      status.className = 'status-pill loading';
+
+      try {
+        // Pour réinitialiser, on envoie un objet vide ou avec les valeurs par défaut au PUT
+        const payload = {
+          styles_aimes: [],
+          styles_evites: [],
+          couleurs_aimees: [],
+          couleurs_evitees: [],
+          niveau_formalite_prefere: 3,
+          tolerance_meteo: "neutre"
+        };
+
+        const r = await fetch(`/preferences/${userId}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (r.ok) {
+          status.textContent = 'Préférences réinitialisées !';
+          status.className = 'status-pill ok';
+          // Décocher tout dans l'UI
+          document.querySelectorAll('#onboardingForm input[type="checkbox"]').forEach(el => el.checked = false);
+
+          // Réinitialiser les segments
+          formalityValue = 3;
+          toleranceValue = 'neutre';
+
+          document.querySelectorAll('.mode-seg').forEach(seg => {
+            const btns = seg.querySelectorAll('.seg-btn');
+            btns.forEach(b => b.classList.remove('active'));
+            btns.forEach(b => {
+              if (b.dataset.value === '3' || b.dataset.value === 'neutre') b.classList.add('active');
+            });
+          });
+
+          setTimeout(() => { status.style.display = 'none'; }, 2000);
+        } else {
+          status.textContent = 'Erreur lors de la réinitialisation';
+          status.className = 'status-pill err';
+        }
+      } catch (e) {
+        status.textContent = 'Erreur réseau';
+        status.className = 'status-pill err';
+      }
+    }
+
     document.getElementById('submitBtn').addEventListener('click', submitOnboarding);
+    document.getElementById('resetBtn').addEventListener('click', resetPreferences);
   </script>
   <script src="nav.js"></script>
 </body>
