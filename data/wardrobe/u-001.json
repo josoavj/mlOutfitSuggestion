@@ -181,5 +181,36 @@
     "created_at": "2026-09-17T07:58:51.585745",
     "last_suggested_at": null,
     "last_worn_at": null
+  },
+  {
+    "item_id": "itm_2096b018",
+    "user_id": "u-001",
+    "category": "top",
+    "subcategory": "Shirt",
+    "color_primary": "noir",
+    "gender": "unisex",
+    "color_secondary": null,
+    "material": "Coton",
+    "pattern": null,
+    "formality_levels": [
+      2,
+      3
+    ],
+    "warmth_ratings": [
+      3
+    ],
+    "season_suitability": [
+      "printemps",
+      "ete",
+      "automne",
+      "hiver"
+    ],
+    "occasion_tags": [],
+    "image_url": null,
+    "auto_tagged": false,
+    "is_favorite": false,
+    "created_at": "2026-09-17T09:51:26.745303",
+    "last_suggested_at": null,
+    "last_worn_at": null
   }
 ]
