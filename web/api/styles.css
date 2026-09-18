@@ -135,7 +135,7 @@ body {
 .endpoints { grid-area: endpoints; }
 .request { grid-area: request; }
 .response { grid-area: response; }
-.history { grid-area: history; }
+.history-section { grid-area: history; }
 
 .panel {
   background: var(--panel);
@@ -319,7 +319,7 @@ body {
 .meta-value.status-warn { color: #ffe1a1; }
 .meta-value.status-err { color: #ffb1aa; }
 
-.history { display: grid; gap: 8px; }
+.history-list { display: grid; gap: 8px; margin-top: 5px; }
 .history-item {
   display: grid;
   grid-template-columns: 100px 1fr 120px;
