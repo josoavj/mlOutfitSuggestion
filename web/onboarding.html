@@ -173,20 +173,26 @@
 
             <!-- Bloc Paramètres -->
             <div class="q-section q-full">
-              <p class="section-title">5. Niveau de formalité & 6. Météo</p>
+              <p class="section-title">5. Niveau de formalité & Météo</p>
               <div class="grid g2" style="gap: 40px;">
                 <div>
                   <p class="muted" style="margin-bottom: 10px;">Formalité par défaut (1-5)</p>
-                  <input type="range" min="1" max="5" step="1" value="3" class="formality-slider" id="prefFormality" />
-                  <div class="slider-labels">
-                    <span>Casual</span>
-                    <span>Smart</span>
-                    <span>Formel</span>
+                  <div class="mode-seg" id="formalitySeg">
+                    <button class="seg-btn" data-value="1" data-tooltip="Très décontracté (Maison, Sport)">1</button>
+                    <button class="seg-btn" data-value="2" data-tooltip="Décontracté (Sortie ville, Weekend)">2</button>
+                    <button class="seg-btn active" data-value="3" data-tooltip="Smart Casual (Bureau, RDV pro léger)">3</button>
+                    <button class="seg-btn" data-value="4" data-tooltip="Formel (Réunion client, Entretien)">4</button>
+                    <button class="seg-btn" data-value="5" data-tooltip="Très Formel (Soirée, Cérémonie)">5</button>
+                  </div>
+                  <div style="display: grid; grid-template-columns: repeat(5, 1fr); margin-top: 8px; text-align: center;">
+                    <span style="font-size: 10px; color: var(--ink2); grid-column: 1;">Décontracté</span>
+                    <span style="font-size: 10px; color: var(--accent2); grid-column: 3; font-weight: 600;">Smart</span>
+                    <span style="font-size: 10px; color: var(--ink2); grid-column: 5;">Formel</span>
                   </div>
                 </div>
                 <div>
                   <p class="muted" style="margin-bottom: 10px;">Sensibilité météo</p>
-                  <div class="mode-seg">
+                  <div class="mode-seg" id="weatherSeg">
                     <button class="seg-btn" data-value="frileux">Frileux</button>
                     <button class="seg-btn active" data-value="neutre">Neutre</button>
                     <button class="seg-btn" data-value="resistant">Résistant</button>
@@ -260,16 +266,25 @@
     renderColorGrid('likedColors');
     renderColorGrid('avoidedColors');
 
-    // Handle tolerance buttons
+    // Handle segmented buttons (Formality & Weather)
+    let formalityValue = 3;
     let toleranceValue = 'neutre';
-    const toleranceBtns = document.querySelectorAll('.mode-seg .seg-btn');
-    toleranceBtns.forEach(btn => {
-      btn.addEventListener('click', () => {
-        toleranceBtns.forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        toleranceValue = btn.dataset.value;
+
+    function setupSegmentedControl(containerId, initialValue, callback) {
+      const container = document.getElementById(containerId);
+      const btns = container.querySelectorAll('.seg-btn');
+
+      btns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          btns.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          callback(btn.dataset.value);
+        });
       });
-    });
+    }
+
+    setupSegmentedControl('formalitySeg', 3, (val) => { formalityValue = parseInt(val); });
+    setupSegmentedControl('weatherSeg', 'neutre', (val) => { toleranceValue = val; });
 
     function getChecked(selector) {
       return Array.from(document.querySelectorAll(`${selector} input:checked`)).map(el => el.value);
@@ -282,7 +297,7 @@
         styles_evites: getChecked('#avoidedStyles'),
         couleurs_aimees: getChecked('#likedColors'),
         couleurs_evitees: getChecked('#avoidedColors'),
-        niveau_formalite_prefere: parseInt(document.getElementById('prefFormality').value),
+        niveau_formalite_prefere: formalityValue,
         tolerance_meteo: toleranceValue
       };
 
@@ -343,12 +358,19 @@
           status.className = 'status-pill ok';
           // Décocher tout dans l'UI
           document.querySelectorAll('#onboardingForm input[type="checkbox"]').forEach(el => el.checked = false);
-          document.getElementById('prefFormality').value = 3;
+
+          // Réinitialiser les segments
+          formalityValue = 3;
           toleranceValue = 'neutre';
-          document.querySelectorAll('.mode-seg .seg-btn').forEach(btn => {
-            btn.classList.remove('active');
-            if (btn.dataset.value === 'neutre') btn.classList.add('active');
+
+          document.querySelectorAll('.mode-seg').forEach(seg => {
+            const btns = seg.querySelectorAll('.seg-btn');
+            btns.forEach(b => b.classList.remove('active'));
+            btns.forEach(b => {
+              if (b.dataset.value === '3' || b.dataset.value === 'neutre') b.classList.add('active');
+            });
           });
+
           setTimeout(() => { status.style.display = 'none'; }, 2000);
         } else {
           status.textContent = 'Erreur lors de la réinitialisation';
