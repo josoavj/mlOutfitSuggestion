@@ -431,5 +431,33 @@
     "created_at": "2026-09-18T13:54:24.780345",
     "last_suggested_at": null,
     "last_worn_at": null
+  },
+  {
+    "item_id": "itm_a140566e",
+    "user_id": "u-001",
+    "category": "top",
+    "subcategory": "chemise",
+    "color_primary": "bleu_marine",
+    "gender": "unisex",
+    "color_secondary": null,
+    "material": "coton",
+    "pattern": "uni",
+    "formality_levels": [
+      3
+    ],
+    "warmth_ratings": [
+      3
+    ],
+    "season_suitability": [
+      "printemps",
+      "automne"
+    ],
+    "occasion_tags": [],
+    "image_url": null,
+    "auto_tagged": false,
+    "is_favorite": false,
+    "created_at": "2026-09-18T14:39:57.381008",
+    "last_suggested_at": null,
+    "last_worn_at": null
   }
 ]
