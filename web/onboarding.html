@@ -71,10 +71,12 @@
     .onboarding-card {
       width: 100%;
       margin: 0;
-      background: transparent;
-      border: none;
-      box-shadow: none;
-      padding: 0;
+      background: transparent !important;
+      border: none !important;
+      box-shadow: none !important;
+      padding: 0 !important;
+      backdrop-filter: none !important;
+      -webkit-backdrop-filter: none !important;
     }
     .q-grid {
       display: grid;
@@ -130,7 +132,7 @@
         <p class="subtitle">Aidez l'IA à comprendre vos goûts pour des recommandations ultra-personnalisées dès la première utilisation.</p>
       </div>
 
-      <div class="panel onboarding-card">
+      <div class="onboarding-card">
         <div id="onboardingForm">
           <div class="q-grid">
             <!-- Bloc Styles -->
