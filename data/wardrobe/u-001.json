@@ -212,5 +212,224 @@
     "created_at": "2026-09-17T09:51:26.745303",
     "last_suggested_at": null,
     "last_worn_at": null
+  },
+  {
+    "item_id": "itm_7080b8b9",
+    "user_id": "u-001",
+    "category": "top",
+    "subcategory": "Chemise Blanche",
+    "color_primary": "blanc",
+    "gender": "masculin",
+    "color_secondary": null,
+    "material": "coton",
+    "pattern": null,
+    "formality_levels": [
+      3,
+      4
+    ],
+    "warmth_ratings": [
+      2,
+      3
+    ],
+    "season_suitability": [],
+    "occasion_tags": [],
+    "image_url": null,
+    "auto_tagged": false,
+    "is_favorite": false,
+    "created_at": "2026-09-18T13:54:24.722897",
+    "last_suggested_at": null,
+    "last_worn_at": null
+  },
+  {
+    "item_id": "itm_143e584b",
+    "user_id": "u-001",
+    "category": "top",
+    "subcategory": "Pull en Laine",
+    "color_primary": "bleu_marine",
+    "gender": "unisex",
+    "color_secondary": null,
+    "material": "coton",
+    "pattern": null,
+    "formality_levels": [
+      2,
+      3
+    ],
+    "warmth_ratings": [
+      4,
+      5
+    ],
+    "season_suitability": [],
+    "occasion_tags": [],
+    "image_url": null,
+    "auto_tagged": false,
+    "is_favorite": false,
+    "created_at": "2026-09-18T13:54:24.731880",
+    "last_suggested_at": null,
+    "last_worn_at": null
+  },
+  {
+    "item_id": "itm_e8ded1eb",
+    "user_id": "u-001",
+    "category": "top",
+    "subcategory": "T-shirt Casual",
+    "color_primary": "gris",
+    "gender": "unisex",
+    "color_secondary": null,
+    "material": "coton",
+    "pattern": null,
+    "formality_levels": [
+      1,
+      2
+    ],
+    "warmth_ratings": [
+      1,
+      2
+    ],
+    "season_suitability": [],
+    "occasion_tags": [],
+    "image_url": null,
+    "auto_tagged": false,
+    "is_favorite": false,
+    "created_at": "2026-09-18T13:54:24.741378",
+    "last_suggested_at": null,
+    "last_worn_at": null
+  },
+  {
+    "item_id": "itm_5e2ca153",
+    "user_id": "u-001",
+    "category": "bottom",
+    "subcategory": "Jean Brut",
+    "color_primary": "bleu_marine",
+    "gender": "masculin",
+    "color_secondary": null,
+    "material": "coton",
+    "pattern": null,
+    "formality_levels": [
+      2,
+      3
+    ],
+    "warmth_ratings": [
+      2,
+      3,
+      4
+    ],
+    "season_suitability": [],
+    "occasion_tags": [],
+    "image_url": null,
+    "auto_tagged": false,
+    "is_favorite": false,
+    "created_at": "2026-09-18T13:54:24.749955",
+    "last_suggested_at": null,
+    "last_worn_at": null
+  },
+  {
+    "item_id": "itm_eadb1b04",
+    "user_id": "u-001",
+    "category": "bottom",
+    "subcategory": "Pantalon Chino",
+    "color_primary": "beige",
+    "gender": "masculin",
+    "color_secondary": null,
+    "material": "coton",
+    "pattern": null,
+    "formality_levels": [
+      3,
+      4
+    ],
+    "warmth_ratings": [
+      2,
+      3
+    ],
+    "season_suitability": [],
+    "occasion_tags": [],
+    "image_url": null,
+    "auto_tagged": false,
+    "is_favorite": false,
+    "created_at": "2026-09-18T13:54:24.756131",
+    "last_suggested_at": null,
+    "last_worn_at": null
+  },
+  {
+    "item_id": "itm_cb217560",
+    "user_id": "u-001",
+    "category": "shoes",
+    "subcategory": "Baskets Blanches",
+    "color_primary": "blanc",
+    "gender": "unisex",
+    "color_secondary": null,
+    "material": "coton",
+    "pattern": null,
+    "formality_levels": [
+      1,
+      2,
+      3
+    ],
+    "warmth_ratings": [
+      2,
+      3
+    ],
+    "season_suitability": [],
+    "occasion_tags": [],
+    "image_url": null,
+    "auto_tagged": false,
+    "is_favorite": false,
+    "created_at": "2026-09-18T13:54:24.762790",
+    "last_suggested_at": null,
+    "last_worn_at": null
+  },
+  {
+    "item_id": "itm_6650230e",
+    "user_id": "u-001",
+    "category": "shoes",
+    "subcategory": "Mocassins",
+    "color_primary": "marron",
+    "gender": "masculin",
+    "color_secondary": null,
+    "material": "coton",
+    "pattern": null,
+    "formality_levels": [
+      4,
+      5
+    ],
+    "warmth_ratings": [
+      2,
+      3
+    ],
+    "season_suitability": [],
+    "occasion_tags": [],
+    "image_url": null,
+    "auto_tagged": false,
+    "is_favorite": false,
+    "created_at": "2026-09-18T13:54:24.771715",
+    "last_suggested_at": null,
+    "last_worn_at": null
+  },
+  {
+    "item_id": "itm_8134c460",
+    "user_id": "u-001",
+    "category": "outerwear",
+    "subcategory": "Manteau Long",
+    "color_primary": "noir",
+    "gender": "unisex",
+    "color_secondary": null,
+    "material": "coton",
+    "pattern": null,
+    "formality_levels": [
+      3,
+      4,
+      5
+    ],
+    "warmth_ratings": [
+      4,
+      5
+    ],
+    "season_suitability": [],
+    "occasion_tags": [],
+    "image_url": null,
+    "auto_tagged": false,
+    "is_favorite": false,
+    "created_at": "2026-09-18T13:54:24.780345",
+    "last_suggested_at": null,
+    "last_worn_at": null
   }
 ]
