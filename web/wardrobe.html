@@ -71,8 +71,54 @@
     }
     .form-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-      gap: 12px;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 15px;
+    }
+    .form-grid-multi {
+      display: grid;
+      grid-template-columns: 2fr 2fr 1fr; /* On groupe formalité/chaleur sur les 4 premières colonnes */
+      gap: 15px;
+      margin-top: 20px;
+    }
+    /* Ajustement précis pour aligner le bas avec le haut */
+    .multi-layout {
+       display: grid;
+       grid-template-columns: repeat(5, 1fr);
+       gap: 15px;
+       margin-top: 25px;
+       align-items: end;
+    }
+    .toggle-pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 6px 0;
+      width: 32px; /* Taille fixe pour les chiffres */
+      border-radius: 8px;
+      border: 1px solid rgba(130, 188, 255, 0.3);
+      background: rgba(14, 30, 52, 0.6);
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .toggle-pill.wide {
+      width: auto;
+      padding: 6px 12px;
+    }
+    .toggle-pill input { display: none; }
+    .toggle-pill:has(input:checked) {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+    @media (max-width: 1100px) {
+      .form-grid { grid-template-columns: repeat(3, 1fr); }
+      .form-grid-multi { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 720px) {
+      .form-grid { grid-template-columns: 1fr; }
+      .form-grid-multi { grid-template-columns: 1fr; }
     }
     @keyframes panelIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
   </style>
@@ -246,35 +292,37 @@
               <option value="feminin">Féminin</option>
             </select>
           </label>
-          <label>Formalité (Multi-sélection)
-            <div class="style-grid" style="grid-template-columns: repeat(5, 1fr); gap: 4px; margin-top: 5px;" id="formalityCheckboxes">
-              <label style="display:flex; flex-direction:column; align-items:center; gap:2px; font-size:9px;"><input type="checkbox" value="1"> 1</label>
-              <label style="display:flex; flex-direction:column; align-items:center; gap:2px; font-size:9px;"><input type="checkbox" value="2"> 2</label>
-              <label style="display:flex; flex-direction:column; align-items:center; gap:2px; font-size:9px;"><input type="checkbox" value="3" checked> 3</label>
-              <label style="display:flex; flex-direction:column; align-items:center; gap:2px; font-size:9px;"><input type="checkbox" value="4"> 4</label>
-              <label style="display:flex; flex-direction:column; align-items:center; gap:2px; font-size:9px;"><input type="checkbox" value="5"> 5</label>
+        </div>
+
+        <div class="multi-layout">
+          <label style="grid-column: span 2;">Formalité (Multi-sélection)
+            <div style="display: flex; gap: 6px; margin-top: 5px;" id="formalityCheckboxes">
+              <label class="toggle-pill"><input type="checkbox" value="1"> 1</label>
+              <label class="toggle-pill"><input type="checkbox" value="2"> 2</label>
+              <label class="toggle-pill"><input type="checkbox" value="3" checked> 3</label>
+              <label class="toggle-pill"><input type="checkbox" value="4"> 4</label>
+              <label class="toggle-pill"><input type="checkbox" value="5"> 5</label>
             </div>
           </label>
-          <label>Chaleur (Multi-sélection)
-            <div class="style-grid" style="grid-template-columns: repeat(5, 1fr); gap: 4px; margin-top: 5px;" id="warmthCheckboxes">
-              <label style="display:flex; flex-direction:column; align-items:center; gap:2px; font-size:9px;"><input type="checkbox" value="1"> 1</label>
-              <label style="display:flex; flex-direction:column; align-items:center; gap:2px; font-size:9px;"><input type="checkbox" value="2"> 2</label>
-              <label style="display:flex; flex-direction:column; align-items:center; gap:2px; font-size:9px;"><input type="checkbox" value="3" checked> 3</label>
-              <label style="display:flex; flex-direction:column; align-items:center; gap:2px; font-size:9px;"><input type="checkbox" value="4"> 4</label>
-              <label style="display:flex; flex-direction:column; align-items:center; gap:2px; font-size:9px;"><input type="checkbox" value="5"> 5</label>
+          <label style="grid-column: span 2;">Chaleur (Multi-sélection)
+            <div style="display: flex; gap: 6px; margin-top: 5px;" id="warmthCheckboxes">
+              <label class="toggle-pill"><input type="checkbox" value="1"> 1</label>
+              <label class="toggle-pill"><input type="checkbox" value="2"> 2</label>
+              <label class="toggle-pill"><input type="checkbox" value="3" checked> 3</label>
+              <label class="toggle-pill"><input type="checkbox" value="4"> 4</label>
+              <label class="toggle-pill"><input type="checkbox" value="5"> 5</label>
             </div>
           </label>
-          <label>Saisons (Multi-sélection)
-            <div class="style-grid" style="grid-template-columns: repeat(2, 1fr); gap: 4px; margin-top: 5px;" id="seasonCheckboxes">
-              <label style="display:flex; align-items:center; gap:6px; font-size:10px;"><input type="checkbox" value="printemps" checked> Printemps</label>
-              <label style="display:flex; align-items:center; gap:6px; font-size:10px;"><input type="checkbox" value="ete" checked> Été</label>
-              <label style="display:flex; align-items:center; gap:6px; font-size:10px;"><input type="checkbox" value="automne" checked> Automne</label>
-              <label style="display:flex; align-items:center; gap:6px; font-size:10px;"><input type="checkbox" value="hiver" checked> Hiver</label>
+          <button class="btn-run" id="addBtn" style="height: 38px; width: 100%;">Ajouter</button>
+
+          <label style="grid-column: 1 / -1; margin-top: 10px;">Saisons (Multi-sélection)
+            <div style="display: flex; gap: 8px; margin-top: 5px;" id="seasonCheckboxes">
+              <label class="toggle-pill wide"><input type="checkbox" value="printemps" checked> Printemps</label>
+              <label class="toggle-pill wide"><input type="checkbox" value="ete" checked> Été</label>
+              <label class="toggle-pill wide"><input type="checkbox" value="automne" checked> Automne</label>
+              <label class="toggle-pill wide"><input type="checkbox" value="hiver" checked> Hiver</label>
             </div>
           </label>
-          <div style="display: flex; align-items: flex-end;">
-            <button class="btn-run" id="addBtn" style="width: 100%;">Ajouter</button>
-          </div>
         </div>
       </div>
 
