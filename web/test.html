@@ -95,7 +95,6 @@
         <div class="grid g3">
           <label>Prénom <input id="firstName" placeholder="ex: Camille" /></label>
           <label>Nom <input id="lastName" placeholder="ex: Martin" /></label>
-          <input id="userId" type="hidden" value="u-001" />
           <label>Genre
             <select id="gender"><option value="female">female</option><option value="male">male</option><option value="unknown" selected>unknown</option></select>
           </label>
@@ -124,6 +123,7 @@
           <label>Agenda (mode manuel) <input id="agenda" value="work,meeting" /></label>
           <label>Autres styles (optionnel) <input id="stylesCustom" placeholder="ex: streetwear, vintage" /></label>
         </div>
+        <input id="userId" type="hidden" value="u-001" />
         <div style="margin-top: 25px;">
           <label>Styles recommandés</label>
           <p class="muted" style="margin-top:-2px; margin-bottom: 10px;">Tous les styles disponibles sont listés. Survole un style pour voir un exemple.</p>
@@ -141,14 +141,14 @@
       <div class="panel" id="contexte">
         <p class="section-title">Contexte</p>
         <div class="grid g3">
-          <label>Location (Ville) <input id="location" value="Antananarivo" placeholder="ex: Paris, London..." /></label>
+          <label>Localisation (Ville) <input id="location" value="Antananarivo" placeholder="ex: Paris, London..." /></label>
+          <label>Nombre de tenues <input id="topK" type="number" min="1" max="10" value="3" /></label>
           <label id="manualTempField" class="hidden-field">Température °C <input id="temperature" type="number" step="0.1" value="14" /></label>
           <label id="manualConditionField" class="hidden-field">Météo (manuel) <input id="condition" value="Clear" /></label>
         </div>
         <div class="run-row" style="margin-top: 20px;">
           <button class="summary-toggle" id="toggleWeatherManual" style="display: inline-flex;">Forcer la météo manuellement</button>
           <div style="flex-grow: 1;"></div>
-          <label style="width:110px;">Top K <input id="topK" type="number" min="1" max="10" value="3" /></label>
           <button class="btn-run" id="runBtn">
             <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><polygon points="3,1.5 11.5,6.5 3,11.5" fill="currentColor"/></svg>
             Lancer le test
