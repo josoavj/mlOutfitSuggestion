@@ -45,7 +45,10 @@
           <a class="summary-link" href="#dashboard">Dashboard</a>
           <a class="summary-link" href="#synthese">Synthèse modèle</a>
           <a class="summary-link" href="#configuration">Configuration</a>
+          <a class="summary-link" href="#rag">RAG & Sémantique</a>
+          <a class="summary-link" href="#pipeline">Pipeline</a>
           <a class="summary-link" href="#metriques">Métriques</a>
+          <a class="summary-link" href="#roadmap">Feuille de route</a>
           <a class="summary-link" href="#feedback">Feedback</a>
           <a class="summary-link" href="#json">JSON</a>
         </div>
@@ -61,8 +64,17 @@
         <a class="summary-dot" href="#configuration" data-label="Configuration" aria-label="Configuration">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l1.2 2.6 2.8.3-2.1 1.9.7 2.7-2.6-1.6-2.6 1.6.7-2.7-2.1-1.9 2.8-.3L12 3z" fill="currentColor"/></svg>
         </a>
+        <a class="summary-dot" href="#rag" data-label="RAG & Sémantique" aria-label="RAG & Sémantique">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+        <a class="summary-dot" href="#pipeline" data-label="Pipeline" aria-label="Pipeline">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16v16H4zM4 12h16M12 4v16" stroke="currentColor" stroke-width="2" fill="none"/></svg>
+        </a>
         <a class="summary-dot" href="#metriques" data-label="Métriques" aria-label="Métriques">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 18h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><rect x="6" y="10" width="3" height="6" fill="currentColor"/><rect x="11" y="7" width="3" height="9" fill="currentColor"/><rect x="16" y="4" width="3" height="12" fill="currentColor"/></svg>
+        </a>
+        <a class="summary-dot" href="#roadmap" data-label="Feuille de route" aria-label="Feuille de route">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 11l3 3L22 4" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </a>
         <a class="summary-dot" href="#feedback" data-label="Feedback" aria-label="Feedback">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 6h14v9H9l-4 4V6z" stroke="currentColor" stroke-width="2" fill="none" stroke-linejoin="round"/></svg>
@@ -83,7 +95,10 @@
             <a class="summary-link" href="#dashboard">Dashboard</a>
             <a class="summary-link" href="#synthese">Synthèse modèle</a>
             <a class="summary-link" href="#configuration">Configuration</a>
+            <a class="summary-link" href="#rag">RAG & Sémantique</a>
+            <a class="summary-link" href="#pipeline">Pipeline</a>
             <a class="summary-link" href="#metriques">Métriques</a>
+            <a class="summary-link" href="#roadmap">Feuille de route</a>
             <a class="summary-link" href="#feedback">Feedback</a>
             <a class="summary-link" href="#json">JSON</a>
           </div>
@@ -115,8 +130,22 @@
         </div>
         <p class="section-label" id="configuration">Configuration modèle</p>
         <div id="modelDetails" class="metric-table"></div>
+
+        <p class="section-label" id="wardrobe">Inventaire de la Garde-robe</p>
+        <div id="wardrobeDetails" class="metric-table"></div>
+
+        <p class="section-label" id="rag">RAG & Sémantique (ChromaDB)</p>
+        <div id="ragDetails" class="metric-table"></div>
+
+        <p class="section-label" id="pipeline">Structure du Pipeline</p>
+        <div id="pipelineSteps" class="metric-table"></div>
+
         <p class="section-label" id="metriques">Métriques modèle</p>
         <div id="modelMetrics" class="metric-table"></div>
+
+        <p class="section-label" id="roadmap">Feuille de route & Évolutions</p>
+        <div id="roadmapItems" class="metric-table"></div>
+
         <p class="section-label" id="feedback">Feedback par type</p>
         <div id="feedbackBars" class="bars"></div>
         <p class="section-label" id="json">Dashboard JSON</p>
@@ -230,13 +259,21 @@
     }
 
     function humanizeKey(value) {
-      const text = String(value || '').toLowerCase();
+      const text = String(value || '').trim();
+      if (!text) return '';
+
       const map = {
-        gender: 'genre ciblé',
-        age: 'âge',
-        height_cm: 'taille (cm)',
+        gender: 'Genre ciblé',
+        age: 'Âge',
+        height_cm: 'Taille (cm)',
       };
-      return map[text] || text.replace(/_/g, ' ').trim();
+
+      if (map[text.toLowerCase()]) return map[text.toLowerCase()];
+
+      // Si le texte contient déjà des majuscules (ex: RAG, ML), on le garde tel quel
+      if (/[A-Z]/.test(text)) return text.replace(/_/g, ' ');
+
+      return text.replace(/_/g, ' ').charAt(0).toUpperCase() + text.slice(1);
     }
 
     function setStatus(elId, text, type) {
@@ -488,11 +525,11 @@
         row.className = 'metric-row';
         const labelEl = document.createElement('span');
         labelEl.className = 'metric-label';
-        labelEl.textContent = toSentenceCase(humanizeKey(entry.label));
+        labelEl.textContent = humanizeKey(entry.label);
         const valueEl = document.createElement('span');
         valueEl.className = 'metric-value';
         const val = formatValue(entry.value);
-        valueEl.textContent = typeof val === 'string' ? toSentenceCase(humanizeKey(val)) : val;
+        valueEl.textContent = typeof val === 'string' ? humanizeKey(val) : val;
         row.append(labelEl, valueEl);
         host.appendChild(row);
       });
@@ -533,14 +570,41 @@
 
     function renderDashboard(data) {
       const service=(data&&data.service)||{}, model=(data&&data.model)||{}, feedback=(data&&data.feedback)||{};
+      const rag=(data&&data.rag)||{}, pipeline=(data&&data.pipeline)||[], roadmap=(data&&data.roadmap)||[];
+
       byId('kpiService').textContent = toSentenceCase(service.status||'—');
       byId('kpiDataSource').textContent = normalizeDataSource(service.data_source||'—');
       byId('kpiModel').textContent = model.metrics_present ? 'Présent' : 'Absent';
       byId('kpiFeedback').textContent = String(feedback.total_events||0);
       byId('kpiFreshness').textContent = model.metrics_present?formatAge(model.metrics_age_seconds):'—';
+
       renderFeedbackBars(feedback.event_type_counts||{});
       renderModelOverview(model);
       renderModelMetrics(model);
+
+      // RAG Details
+      const ragEntries = [
+        { label: 'Moteur vectoriel', value: rag.engine },
+        { label: 'Nom de collection', value: rag.collection },
+        { label: 'Documents indexés', value: rag.document_count },
+        { label: 'Fonction d\'embedding', value: rag.embedding },
+        { label: 'Chemin du corpus', value: rag.corpus_path }
+      ];
+      fillMetricTable('ragDetails', ragEntries);
+
+      // Pipeline Steps
+      const pipelineEntries = pipeline.map(p => ({
+        label: `Étape ${p.step} : ${p.name}`,
+        value: `${p.desc}`
+      }));
+      fillMetricTable('pipelineSteps', pipelineEntries);
+
+      // Roadmap Items
+      const roadmapEntries = roadmap.map(r => ({
+        label: r.item,
+        value: `[${r.status}]`
+      }));
+      fillMetricTable('roadmapItems', roadmapEntries);
     }
 
     async function refreshDashboard() {
