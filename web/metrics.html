@@ -310,7 +310,7 @@
         row.className = 'bar-row';
         const labelEl = document.createElement('span');
         labelEl.className = 'bar-label';
-        labelEl.textContent = toSentenceCase(label);
+        labelEl.textContent = toSentenceCase(humanizeKey(label));
         const track = document.createElement('div');
         track.className = 'bar-track';
         const fill = document.createElement('div');
@@ -478,11 +478,11 @@
         row.className = 'metric-row';
         const labelEl = document.createElement('span');
         labelEl.className = 'metric-label';
-        labelEl.textContent = toSentenceCase(entry.label);
+        labelEl.textContent = toSentenceCase(humanizeKey(entry.label));
         const valueEl = document.createElement('span');
         valueEl.className = 'metric-value';
         const val = formatValue(entry.value);
-        valueEl.textContent = typeof val === 'string' ? toSentenceCase(val) : val;
+        valueEl.textContent = typeof val === 'string' ? toSentenceCase(humanizeKey(val)) : val;
         row.append(labelEl, valueEl);
         host.appendChild(row);
       });
