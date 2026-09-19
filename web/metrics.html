@@ -444,17 +444,17 @@
     function normalizeMethod(value) {
       const text = String(value || '').toLowerCase();
       const map = {
-        supervised: 'supervisé',
-        unsupervised: 'non supervisé',
-        semi_supervised: 'semi-supervisé',
-        reinforcement: 'renforcement',
-        learning_to_rank: 'apprentissage par ranking',
-        ranking: 'ranking',
-        classification: 'classification',
-        regression: 'régression',
-        hybrid: 'hybride',
+        supervised: 'Supervisé',
+        unsupervised: 'Non supervisé',
+        semi_supervised: 'Semi-supervisé',
+        reinforcement: 'Renforcement',
+        learning_to_rank: 'Apprentissage par ranking',
+        ranking: 'Ranking',
+        classification: 'Classification',
+        regression: 'Régression',
+        hybrid: 'Hybride',
       };
-      return map[text] || value;
+      return toSentenceCase(map[text] || value);
     }
 
     function fillMetricTable(hostId, entries) {
@@ -472,10 +472,11 @@
         row.className = 'metric-row';
         const labelEl = document.createElement('span');
         labelEl.className = 'metric-label';
-        labelEl.textContent = entry.label;
+        labelEl.textContent = toSentenceCase(entry.label);
         const valueEl = document.createElement('span');
         valueEl.className = 'metric-value';
-        valueEl.textContent = formatValue(entry.value);
+        const val = formatValue(entry.value);
+        valueEl.textContent = typeof val === 'string' ? toSentenceCase(val) : val;
         row.append(labelEl, valueEl);
         host.appendChild(row);
       });
@@ -497,7 +498,7 @@
 
       const summaryParts = [];
       if (bestModel) summaryParts.push('Modèle retenu : ' + humanizeModelName(bestModel));
-      if (metricsUpdated) summaryParts.push('mis à jour le ' + metricsUpdated);
+      if (metricsUpdated) summaryParts.push('Mis à jour le ' + metricsUpdated);
       if (samples) summaryParts.push(formatNumber(Number(samples)) + ' échantillons');
       if (summaryParts.length === 0) summaryParts.push('Résumé non disponible');
       byId('modelSummaryText').textContent = summaryParts.join(' · ');
@@ -540,9 +541,9 @@
 
     function renderDashboard(data) {
       const service=(data&&data.service)||{}, model=(data&&data.model)||{}, feedback=(data&&data.feedback)||{};
-      byId('kpiService').textContent = service.status||'—';
-      byId('kpiDataSource').textContent = service.data_source||'—';
-      byId('kpiModel').textContent = model.metrics_present?'présent':'absent';
+      byId('kpiService').textContent = toSentenceCase(service.status||'—');
+      byId('kpiDataSource').textContent = normalizeDataSource(service.data_source||'—');
+      byId('kpiModel').textContent = model.metrics_present ? 'Présent' : 'Absent';
       byId('kpiFeedback').textContent = String(feedback.total_events||0);
       byId('kpiFreshness').textContent = model.metrics_present?formatAge(model.metrics_age_seconds):'—';
       renderFeedbackBars(feedback.event_type_counts||{});
