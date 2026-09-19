@@ -276,9 +276,15 @@
       if (s===null||s===undefined||isNaN(Number(s))) return '—';
       const v = Math.max(0, Math.floor(Number(s)));
       const d=Math.floor(v/86400), h=Math.floor((v%86400)/3600), m=Math.floor((v%3600)/60);
-      if (d>0) return d+'j '+h+'h';
-      if (h>0) return h+'h '+m+'m';
-      return m+'m';
+
+      const parts = [];
+      if (d > 0) parts.push(d + (d > 1 ? ' Jours' : ' Jour'));
+      if (h > 0) parts.push(h + (h > 1 ? ' Heures' : ' Heure'));
+      if (m > 0 || (d === 0 && h === 0)) {
+        parts.push(m + (m > 1 ? ' Minutes' : ' Minute'));
+      }
+
+      return parts.slice(0, 2).join(' ');
     }
 
     function getHeaders() {
