@@ -330,7 +330,7 @@
       <div class="panel">
         <div class="row-head">
           <p class="section-title" style="margin:0;">Mes vêtements</p>
-          <span class="status-pill" id="itemCount">0 items</span>
+          <span class="status-pill" id="itemCount">0 Vêtements</span>
         </div>
         <div class="wardrobe-grid" id="wardrobeGrid">
           <!-- Les items seront injectés ici -->
@@ -385,7 +385,7 @@
       const emptyMsg = document.getElementById('emptyMsg');
 
       grid.replaceChildren();
-      countEl.textContent = `${items.length} item${items.length > 1 ? 's' : ''}`;
+      countEl.textContent = `${items.length} Vêtement${items.length > 1 ? 's' : ''}`;
 
       if (items.length === 0) {
         emptyMsg.style.display = 'block';
