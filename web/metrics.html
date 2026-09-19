@@ -260,14 +260,14 @@
       if (detail) {
         const mainEl = document.createElement('span');
         mainEl.className = 'chip-main';
-        mainEl.textContent = main;
+        mainEl.textContent = toSentenceCase(main);
         const detailEl = document.createElement('span');
         detailEl.className = 'chip-sub';
-        detailEl.textContent = detail;
+        detailEl.textContent = toSentenceCase(detail);
         chip.appendChild(mainEl);
         chip.appendChild(detailEl);
       } else {
-        chip.textContent = raw;
+        chip.textContent = toSentenceCase(raw);
       }
       return chip;
     }
@@ -304,7 +304,7 @@
         row.className = 'bar-row';
         const labelEl = document.createElement('span');
         labelEl.className = 'bar-label';
-        labelEl.textContent = label;
+        labelEl.textContent = toSentenceCase(label);
         const track = document.createElement('div');
         track.className = 'bar-track';
         const fill = document.createElement('div');
@@ -499,7 +499,7 @@
       const summaryParts = [];
       if (bestModel) summaryParts.push('Modèle retenu : ' + humanizeModelName(bestModel));
       if (metricsUpdated) summaryParts.push('Mis à jour le ' + metricsUpdated);
-      if (samples) summaryParts.push(formatNumber(Number(samples)) + ' échantillons');
+      if (samples) summaryParts.push('Échantillons : ' + formatNumber(Number(samples)));
       if (summaryParts.length === 0) summaryParts.push('Résumé non disponible');
       byId('modelSummaryText').textContent = summaryParts.join(' · ');
 
