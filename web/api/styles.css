@@ -212,8 +212,10 @@ body {
   font-family: "JetBrains Mono", monospace;
   font-size: 12px;
   line-height: 1.45;
-  min-height: 355px;
+  min-height: 60px;
   white-space: pre;
+  resize: vertical;
+  overflow-y: hidden;
 }
 
 .output { max-height: 260px; overflow: auto; }

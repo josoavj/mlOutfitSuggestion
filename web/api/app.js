@@ -378,6 +378,12 @@ function renderEndpoints(list) {
   });
 }
 
+function autoResize(textarea) {
+  if (!textarea) return;
+  textarea.style.height = 'auto';
+  textarea.style.height = textarea.scrollHeight + 'px';
+}
+
 function selectEndpoint(id) {
   const endpoint = endpoints.find((item) => item.id === id);
   if (!endpoint) return;
@@ -389,6 +395,12 @@ function selectEndpoint(id) {
   bodyInput.value = endpoint.sample || "";
   updateBodyVisibility(endpoint.method);
   renderEndpoints(filterEndpoints(searchInput.value));
+
+  // Trigger auto-resize after setting initial values
+  setTimeout(() => {
+    autoResize(headersInput);
+    autoResize(bodyInput);
+  }, 0);
 }
 
 function updateBodyVisibility(method) {
@@ -569,6 +581,9 @@ function resetForm() {
   timePill.textContent = "0 ms";
   setLatency(null);
   setStatus("Idle", "ok");
+
+  autoResize(bodyInput);
+  autoResize(headersInput);
 }
 
 searchInput.addEventListener("input", (event) => {
@@ -582,9 +597,23 @@ methodSelect.addEventListener("change", (event) => {
 
 sendBtn.addEventListener("click", sendRequest);
 sendBtnTop.addEventListener("click", sendRequest);
-formatBtn.addEventListener("click", () => { formatBody(); formatHeaders(); });
-formatBtnTop.addEventListener("click", () => { formatBody(); formatHeaders(); });
+formatBtn.addEventListener("click", () => {
+  formatBody();
+  formatHeaders();
+  autoResize(bodyInput);
+  autoResize(headersInput);
+});
+formatBtnTop.addEventListener("click", () => {
+  formatBody();
+  formatHeaders();
+  autoResize(bodyInput);
+  autoResize(headersInput);
+});
 resetBtn.addEventListener("click", resetForm);
+
+bodyInput.addEventListener("input", () => autoResize(bodyInput));
+headersInput.addEventListener("input", () => autoResize(headersInput));
+
 clearHistory.addEventListener("click", () => {
   state.history = [];
   historyList.innerHTML = "";

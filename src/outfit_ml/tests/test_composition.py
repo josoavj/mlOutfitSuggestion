@@ -22,8 +22,8 @@ def test_composition_filters_and_generator():
         category=Category.top,
         subcategory="t_shirt",
         color_primary=Color.blanc,
-        formality_level=2,
-        warmth_rating=1,
+        formality_levels=[2],
+        warmth_ratings=[1],
         season_suitability=[Season.ete]
     )
 
@@ -33,8 +33,8 @@ def test_composition_filters_and_generator():
         category=Category.bottom,
         subcategory="short",
         color_primary=Color.beige,
-        formality_level=2,
-        warmth_rating=1,
+        formality_levels=[2],
+        warmth_ratings=[1],
         season_suitability=[Season.ete]
     )
 
@@ -44,8 +44,8 @@ def test_composition_filters_and_generator():
         category=Category.shoes,
         subcategory="baskets",
         color_primary=Color.blanc,
-        formality_level=2,
-        warmth_rating=1,
+        formality_levels=[2],
+        warmth_ratings=[1],
         season_suitability=[Season.ete]
     )
 

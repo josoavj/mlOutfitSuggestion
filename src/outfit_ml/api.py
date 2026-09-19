@@ -23,7 +23,12 @@ from .context import (
     fetch_today_agenda_entries,
     fetch_user_profile,
 )
-from .feedback import append_feedback_event, append_feedback_events, feedback_stats
+from .feedback import (
+    append_feedback_event,
+    append_feedback_events,
+    feedback_stats,
+    flush_feedback,
+)
 from .recommend import OutfitRecommender
 from .schemas import (
     AutoRecommendationRequest,
@@ -96,6 +101,11 @@ def require_api_key(x_api_key: str | None = Header(default=None, alias="X-API-Ke
 # ---------------------------------------------------------------------------
 
 app = FastAPI(title="Outfit Suggestion API", version="0.1.0")
+
+@app.on_event("shutdown")
+def shutdown_event():
+    # Sauvegarde des feedbacks en attente avant l'arrêt
+    flush_feedback()
 
 limiter = Limiter(key_func=get_remote_address)
 app.state.limiter = limiter
@@ -275,6 +285,8 @@ def ui_favicon() -> Response:
 @app.get("/dashboard/technical")
 @limiter.limit(os.getenv("RATE_LIMIT_TECHNICAL", "60/minute"))
 def technical_dashboard(request: Request, _: None = Depends(require_api_key)) -> dict:
+    from .composition.rag import style_rag
+    
     model_present, model_metrics = _load_model_metrics()
     feedback = feedback_stats().model_dump()
     now_utc = datetime.now(UTC)
@@ -285,6 +297,9 @@ def technical_dashboard(request: Request, _: None = Depends(require_api_key)) ->
         modified_dt = datetime.fromtimestamp(modified_ts, tz=UTC)
         metrics_modified_iso = modified_dt.isoformat()
         metrics_age_seconds = max(0.0, (now_utc - modified_dt).total_seconds())
+
+    # RAG Stats
+    rag_count = style_rag.collection.count()
 
     return {
         "service": {
@@ -303,6 +318,25 @@ def technical_dashboard(request: Request, _: None = Depends(require_api_key)) ->
             "metrics_age_seconds": metrics_age_seconds,
             "metrics": model_metrics,
         },
+        "rag": {
+            "engine": "ChromaDB",
+            "collection": "style_rules",
+            "document_count": rag_count,
+            "embedding": "LightTokenEmbedding (Local)",
+            "corpus_path": "data/corpus_style/",
+        },
+        "pipeline": [
+            {"step": 1, "name": "Filtres durs", "desc": "Élimination par météo, formalité et genre"},
+            {"step": 2, "name": "Validation RAG", "desc": "Harmonie des couleurs via recherche vectorielle"},
+            {"step": 3, "name": "Scoring ML", "desc": "Évaluation de la pertinence par Random Forest"},
+            {"step": 4, "name": "Diversité MMR", "desc": "Pénalisation de la répétition structurelle"}
+        ],
+        "roadmap": [
+            {"item": "Auth multi-utilisateurs", "status": "Planifié"},
+            {"item": "Flush feedback périodique", "status": "En cours"},
+            {"item": "Intégration d'images réelles", "status": "Recherche"},
+            {"item": "Support des accessoires complexes", "status": "Planifié"}
+        ],
         "feedback": feedback,
     }
 

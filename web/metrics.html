@@ -45,7 +45,10 @@
           <a class="summary-link" href="#dashboard">Dashboard</a>
           <a class="summary-link" href="#synthese">Synthèse modèle</a>
           <a class="summary-link" href="#configuration">Configuration</a>
+          <a class="summary-link" href="#rag">RAG & Sémantique</a>
+          <a class="summary-link" href="#pipeline">Pipeline</a>
           <a class="summary-link" href="#metriques">Métriques</a>
+          <a class="summary-link" href="#roadmap">Feuille de route</a>
           <a class="summary-link" href="#feedback">Feedback</a>
           <a class="summary-link" href="#json">JSON</a>
         </div>
@@ -61,8 +64,17 @@
         <a class="summary-dot" href="#configuration" data-label="Configuration" aria-label="Configuration">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l1.2 2.6 2.8.3-2.1 1.9.7 2.7-2.6-1.6-2.6 1.6.7-2.7-2.1-1.9 2.8-.3L12 3z" fill="currentColor"/></svg>
         </a>
+        <a class="summary-dot" href="#rag" data-label="RAG & Sémantique" aria-label="RAG & Sémantique">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+        <a class="summary-dot" href="#pipeline" data-label="Pipeline" aria-label="Pipeline">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16v16H4zM4 12h16M12 4v16" stroke="currentColor" stroke-width="2" fill="none"/></svg>
+        </a>
         <a class="summary-dot" href="#metriques" data-label="Métriques" aria-label="Métriques">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 18h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><rect x="6" y="10" width="3" height="6" fill="currentColor"/><rect x="11" y="7" width="3" height="9" fill="currentColor"/><rect x="16" y="4" width="3" height="12" fill="currentColor"/></svg>
+        </a>
+        <a class="summary-dot" href="#roadmap" data-label="Feuille de route" aria-label="Feuille de route">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 11l3 3L22 4" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </a>
         <a class="summary-dot" href="#feedback" data-label="Feedback" aria-label="Feedback">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 6h14v9H9l-4 4V6z" stroke="currentColor" stroke-width="2" fill="none" stroke-linejoin="round"/></svg>
@@ -83,7 +95,10 @@
             <a class="summary-link" href="#dashboard">Dashboard</a>
             <a class="summary-link" href="#synthese">Synthèse modèle</a>
             <a class="summary-link" href="#configuration">Configuration</a>
+            <a class="summary-link" href="#rag">RAG & Sémantique</a>
+            <a class="summary-link" href="#pipeline">Pipeline</a>
             <a class="summary-link" href="#metriques">Métriques</a>
+            <a class="summary-link" href="#roadmap">Feuille de route</a>
             <a class="summary-link" href="#feedback">Feedback</a>
             <a class="summary-link" href="#json">JSON</a>
           </div>
@@ -93,12 +108,14 @@
       <div class="panel" id="dashboard">
         <div class="row-head">
           <p class="section-title" style="margin:0;">Dashboard technique</p>
-          <button class="btn-refresh" id="refreshDashBtn">
-            <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M10.5 6A4.5 4.5 0 1 1 6 1.5a4.47 4.47 0 0 1 3.18 1.32M9.18 2.82V1M9.18 2.82H7" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            Actualiser
-          </button>
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <span class="status-pill" id="dashStatus" style="display:inline-flex; margin-bottom: 0; padding: 7px 16px; font-size: 13px; height: 34px; align-items: center;"><span class="pulse"></span>À jour</span>
+            <button class="btn-refresh" id="refreshDashBtn" style="height: 34px;">
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M10.5 6A4.5 4.5 0 1 1 6 1.5a4.47 4.47 0 0 1 3.18 1.32M9.18 2.82V1M9.18 2.82H7" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              Actualiser
+            </button>
+          </div>
         </div>
-        <span class="status-pill" id="dashStatus" style="display:inline-flex;"><span class="pulse"></span>Prêt</span>
         <div class="dash-grid">
           <div class="kpi"><p class="kpi-label">Service</p><h3 id="kpiService">—</h3></div>
           <div class="kpi"><p class="kpi-label">Source de données</p><h3 id="kpiDataSource">—</h3></div>
@@ -107,21 +124,28 @@
           <div class="kpi"><p class="kpi-label">Fraîcheur</p><h3 id="kpiFreshness">—</h3></div>
         </div>
         <p class="section-label" id="synthese">Synthèse modèle</p>
-        <div class="info-grid">
-          <div class="info-box">
-            <p class="info-title">Résumé</p>
-            <p class="info-text" id="modelSummaryText">—</p>
-            <div id="modelPills" class="chip-row"></div>
-          </div>
-          <div class="info-box">
-            <p class="info-title">Apprentissage</p>
-            <div id="learningDetails" class="metric-table"></div>
-          </div>
+        <div class="info-box">
+          <p class="info-title">Résumé de l'apprentissage</p>
+          <div id="learningDetails" class="metric-table"></div>
         </div>
         <p class="section-label" id="configuration">Configuration modèle</p>
         <div id="modelDetails" class="metric-table"></div>
+
+        <p class="section-label" id="wardrobe">Inventaire de la Garde-robe</p>
+        <div id="wardrobeDetails" class="metric-table"></div>
+
+        <p class="section-label" id="rag">RAG & Sémantique (ChromaDB)</p>
+        <div id="ragDetails" class="metric-table"></div>
+
+        <p class="section-label" id="pipeline">Structure du Pipeline</p>
+        <div id="pipelineSteps" class="metric-table"></div>
+
         <p class="section-label" id="metriques">Métriques modèle</p>
         <div id="modelMetrics" class="metric-table"></div>
+
+        <p class="section-label" id="roadmap">Feuille de route & Évolutions</p>
+        <div id="roadmapItems" class="metric-table"></div>
+
         <p class="section-label" id="feedback">Feedback par type</p>
         <div id="feedbackBars" class="bars"></div>
         <p class="section-label" id="json">Dashboard JSON</p>
@@ -235,7 +259,21 @@
     }
 
     function humanizeKey(value) {
-      return String(value || '').replace(/_/g, ' ').trim();
+      const text = String(value || '').trim();
+      if (!text) return '';
+
+      const map = {
+        gender: 'Genre ciblé',
+        age: 'Âge',
+        height_cm: 'Taille (cm)',
+      };
+
+      if (map[text.toLowerCase()]) return map[text.toLowerCase()];
+
+      // Si le texte contient déjà des majuscules (ex: RAG, ML), on le garde tel quel
+      if (/[A-Z]/.test(text)) return text.replace(/_/g, ' ');
+
+      return text.replace(/_/g, ' ').charAt(0).toUpperCase() + text.slice(1);
     }
 
     function setStatus(elId, text, type) {
@@ -260,25 +298,40 @@
       if (detail) {
         const mainEl = document.createElement('span');
         mainEl.className = 'chip-main';
-        mainEl.textContent = main;
+        mainEl.textContent = toSentenceCase(main);
         const detailEl = document.createElement('span');
         detailEl.className = 'chip-sub';
-        detailEl.textContent = detail;
+        detailEl.textContent = toSentenceCase(detail);
         chip.appendChild(mainEl);
         chip.appendChild(detailEl);
       } else {
-        chip.textContent = raw;
+        chip.textContent = toSentenceCase(raw);
       }
       return chip;
+    }
+
+    function formatDateTime(isoStr) {
+      if (!isoStr) return '—';
+      try {
+        const d = new Date(isoStr);
+        if (isNaN(d.getTime())) return isoStr;
+        return d.toLocaleDateString('fr-FR') + ' à ' + d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+      } catch (e) { return isoStr; }
     }
 
     function formatAge(s) {
       if (s===null||s===undefined||isNaN(Number(s))) return '—';
       const v = Math.max(0, Math.floor(Number(s)));
       const d=Math.floor(v/86400), h=Math.floor((v%86400)/3600), m=Math.floor((v%3600)/60);
-      if (d>0) return d+'j '+h+'h';
-      if (h>0) return h+'h '+m+'m';
-      return m+'m';
+
+      const parts = [];
+      if (d > 0) parts.push(d + (d > 1 ? ' Jours' : ' Jour'));
+      if (h > 0) parts.push(h + (h > 1 ? ' Heures' : ' Heure'));
+      if (m > 0 || (d === 0 && h === 0)) {
+        parts.push(m + (m > 1 ? ' Minutes' : ' Minute'));
+      }
+
+      return parts.slice(0, 2).join(' ');
     }
 
     function getHeaders() {
@@ -304,7 +357,7 @@
         row.className = 'bar-row';
         const labelEl = document.createElement('span');
         labelEl.className = 'bar-label';
-        labelEl.textContent = label;
+        labelEl.textContent = toSentenceCase(humanizeKey(label));
         const track = document.createElement('div');
         track.className = 'bar-track';
         const fill = document.createElement('div');
@@ -327,7 +380,8 @@
     function humanizeModelName(value) {
       const text = String(value || '').toLowerCase();
       const map = {
-        random_forest: 'Random forest',
+        random_forest: 'Forêt aléatoire (Random forest)',
+        extra_trees: 'Arbres extrêmement aléatoires (Extra trees)',
         xgboost: 'XGBoost',
         lightgbm: 'LightGBM',
         catboost: 'CatBoost',
@@ -338,27 +392,27 @@
         knn: 'K-NN',
         naive_bayes: 'Naive Bayes',
       };
-      return map[text] || value;
+      return toSentenceCase(map[text] || value);
     }
 
     function normalizeDataSource(value) {
       const text = String(value || '').toLowerCase();
       const map = {
-        synthetic: 'synthétique',
-        real: 'réel',
-        file: 'fichier local',
+        synthetic: 'Synthétique',
+        real: 'Réel',
+        file: 'Fichier local',
       };
-      return map[text] || value;
+      return toSentenceCase(map[text] || value);
     }
 
     function normalizeSplitMode(value) {
       const text = String(value || '').toLowerCase();
       const map = {
-        random: 'aléatoire',
-        time: 'chronologique',
-        temporal: 'chronologique',
+        random: 'Aléatoire',
+        time: 'Chronologique',
+        temporal: 'Chronologique',
       };
-      return map[text] || value;
+      return toSentenceCase(map[text] || value);
     }
 
     function formatMetricValue(key, value) {
@@ -383,13 +437,13 @@
       }
       const labelMap = {
         roc_auc: 'ROC-AUC',
-        average_precision: 'Average precision',
+        average_precision: 'Précision moyenne (AP)',
         precision: 'Précision',
         recall: 'Rappel',
         f1: 'Score F1',
-        precision_at_3: 'Précision @3',
-        recall_at_3: 'Rappel @3',
-        ndcg_at_3: 'NDCG @3',
+        precision_at_3: 'Précision à 3',
+        recall_at_3: 'Rappel à 3',
+        ndcg_at_3: 'NDCG à 3',
       };
       const order = Object.keys(labelMap);
       const ordered = entries.sort((a, b) => {
@@ -405,7 +459,7 @@
         row.className = 'metric-row';
         const labelEl = document.createElement('span');
         labelEl.className = 'metric-label';
-        labelEl.textContent = labelMap[key] || humanizeKey(key);
+        labelEl.textContent = labelMap[key] || toSentenceCase(humanizeKey(key));
         const valueEl = document.createElement('span');
         valueEl.className = 'metric-value';
         valueEl.textContent = formatMetricValue(key, Number(value));
@@ -443,17 +497,17 @@
     function normalizeMethod(value) {
       const text = String(value || '').toLowerCase();
       const map = {
-        supervised: 'supervisé',
-        unsupervised: 'non supervisé',
-        semi_supervised: 'semi-supervisé',
-        reinforcement: 'renforcement',
-        learning_to_rank: 'apprentissage par ranking',
-        ranking: 'ranking',
-        classification: 'classification',
-        regression: 'régression',
-        hybrid: 'hybride',
+        supervised: 'Supervisé',
+        unsupervised: 'Non supervisé',
+        semi_supervised: 'Semi-supervisé',
+        reinforcement: 'Renforcement',
+        learning_to_rank: 'Apprentissage par ranking',
+        ranking: 'Ranking',
+        classification: 'Classification',
+        regression: 'Régression',
+        hybrid: 'Hybride',
       };
-      return map[text] || value;
+      return toSentenceCase(map[text] || value);
     }
 
     function fillMetricTable(hostId, entries) {
@@ -471,10 +525,11 @@
         row.className = 'metric-row';
         const labelEl = document.createElement('span');
         labelEl.className = 'metric-label';
-        labelEl.textContent = entry.label;
+        labelEl.textContent = humanizeKey(entry.label);
         const valueEl = document.createElement('span');
         valueEl.className = 'metric-value';
-        valueEl.textContent = formatValue(entry.value);
+        const val = formatValue(entry.value);
+        valueEl.textContent = typeof val === 'string' ? humanizeKey(val) : val;
         row.append(labelEl, valueEl);
         host.appendChild(row);
       });
@@ -494,59 +549,62 @@
       const featureCount = readField(model, ['feature_count', 'features_count', 'training.feature_count', 'metadata.feature_count']);
       const featureList = readField(model, ['feature_list', 'features', 'training.features', 'metadata.features']);
 
-      const summaryParts = [];
-      if (bestModel) summaryParts.push('Modèle retenu : ' + humanizeModelName(bestModel));
-      if (metricsUpdated) summaryParts.push('mis à jour le ' + metricsUpdated);
-      if (samples) summaryParts.push(formatNumber(Number(samples)) + ' échantillons');
-      if (summaryParts.length === 0) summaryParts.push('Résumé non disponible');
-      byId('modelSummaryText').textContent = summaryParts.join(' · ');
+      const summaryEntries = [];
+      if (bestModel) summaryEntries.push({ label: 'Algorithme retenu', value: humanizeModelName(bestModel) });
+      if (samples) summaryEntries.push({ label: 'Échantillons entraînés', value: formatNumber(Number(samples)) });
+      if (learningType) summaryEntries.push({ label: 'Type d\'apprentissage', value: normalizeMethod(learningType) });
+      if (learningMode) summaryEntries.push({ label: 'Mode d\'entraînement', value: normalizeMethod(learningMode) });
+      if (objective) summaryEntries.push({ label: 'Objectif du modèle', value: objective });
+      if (metricsUpdated) summaryEntries.push({ label: 'Dernière mise à jour', value: formatDateTime(metricsUpdated) });
 
-      const pills = [];
-      if (bestModel) pills.push('Algorithme: ' + humanizeModelName(bestModel));
-      if (dataSource) pills.push('Source: ' + normalizeDataSource(dataSource));
-      if (splitMode) pills.push('Découpage: ' + normalizeSplitMode(splitMode));
-      if (samples) pills.push('Échantillons: ' + formatNumber(Number(samples)));
-      const pillHost = byId('modelPills');
-      pillHost.replaceChildren();
-      if (!pills.length) {
-        const chip = document.createElement('span');
-        chip.className = 'chip';
-        chip.textContent = 'Métadonnées modèle non fournies';
-        pillHost.appendChild(chip);
-      } else {
-        pills.forEach((label) => {
-          const chip = renderPill(label);
-          if (chip) pillHost.appendChild(chip);
-        });
-      }
-
-      const learningEntries = [];
-      if (learningType) learningEntries.push({ label: 'Type d\'apprentissage', value: normalizeMethod(learningType) });
-      if (learningMode) learningEntries.push({ label: 'Mode d\'entraînement', value: normalizeMethod(learningMode) });
-      if (objective) learningEntries.push({ label: 'Objectif', value: objective });
-      if (bestModel) learningEntries.push({ label: 'Algorithme retenu', value: humanizeModelName(bestModel) });
-      if (splitMode) learningEntries.push({ label: 'Découpage des données', value: normalizeSplitMode(splitMode) });
-      if (dataSource) learningEntries.push({ label: 'Source des données', value: normalizeDataSource(dataSource) });
-      fillMetricTable('learningDetails', learningEntries);
+      fillMetricTable('learningDetails', summaryEntries);
 
       const detailsEntries = [];
       if (featureCount) detailsEntries.push({ label: 'Nombre de variables', value: featureCount });
       if (featureList) detailsEntries.push({ label: 'Variables clés', value: featureList });
-      if (payload && payload.data_source) detailsEntries.push({ label: 'Type de données', value: normalizeDataSource(payload.data_source) });
-      if (payload && payload.split_mode) detailsEntries.push({ label: 'Mode de split', value: normalizeSplitMode(payload.split_mode) });
+      if (splitMode) detailsEntries.push({ label: 'Découpage des données', value: normalizeSplitMode(splitMode) });
+      if (dataSource) detailsEntries.push({ label: 'Source des données', value: normalizeDataSource(dataSource) });
+
       fillMetricTable('modelDetails', detailsEntries);
     }
 
     function renderDashboard(data) {
       const service=(data&&data.service)||{}, model=(data&&data.model)||{}, feedback=(data&&data.feedback)||{};
-      byId('kpiService').textContent = service.status||'—';
-      byId('kpiDataSource').textContent = service.data_source||'—';
-      byId('kpiModel').textContent = model.metrics_present?'présent':'absent';
+      const rag=(data&&data.rag)||{}, pipeline=(data&&data.pipeline)||[], roadmap=(data&&data.roadmap)||[];
+
+      byId('kpiService').textContent = toSentenceCase(service.status||'—');
+      byId('kpiDataSource').textContent = normalizeDataSource(service.data_source||'—');
+      byId('kpiModel').textContent = model.metrics_present ? 'Présent' : 'Absent';
       byId('kpiFeedback').textContent = String(feedback.total_events||0);
       byId('kpiFreshness').textContent = model.metrics_present?formatAge(model.metrics_age_seconds):'—';
+
       renderFeedbackBars(feedback.event_type_counts||{});
       renderModelOverview(model);
       renderModelMetrics(model);
+
+      // RAG Details
+      const ragEntries = [
+        { label: 'Moteur vectoriel', value: rag.engine },
+        { label: 'Nom de collection', value: rag.collection },
+        { label: 'Documents indexés', value: rag.document_count },
+        { label: 'Fonction d\'embedding', value: rag.embedding },
+        { label: 'Chemin du corpus', value: rag.corpus_path }
+      ];
+      fillMetricTable('ragDetails', ragEntries);
+
+      // Pipeline Steps
+      const pipelineEntries = pipeline.map(p => ({
+        label: `Étape ${p.step} : ${p.name}`,
+        value: `${p.desc}`
+      }));
+      fillMetricTable('pipelineSteps', pipelineEntries);
+
+      // Roadmap Items
+      const roadmapEntries = roadmap.map(r => ({
+        label: r.item,
+        value: `[${r.status}]`
+      }));
+      fillMetricTable('roadmapItems', roadmapEntries);
     }
 
     async function refreshDashboard() {
@@ -562,13 +620,11 @@
           ['kpiService','kpiDataSource','kpiModel','kpiFeedback','kpiFreshness'].forEach(id=>byId(id).textContent='—');
           byId('feedbackBars').replaceChildren();
           byId('modelMetrics').replaceChildren();
-          byId('modelSummaryText').textContent = '—';
-          byId('modelPills').replaceChildren();
           byId('learningDetails').replaceChildren();
           byId('modelDetails').replaceChildren();
           return;
         }
-        setStatus('dashStatus','OK','ok');
+        setStatus('dashStatus','À jour','ok');
         renderDashboard(data);
       } catch(e) {
         setStatus('dashStatus','Erreur réseau : '+e,'err');

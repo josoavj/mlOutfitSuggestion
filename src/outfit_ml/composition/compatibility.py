@@ -31,8 +31,19 @@ def combination_compatibility_score(items: list[WardrobeItem]) -> float:
 
     pair_scores: list[float] = []
     for a, b in combinations(items, 2):
-        if abs(a.formality_level - b.formality_level) > MAX_FORMALITY_GAP:
+        # Vérification de l'écart de formalité entre les plages autorisées des deux items
+        # On vérifie s'il existe au moins une paire de niveaux (fa, fb) dont l'écart <= MAX_FORMALITY_GAP
+        gap_ok = False
+        for fa in a.formality_levels:
+            for fb in b.formality_levels:
+                if abs(fa - fb) <= MAX_FORMALITY_GAP:
+                    gap_ok = True
+                    break
+            if gap_ok: break
+            
+        if not gap_ok:
             return 0.0
+            
         if not _patterns_compatible(a.pattern, b.pattern):
             return 0.0
 

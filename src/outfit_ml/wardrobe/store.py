@@ -11,6 +11,7 @@ from __future__ import annotations
 import base64
 import json
 import os
+import threading
 import uuid
 from datetime import datetime
 from pathlib import Path
@@ -32,6 +33,7 @@ class WardrobeStore:
         self.image_root = image_root
         self.data_root.mkdir(parents=True, exist_ok=True)
         self.image_root.mkdir(parents=True, exist_ok=True)
+        self._lock = threading.Lock()
 
     def _user_file(self, user_id: str) -> Path:
         return self.data_root / f"{user_id}.json"
@@ -72,50 +74,57 @@ class WardrobeStore:
             image_url = self._persist_image(user_id, payload.image_base64)
 
         item = WardrobeItem.from_create(user_id, payload, image_url)
-        items = self._load(user_id)
-        items.append(json.loads(item.model_dump_json()))
-        self._save(user_id, items)
+        with self._lock:
+            items = self._load(user_id)
+            items.append(json.loads(item.model_dump_json()))
+            self._save(user_id, items)
         return item
 
     def list_items(self, user_id: str, category: Optional[str] = None) -> list[WardrobeItem]:
-        raw_items = self._load(user_id)
+        with self._lock:
+            raw_items = self._load(user_id)
         items = [WardrobeItem.model_validate(raw) for raw in raw_items]
         if category:
             items = [i for i in items if i.category == category]
         return items
 
     def get_item(self, user_id: str, item_id: str) -> WardrobeItem:
-        for raw in self._load(user_id):
+        with self._lock:
+            items = self._load(user_id)
+        for raw in items:
             if raw.get("item_id") == item_id:
                 return WardrobeItem.model_validate(raw)
         raise WardrobeItemNotFound(item_id)
 
     def update_item(self, user_id: str, item_id: str, payload: WardrobeItemUpdate) -> WardrobeItem:
-        items = self._load(user_id)
-        for raw in items:
-            if raw.get("item_id") == item_id:
-                updates = payload.model_dump(exclude_unset=True)
-                raw.update(updates)
-                self._save(user_id, items)
-                return WardrobeItem.model_validate(raw)
+        with self._lock:
+            items = self._load(user_id)
+            for raw in items:
+                if raw.get("item_id") == item_id:
+                    updates = payload.model_dump(exclude_unset=True)
+                    raw.update(updates)
+                    self._save(user_id, items)
+                    return WardrobeItem.model_validate(raw)
         raise WardrobeItemNotFound(item_id)
 
     def delete_item(self, user_id: str, item_id: str) -> None:
-        items = self._load(user_id)
-        filtered = [raw for raw in items if raw.get("item_id") != item_id]
-        if len(filtered) == len(items):
-            raise WardrobeItemNotFound(item_id)
-        self._save(user_id, filtered)
+        with self._lock:
+            items = self._load(user_id)
+            filtered = [raw for raw in items if raw.get("item_id") != item_id]
+            if len(filtered) == len(items):
+                raise WardrobeItemNotFound(item_id)
+            self._save(user_id, filtered)
 
     def mark_suggested(self, user_id: str, item_ids: list[str]) -> None:
         """Met à jour last_suggested_at pour tous les items d'une tenue proposée
         (utilisé par le moteur de diversité, voir composition/diversity.py)."""
-        items = self._load(user_id)
-        now = datetime.utcnow().isoformat()
-        for raw in items:
-            if raw.get("item_id") in item_ids:
-                raw["last_suggested_at"] = now
-        self._save(user_id, items)
+        with self._lock:
+            items = self._load(user_id)
+            now = datetime.now().isoformat()
+            for raw in items:
+                if raw.get("item_id") in item_ids:
+                    raw["last_suggested_at"] = now
+            self._save(user_id, items)
 
 
 wardrobe_store = WardrobeStore()
