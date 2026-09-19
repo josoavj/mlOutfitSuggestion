@@ -17,8 +17,8 @@ def test_wardrobe_store_crud_and_methods():
         category=Category.top,
         subcategory="chemise_luxe",
         color_primary=Color.bleu_marine,
-        formality_level=4,
-        warmth_rating=2,
+        formality_levels=[4],
+        warmth_ratings=[2],
         pattern=Pattern.uni,
         season_suitability=[Season.printemps, Season.ete]
     )
