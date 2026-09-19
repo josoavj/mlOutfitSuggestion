@@ -146,10 +146,9 @@
           <label id="manualTempField" class="hidden-field">Température °C <input id="temperature" type="number" step="0.1" value="14" /></label>
           <label id="manualConditionField" class="hidden-field">Météo (manuel) <input id="condition" value="Clear" /></label>
         </div>
-        <div class="run-row" style="margin-top: 20px;">
-          <button class="summary-toggle" id="toggleWeatherManual" style="display: inline-flex;">Forcer la météo manuellement</button>
-          <div style="flex-grow: 1;"></div>
-          <button class="btn-run" id="runBtn">
+        <div class="run-row" style="margin-top: 25px; justify-content: flex-end; gap: 15px;">
+          <button class="btn-refresh" id="toggleWeatherManual" style="padding: 9px 24px; font-size: 14px;">Forcer la météo manuellement</button>
+          <button class="btn-run" id="runBtn" style="padding: 9px 24px; font-size: 14px;">
             <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><polygon points="3,1.5 11.5,6.5 3,11.5" fill="currentColor"/></svg>
             Lancer le test
           </button>
