@@ -235,7 +235,13 @@
     }
 
     function humanizeKey(value) {
-      return String(value || '').replace(/_/g, ' ').trim();
+      const text = String(value || '').toLowerCase();
+      const map = {
+        gender: 'genre ciblé',
+        age: 'âge',
+        height_cm: 'taille (cm)',
+      };
+      return map[text] || text.replace(/_/g, ' ').trim();
     }
 
     function setStatus(elId, text, type) {
