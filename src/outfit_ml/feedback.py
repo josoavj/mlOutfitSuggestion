@@ -66,6 +66,11 @@ def _flush_feedback_buffer(force: bool = False) -> None:
             file.write(json.dumps(payload, ensure_ascii=True) + "\n")
 
 
+def flush_feedback() -> None:
+    """Force l'écriture immédiate de tous les événements en attente dans le buffer."""
+    _flush_feedback_buffer(force=True)
+
+
 def append_feedback_event(event: FeedbackEventRequest) -> str:
     event_id = str(uuid.uuid4())
     payload = event.model_dump()
