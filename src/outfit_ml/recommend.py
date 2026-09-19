@@ -251,11 +251,13 @@ class OutfitRecommender:
         if prefs and prefs.items_bannis:
             user_items = [item for item in user_items if item.item_id not in prefs.items_bannis]
 
-        # 4. Compose outfits
+        # 4. Compose outfits with ML Scoring
+        from .composition.scoring import ml_combination_score
         combinations = compose_outfits(
             items=user_items,
             context=context,
-            top_k=request.top_k
+            top_k=request.top_k,
+            score_fn=ml_combination_score
         )
 
         # 5. Mark suggested items
