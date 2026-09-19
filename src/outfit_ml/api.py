@@ -23,7 +23,12 @@ from .context import (
     fetch_today_agenda_entries,
     fetch_user_profile,
 )
-from .feedback import append_feedback_event, append_feedback_events, feedback_stats
+from .feedback import (
+    append_feedback_event,
+    append_feedback_events,
+    feedback_stats,
+    flush_feedback,
+)
 from .recommend import OutfitRecommender
 from .schemas import (
     AutoRecommendationRequest,
@@ -96,6 +101,11 @@ def require_api_key(x_api_key: str | None = Header(default=None, alias="X-API-Ke
 # ---------------------------------------------------------------------------
 
 app = FastAPI(title="Outfit Suggestion API", version="0.1.0")
+
+@app.on_event("shutdown")
+def shutdown_event():
+    # Sauvegarde des feedbacks en attente avant l'arrêt
+    flush_feedback()
 
 limiter = Limiter(key_func=get_remote_address)
 app.state.limiter = limiter
