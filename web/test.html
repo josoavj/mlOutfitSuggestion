@@ -141,7 +141,7 @@
       <div class="panel" id="contexte">
         <p class="section-title">Contexte</p>
         <div class="grid g3">
-          <label>Location (Ville) <input id="location" value="Lyon" placeholder="ex: Paris, London..." /></label>
+          <label>Location (Ville) <input id="location" value="Antananarivo" placeholder="ex: Paris, London..." /></label>
           <label id="manualTempField" class="hidden-field">Température °C <input id="temperature" type="number" step="0.1" value="14" /></label>
           <label id="manualConditionField" class="hidden-field">Météo (manuel) <input id="condition" value="Clear" /></label>
         </div>
@@ -325,6 +325,10 @@
         .filter(Boolean);
       const extra = parseCsv(byId('stylesCustom').value);
       return Array.from(new Set([...checked, ...extra]));
+    }
+
+    function humanizeKey(value) {
+      return String(value || '').replace(/_/g, ' ').trim();
     }
 
     function toFrenchText(value) {
@@ -569,7 +573,7 @@
           list.className = 'outfit-items';
           outfitItems.forEach((value) => {
             const li = document.createElement('li');
-            li.textContent = String(value);
+            li.textContent = toSentenceCase(toFrenchText(humanizeKey(value)));
             list.appendChild(li);
           });
           card.appendChild(list);
