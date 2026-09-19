@@ -327,7 +327,8 @@
     function humanizeModelName(value) {
       const text = String(value || '').toLowerCase();
       const map = {
-        random_forest: 'Random forest',
+        random_forest: 'Forêt aléatoire (Random forest)',
+        extra_trees: 'Arbres extrêmement aléatoires (Extra trees)',
         xgboost: 'XGBoost',
         lightgbm: 'LightGBM',
         catboost: 'CatBoost',
@@ -338,27 +339,27 @@
         knn: 'K-NN',
         naive_bayes: 'Naive Bayes',
       };
-      return map[text] || value;
+      return toSentenceCase(map[text] || value);
     }
 
     function normalizeDataSource(value) {
       const text = String(value || '').toLowerCase();
       const map = {
-        synthetic: 'synthétique',
-        real: 'réel',
-        file: 'fichier local',
+        synthetic: 'Synthétique',
+        real: 'Réel',
+        file: 'Fichier local',
       };
-      return map[text] || value;
+      return toSentenceCase(map[text] || value);
     }
 
     function normalizeSplitMode(value) {
       const text = String(value || '').toLowerCase();
       const map = {
-        random: 'aléatoire',
-        time: 'chronologique',
-        temporal: 'chronologique',
+        random: 'Aléatoire',
+        time: 'Chronologique',
+        temporal: 'Chronologique',
       };
-      return map[text] || value;
+      return toSentenceCase(map[text] || value);
     }
 
     function formatMetricValue(key, value) {
@@ -383,13 +384,13 @@
       }
       const labelMap = {
         roc_auc: 'ROC-AUC',
-        average_precision: 'Average precision',
+        average_precision: 'Précision moyenne (AP)',
         precision: 'Précision',
         recall: 'Rappel',
         f1: 'Score F1',
-        precision_at_3: 'Précision @3',
-        recall_at_3: 'Rappel @3',
-        ndcg_at_3: 'NDCG @3',
+        precision_at_3: 'Précision à 3',
+        recall_at_3: 'Rappel à 3',
+        ndcg_at_3: 'NDCG à 3',
       };
       const order = Object.keys(labelMap);
       const ordered = entries.sort((a, b) => {
@@ -405,7 +406,7 @@
         row.className = 'metric-row';
         const labelEl = document.createElement('span');
         labelEl.className = 'metric-label';
-        labelEl.textContent = labelMap[key] || humanizeKey(key);
+        labelEl.textContent = labelMap[key] || toSentenceCase(humanizeKey(key));
         const valueEl = document.createElement('span');
         valueEl.className = 'metric-value';
         valueEl.textContent = formatMetricValue(key, Number(value));
