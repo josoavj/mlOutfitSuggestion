@@ -53,7 +53,9 @@ COMPLEMENTARY_COLOR_PAIRS = [
 OCCASION_MIN_FORMALITY = {
     "Sport": 1,
     "Casual": 2,
+    "Outdoor": 2,
     "Work": 3,
+    "Date": 3,
     "Meeting": 4,
     "Event": 5,
 }
@@ -251,7 +253,9 @@ def build_ontology():
         occasion_classes = {
             "Sport": SportOccasion,
             "Casual": CasualOccasion,
+            "Outdoor": CasualOccasion, # Or maybe a new class?
             "Work": WorkOccasion,
+            "Date": WorkOccasion,   # Or maybe a new class?
             "Meeting": MeetingOccasion,
             "Event": EventOccasion,
         }

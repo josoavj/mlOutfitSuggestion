@@ -7,13 +7,13 @@ from __future__ import annotations
 
 from itertools import combinations
 from ..wardrobe.models import Color, Pattern, WardrobeItem
-from .rag import style_rag
+from .ontology_rules import colors_harmonize
 
 MAX_FORMALITY_GAP = 1
 
 
 def _colors_compatible(c1: Color, c2: Color) -> bool:
-    return style_rag.check_color_harmony(c1.value, c2.value)
+    return colors_harmonize(c1.value, c2.value)
 
 
 def _patterns_compatible(p1: Pattern | None, p2: Pattern | None) -> bool:
