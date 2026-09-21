@@ -30,19 +30,84 @@
 
 ## Architecture
 
-Le système est composé de 3 parties :
+Le système repose sur un moteur de recommandation hybride alliant logique formelle, recherche vectorielle et apprentissage automatique.
 
-### 1. Détection de morphologie
+```mermaid
+graph TD
+    subgraph "Frontend & Clients"
+        User([Utilisateur / Miroir])
+        WebUI[Interface Web / Admin]
+    end
 
-Si l'utilisateur fournit ses mesures (épaules, taille, hanches), la morphologie est déduite automatiquement.
+    subgraph "FastAPI Backend"
+        API[API Endpoints /recommend, /vision, /feedback]
+        
+        subgraph "Services Coeur"
+            Vision[Identification Faciale]
+            Context[Résolveur de Contexte - Météo & Agenda]
+            Recommender[Moteur de Recommandation]
+        end
+        
+        subgraph "Pipeline de Composition"
+            Filtres[1. Filtres Durs - Chaleur, Formalité, Genre]
+            RAG[2. Validation Sémantique - RAG ChromaDB & Ontologie]
+            Scoring[3. Scoring ML - Modèle Random Forest]
+            Diversity[4. Diversité MMR - Anti-répétition]
+        end
+    end
 
-### 2. Moteur de composition dynamique (Phase 2)
+    subgraph "Base de Connaissances"
+        Model[(Modèle ML .joblib)]
+        VectorDB[(Vecteurs ChromaDB)]
+        Ontology[(Ontologie OWL / JSON)]
+    end
 
-Pipeline en 4 étapes utilisant ChromaDB pour la validation sémantique du style (RAG) et un modèle de ranking réentraîné sur des combinaisons d'items (Haut, Bas, Chaussures).
+    subgraph "Stockage des Données"
+        Wardrobe[(Garde-robe JSON)]
+        Prefs[(Préférences JSON)]
+        Logs[(Logs Feedback .jsonl)]
+    end
 
-### 3. API de recommandation
+    %% Flux
+    User --> API
+    WebUI --> API
+    API --> Vision
+    API --> Context
+    API --> Recommender
+    
+    Recommender --> Filtres
+    Filtres --> RAG
+    RAG --> Scoring
+    Scoring --> Diversity
+    Diversity --> API
+    
+    Vision -.-> Prefs
+    Context -.-> API
+    
+    Recommender -.-> Wardrobe
+    Recommender -.-> Prefs
+    
+    Scoring --- Model
+    RAG --- VectorDB
+    RAG --- Ontology
+    
+    API -.-> Logs
+```
 
-Endpoint FastAPI retournant un classement d'ensembles composés dynamiquement.
+Le système est composé de 3 piliers principaux :
+
+### 1. Analyse du Contexte et Identification
+Identification faciale via caméra pour charger le profil utilisateur, couplée à une récupération en temps réel de la météo (OpenWeather) et de l'agenda pour définir les contraintes du jour.
+
+### 2. Moteur de Composition Dynamique
+Un pipeline en 4 étapes qui transforme le dressing brut en tenues cohérentes :
+- **Logique Formelle** : Utilisation de l'ontologie OWL pour l'harmonie des couleurs et la formalité.
+- **RAG ChromaDB** : Validation sémantique avancée basée sur des règles de style textuelles.
+- **Scoring ML** : Classement des meilleures combinaisons via un modèle Random Forest réentraîné.
+- **Diversité MMR** : Algorithme de rotation pour éviter de suggérer toujours les mêmes vêtements.
+
+### 3. API et Observabilité
+Interface FastAPI sécurisée avec console interactive, questionnaires d'onboarding, gestion de garde-robe et dashboard technique complet pour le suivi des métriques et du feedback.
 
 ---
 
