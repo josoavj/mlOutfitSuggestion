@@ -10,4 +10,5 @@ Pillow==11.3.0
 pyarrow>=19.0.1,<20.0.0
 slowapi==0.1.9
 chromadb==1.5.9
+owlready2==0.51
 
