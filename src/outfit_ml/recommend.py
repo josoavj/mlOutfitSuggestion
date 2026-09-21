@@ -31,16 +31,8 @@ class OutfitRecommender:
         weather = weather_bucket(request.weather.temperature_c, request.weather.condition)
 
         # 1. Determine CompositionContext
-        formality_map = {
-            "sport": 1,
-            "casual": 2,
-            "outdoor": 2,
-            "work": 3,
-            "date": 3,
-            "meeting": 4,
-            "event": 5
-        }
-        dom_formality = formality_map.get(occasion, 3)
+        from .composition.ontology_rules import min_formality_for_occasion
+        dom_formality = min_formality_for_occasion(occasion.capitalize(), default=3)
 
         warmth_map = {
             "hot": 1,
