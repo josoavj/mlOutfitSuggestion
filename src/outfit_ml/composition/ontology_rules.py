@@ -41,3 +41,12 @@ def colors_harmonize(color_a: str, color_b: str) -> bool:
 def min_formality_for_occasion(occasion: str, default: int = 2) -> int:
     """Remplace le formality_map codé en dur dans recommend.py."""
     return _occasion_formality().get(occasion, default)
+
+
+def get_color_pairs_count() -> int:
+    return len(_color_pairs())
+
+
+def get_occasion_formality_dict() -> dict[str, int]:
+    return dict(_occasion_formality())
+
