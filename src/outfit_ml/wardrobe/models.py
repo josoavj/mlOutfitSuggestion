@@ -106,8 +106,8 @@ class WardrobeItemCreate(BaseModel):
     subcategory: str = Field(..., min_length=1, max_length=50)
     color_primary: Color
     gender: ItemGender = ItemGender.unisex
-    formality_levels: list[int] = Field(default_factory=lambda: [3], min_items=1)
-    warmth_ratings: list[int] = Field(default_factory=lambda: [3], min_items=1)
+    formality_levels: list[int] = Field(default_factory=lambda: [3], min_length=1)
+    warmth_ratings: list[int] = Field(default_factory=lambda: [3], min_length=1)
 
     color_secondary: Optional[Color] = None
     material: Optional[str] = "coton"  # Changé en str pour permettre le manuel

@@ -46,6 +46,7 @@
           <a class="summary-link" href="#synthese">Synthèse modèle</a>
           <a class="summary-link" href="#configuration">Configuration</a>
           <a class="summary-link" href="#rag">RAG & Sémantique</a>
+          <a class="summary-link" href="#ontologie">Ontologie OWL</a>
           <a class="summary-link" href="#pipeline">Pipeline</a>
           <a class="summary-link" href="#metriques">Métriques</a>
           <a class="summary-link" href="#roadmap">Feuille de route</a>
@@ -66,6 +67,9 @@
         </a>
         <a class="summary-dot" href="#rag" data-label="RAG & Sémantique" aria-label="RAG & Sémantique">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+        <a class="summary-dot" href="#ontologie" data-label="Ontologie OWL" aria-label="Ontologie OWL">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="5" r="3" fill="currentColor"/><circle cx="5" cy="19" r="3" fill="currentColor"/><circle cx="19" cy="19" r="3" fill="currentColor"/><path d="M12 8v4M9.5 14.5L7 17M14.5 14.5L17 17" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
         </a>
         <a class="summary-dot" href="#pipeline" data-label="Pipeline" aria-label="Pipeline">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16v16H4zM4 12h16M12 4v16" stroke="currentColor" stroke-width="2" fill="none"/></svg>
@@ -96,6 +100,7 @@
             <a class="summary-link" href="#synthese">Synthèse modèle</a>
             <a class="summary-link" href="#configuration">Configuration</a>
             <a class="summary-link" href="#rag">RAG & Sémantique</a>
+            <a class="summary-link" href="#ontologie">Ontologie OWL</a>
             <a class="summary-link" href="#pipeline">Pipeline</a>
             <a class="summary-link" href="#metriques">Métriques</a>
             <a class="summary-link" href="#roadmap">Feuille de route</a>
@@ -136,6 +141,23 @@
 
         <p class="section-label" id="rag">RAG & Sémantique (ChromaDB)</p>
         <div id="ragDetails" class="metric-table"></div>
+
+        <p class="section-label" id="ontologie">Ontologie OWL & Raisonnement (HermiT)</p>
+        <div id="ontologyDetails" class="metric-table"></div>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin-top: 16px;">
+          <div class="info-box" style="margin: 0; text-align: center;">
+            <p class="info-title" style="margin-bottom: 12px;">Hiérarchie des classes OWL</p>
+            <a href="graph_class_hierarchy.svg" target="_blank" rel="noopener">
+              <img src="graph_class_hierarchy.svg" alt="Graphe hiérarchique ontologie" style="max-width: 100%; height: auto; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1);" />
+            </a>
+          </div>
+          <div class="info-box" style="margin: 0; text-align: center;">
+            <p class="info-title" style="margin-bottom: 12px;">Matrice de l'harmonie des couleurs</p>
+            <a href="graph_color_harmony.png" target="_blank" rel="noopener">
+              <img src="graph_color_harmony.png" alt="Graphe d'harmonie des couleurs" style="max-width: 100%; height: auto; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1);" />
+            </a>
+          </div>
+        </div>
 
         <p class="section-label" id="pipeline">Structure du Pipeline</p>
         <div id="pipelineSteps" class="metric-table"></div>
@@ -591,6 +613,17 @@
         { label: 'Chemin du corpus', value: rag.corpus_path }
       ];
       fillMetricTable('ragDetails', ragEntries);
+
+      // Ontology Details
+      const ontology = (data && data.ontology) || {};
+      const ontologyEntries = [
+        { label: 'Raisonneur OWL', value: ontology.reasoner || 'HermiT (OWL DL)' },
+        { label: 'Fichier ontologie', value: ontology.file || 'outfit_ontology.owl' },
+        { label: 'Nombre de classes', value: ontology.classes_count || 12 },
+        { label: 'Paires de couleurs compatibles', value: ontology.color_pairs_count || 63 },
+        { label: 'Règles de formalité par occasion', value: ontology.occasion_rules_count || 7 }
+      ];
+      fillMetricTable('ontologyDetails', ontologyEntries);
 
       // Pipeline Steps
       const pipelineEntries = pipeline.map(p => ({
