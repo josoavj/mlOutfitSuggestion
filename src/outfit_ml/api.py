@@ -285,8 +285,9 @@ def ui_favicon() -> Response:
 @app.get("/dashboard/technical")
 @limiter.limit(os.getenv("RATE_LIMIT_TECHNICAL", "60/minute"))
 def technical_dashboard(request: Request, _: None = Depends(require_api_key)) -> dict:
+    from .composition.ontology_rules import get_color_pairs_count, get_occasion_formality_dict
     from .composition.rag import style_rag
-    
+
     model_present, model_metrics = _load_model_metrics()
     feedback = feedback_stats().model_dump()
     now_utc = datetime.now(UTC)
@@ -325,9 +326,18 @@ def technical_dashboard(request: Request, _: None = Depends(require_api_key)) ->
             "embedding": "LightTokenEmbedding (Local)",
             "corpus_path": "data/corpus_style/",
         },
+        "ontology": {
+            "reasoner": "HermiT (OWL DL Reasoner)",
+            "file": "src/outfit_ml/ontology/outfit_ontology.owl",
+            "classes_count": 12,
+            "color_pairs_count": get_color_pairs_count(),
+            "occasion_rules_count": len(get_occasion_formality_dict()),
+            "class_hierarchy_graph": "/graph_class_hierarchy.svg",
+            "color_harmony_graph": "/graph_color_harmony.png",
+        },
         "pipeline": [
             {"step": 1, "name": "Filtres durs", "desc": "Élimination par météo, formalité et genre"},
-            {"step": 2, "name": "Validation RAG", "desc": "Harmonie des couleurs via recherche vectorielle"},
+            {"step": 2, "name": "Validation RAG & Ontologie", "desc": "Harmonie des couleurs via règles OWL HermiT et RAG vectoriel"},
             {"step": 3, "name": "Scoring ML", "desc": "Évaluation de la pertinence par Random Forest"},
             {"step": 4, "name": "Diversité MMR", "desc": "Pénalisation de la répétition structurelle"}
         ],
