@@ -22,6 +22,7 @@ from .models import (
 )
 
 PREFERENCES_DATA_ROOT = Path(os.getenv("PREFERENCES_DATA_ROOT", "data/preferences"))
+STORAGE_BACKEND = os.getenv("STORAGE_BACKEND", "file").strip().lower()
 
 
 class PreferencesStore:
@@ -29,11 +30,21 @@ class PreferencesStore:
         self.data_root = data_root
         self.data_root.mkdir(parents=True, exist_ok=True)
         self._lock = threading.Lock()
+        self._db_store = None
+
+    def _get_db(self):
+        if self._db_store is None:
+            from ..db_store import DatabaseStore
+            self._db_store = DatabaseStore()
+        return self._db_store
 
     def _user_file(self, user_id: str) -> Path:
         return self.data_root / f"{user_id}.json"
 
     def get(self, user_id: str) -> UserPreferences:
+        if STORAGE_BACKEND == "sqlite":
+            return self._get_db().get_preferences(user_id)
+
         with self._lock:
             path = self._user_file(user_id)
             if not path.exists():
@@ -50,6 +61,9 @@ class PreferencesStore:
         return self.get(user_id).onboarding_completed_at is not None
 
     def submit_onboarding(self, user_id: str, payload: OnboardingSubmission) -> UserPreferences:
+        if STORAGE_BACKEND == "sqlite":
+            return self._get_db().submit_onboarding(user_id, payload)
+
         prefs = UserPreferences(
             user_id=user_id,
             styles_aimes=payload.styles_aimes,
@@ -66,6 +80,9 @@ class PreferencesStore:
         return prefs
 
     def patch(self, user_id: str, payload: PreferencesPatch) -> UserPreferences:
+        if STORAGE_BACKEND == "sqlite":
+            return self._get_db().patch_preferences(user_id, payload)
+
         with self._lock:
             prefs = self.get(user_id)
             updates = payload.model_dump(exclude_unset=True)
@@ -76,6 +93,9 @@ class PreferencesStore:
         return prefs
 
     def apply_micro_survey_response(self, user_id: str, response: MicroSurveyResponse) -> UserPreferences:
+        if STORAGE_BACKEND == "sqlite":
+            return self._get_db().apply_micro_survey_response(user_id, response)
+
         with self._lock:
             prefs = self.get(user_id)
 

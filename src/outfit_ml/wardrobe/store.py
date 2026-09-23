@@ -27,6 +27,9 @@ class WardrobeItemNotFound(Exception):
     pass
 
 
+STORAGE_BACKEND = os.getenv("STORAGE_BACKEND", "file").strip().lower()
+
+
 class WardrobeStore:
     def __init__(self, data_root: Path = WARDROBE_DATA_ROOT, image_root: Path = WARDROBE_IMAGE_ROOT):
         self.data_root = data_root
@@ -34,6 +37,13 @@ class WardrobeStore:
         self.data_root.mkdir(parents=True, exist_ok=True)
         self.image_root.mkdir(parents=True, exist_ok=True)
         self._lock = threading.Lock()
+        self._db_store = None
+
+    def _get_db(self):
+        if self._db_store is None:
+            from ..db_store import DatabaseStore
+            self._db_store = DatabaseStore()
+        return self._db_store
 
     def _user_file(self, user_id: str) -> Path:
         return self.data_root / f"{user_id}.json"
@@ -69,6 +79,12 @@ class WardrobeStore:
         return str(target)
 
     def create_item(self, user_id: str, payload: WardrobeItemCreate) -> WardrobeItem:
+        if STORAGE_BACKEND == "sqlite":
+            image_url = payload.image_url
+            if payload.image_base64:
+                image_url = self._persist_image(user_id, payload.image_base64)
+            return self._get_db().create_wardrobe_item(user_id, payload, image_url)
+
         image_url = payload.image_url
         if payload.image_base64:
             image_url = self._persist_image(user_id, payload.image_base64)
@@ -81,6 +97,9 @@ class WardrobeStore:
         return item
 
     def list_items(self, user_id: str, category: Optional[str] = None) -> list[WardrobeItem]:
+        if STORAGE_BACKEND == "sqlite":
+            return self._get_db().list_wardrobe_items(user_id, category)
+
         with self._lock:
             raw_items = self._load(user_id)
         items = [WardrobeItem.model_validate(raw) for raw in raw_items]
@@ -89,6 +108,9 @@ class WardrobeStore:
         return items
 
     def get_item(self, user_id: str, item_id: str) -> WardrobeItem:
+        if STORAGE_BACKEND == "sqlite":
+            return self._get_db().get_wardrobe_item(user_id, item_id)
+
         with self._lock:
             items = self._load(user_id)
         for raw in items:
@@ -97,6 +119,9 @@ class WardrobeStore:
         raise WardrobeItemNotFound(item_id)
 
     def update_item(self, user_id: str, item_id: str, payload: WardrobeItemUpdate) -> WardrobeItem:
+        if STORAGE_BACKEND == "sqlite":
+            return self._get_db().update_wardrobe_item(user_id, item_id, payload)
+
         with self._lock:
             items = self._load(user_id)
             for raw in items:
@@ -108,6 +133,9 @@ class WardrobeStore:
         raise WardrobeItemNotFound(item_id)
 
     def delete_item(self, user_id: str, item_id: str) -> None:
+        if STORAGE_BACKEND == "sqlite":
+            return self._get_db().delete_wardrobe_item(user_id, item_id)
+
         with self._lock:
             items = self._load(user_id)
             filtered = [raw for raw in items if raw.get("item_id") != item_id]
@@ -118,6 +146,9 @@ class WardrobeStore:
     def mark_suggested(self, user_id: str, item_ids: list[str]) -> None:
         """Met à jour last_suggested_at pour tous les items d'une tenue proposée
         (utilisé par le moteur de diversité, voir composition/diversity.py)."""
+        if STORAGE_BACKEND == "sqlite":
+            return self._get_db().mark_wardrobe_suggested(user_id, item_ids)
+
         with self._lock:
             items = self._load(user_id)
             now = datetime.now().isoformat()
