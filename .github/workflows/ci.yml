@@ -30,9 +30,13 @@ jobs:
           pip install pytest
 
       - name: Validate dataset contract
+        env:
+          PYTHONPATH: src
         run: |
           python -m outfit_ml.dataset.validate_dataset
 
       - name: Run Pytest test suite
+        env:
+          PYTHONPATH: src
         run: |
           pytest src/outfit_ml/tests/ -v
