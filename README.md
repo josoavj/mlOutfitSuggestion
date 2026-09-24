@@ -63,9 +63,10 @@ graph TD
     end
 
     subgraph "Stockage des Données"
-        Wardrobe[(Garde-robe JSON)]
-        Prefs[(Préférences JSON)]
+        Wardrobe[(Garde-robe JSON / SQLite)]
+        Prefs[(Préférences JSON / SQLite)]
         Logs[(Logs Feedback .jsonl)]
+        DB[(Base de données SQLite app_database.db)]
     end
 
     %% Flux
@@ -106,8 +107,11 @@ Un pipeline en 4 étapes qui transforme le dressing brut en tenues cohérentes :
 - **Scoring ML** : Classement des meilleures combinaisons via un modèle Random Forest réentraîné.
 - **Diversité MMR** : Algorithme de rotation pour éviter de suggérer toujours les mêmes vêtements.
 
-### 3. API et Observabilité
+### 3. API, Sécurité et Observabilité
 Interface FastAPI sécurisée avec console interactive, questionnaires d'onboarding, gestion de garde-robe et dashboard technique complet pour le suivi des métriques et du feedback.
+- **Sécurité :** Authentification `X-API-Key` en temps constant (`secrets.compare_digest`), sanitisation des identifiants contre les attaques Path Traversal, et limite de 5 Mo sur l'upload d'images Base64.
+- **Stockage unifié :** Support transparent des fichiers JSON et de la base relationnelle SQLite (`STORAGE_BACKEND=sqlite`) en mode WAL haute concurrence.
+- **CI/CD :** Pipeline GitHub Actions automatisé (`.github/workflows/ci.yml`) pour la validation du dataset et l'exécution des tests unitaires Pytest.
 
 ---
 
@@ -125,6 +129,37 @@ source .venv/bin/activate
 pip install -r requirements.txt
 # ChromaDB initialisera son index au premier démarrage
 ```
+
+---
+
+## Configuration & Base de données
+
+Configurez le comportement du stockage et de la sécurité via le fichier `.env` :
+
+```env
+# Moteur de stockage (file = fichiers JSON locaux, sqlite = base SQLite app_database.db)
+STORAGE_BACKEND=sqlite
+
+# Clé API et sécurité
+API_AUTH_ENABLED=true
+API_AUTH_KEY=votre_cle_secrete_api
+ALLOWED_ORIGINS=https://votre-app.example.com
+
+# Clé météo OpenWeather
+OPENWEATHER_API_KEY=votre_cle_openweather
+```
+
+---
+
+## Tests et Intégration Continue (CI)
+
+Lancer la suite de tests complète (11 tests unitaires et de sécurité) :
+
+```bash
+PYTHONPATH=src python -m pytest src/outfit_ml/tests/ -v
+```
+
+Le projet intègre un workflow **GitHub Actions** (`.github/workflows/ci.yml`) qui exécute automatiquement cette commande et valide le contrat de données sur Python 3.11 et 3.12 à chaque commit.
 
 ---
 
