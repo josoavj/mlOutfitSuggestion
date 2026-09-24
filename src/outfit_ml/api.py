@@ -1,5 +1,6 @@
 import json
 import os
+import secrets
 from datetime import UTC, datetime
 from functools import lru_cache
 from pathlib import Path
@@ -92,7 +93,7 @@ def require_api_key(x_api_key: str | None = Header(default=None, alias="X-API-Ke
     if not key:
         raise HTTPException(status_code=500, detail="API_AUTH_ENABLED=true mais API_AUTH_KEY manquante")
 
-    if x_api_key != key:
+    if not x_api_key or not secrets.compare_digest(x_api_key, key):
         raise HTTPException(status_code=401, detail="Clé API invalide")
 
 
