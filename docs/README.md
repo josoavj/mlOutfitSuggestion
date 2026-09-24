@@ -5,8 +5,11 @@ Nouveautes importantes à connaître:
 - Le contrat de réponse des endpoints de recommandation inclut `resolved_context`.
 - Le mode auto supporte des overrides de profil/tailles/agenda.
 - Le modèle utilise des features de tailles (haut, bas, chaussures) pour le ranking.
-- Le dashboard technique (`/dashboard/technical`) inclut un bloc feedback.
-- L'interface web inclut désormais des pages dédiées à l'Onboarding et à la Gestion de la Garde-robe.
+- Le dashboard technique (`/dashboard/technical`) inclut les métriques d'ontologie OWL, RAG, garde-robe et feedback.
+- L'interface web inclut désormais des pages dédiées à l'Onboarding, à la Gestion de la Garde-robe, aux Métriques et à la Console API.
+- Support du backend de stockage relationnel SQLite (`STORAGE_BACKEND=sqlite` dans `db_store.py`) en mode WAL haute concurrence.
+- Sécurisation des clés API en temps constant (`secrets.compare_digest`), sanitisation des identifiants contre le Path Traversal et limite d'upload de 5 Mo.
+- Workflow CI automatisé avec GitHub Actions (`.github/workflows/ci.yml`).
 
 - `quickstart.md`: démarrage complet en quelques minutes.
 - `flutter_android_integration.md`: guide complet d'intégration Flutter Android + camera + endpoint unifie.

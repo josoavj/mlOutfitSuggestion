@@ -11,6 +11,7 @@ from __future__ import annotations
 import base64
 import json
 import os
+import re
 import threading
 import uuid
 from datetime import datetime
@@ -18,6 +19,14 @@ from pathlib import Path
 from typing import Optional
 
 from .models import WardrobeItem, WardrobeItemCreate, WardrobeItemUpdate
+
+
+def sanitize_user_id(user_id: str) -> str:
+    cleaned = re.sub(r'[^a-zA-Z0-9_-]', '', str(user_id or '')).strip()
+    if not cleaned:
+        return "default_user"
+    return cleaned
+
 
 WARDROBE_DATA_ROOT = Path(os.getenv("WARDROBE_DATA_ROOT", "data/wardrobe"))
 WARDROBE_IMAGE_ROOT = Path(os.getenv("WARDROBE_IMAGE_ROOT", "data/wardrobe/images"))
@@ -46,7 +55,8 @@ class WardrobeStore:
         return self._db_store
 
     def _user_file(self, user_id: str) -> Path:
-        return self.data_root / f"{user_id}.json"
+        safe_id = sanitize_user_id(user_id)
+        return self.data_root / f"{safe_id}.json"
 
     def _load(self, user_id: str) -> list[dict]:
         path = self._user_file(user_id)
@@ -62,11 +72,17 @@ class WardrobeStore:
 
     def _persist_image(self, user_id: str, image_base64: str) -> str:
         """Décode et sauvegarde une image uploadée, renvoie son URL/chemin relatif."""
-        user_dir = self.image_root / user_id
+        safe_id = sanitize_user_id(user_id)
+        user_dir = self.image_root / safe_id
         user_dir.mkdir(parents=True, exist_ok=True)
 
         header, _, encoded = image_base64.partition(",")
         encoded = encoded or header  # tolère un payload sans préfixe data:...
+
+        # Validation de taille (max 5 Mo)
+        if len(encoded) > (5 * 1024 * 1024 * 4 // 3):
+            raise ValueError("L'image dépasse la taille maximale autorisée de 5 Mo")
+
         ext = "jpg"
         if "image/png" in header:
             ext = "png"
