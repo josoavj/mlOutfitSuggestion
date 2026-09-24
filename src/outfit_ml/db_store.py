@@ -46,6 +46,8 @@ class DatabaseStore:
 
     def _init_db(self) -> None:
         with self._lock, self._get_connection() as conn:
+            conn.execute("PRAGMA journal_mode=WAL;")
+            conn.execute("PRAGMA synchronous=NORMAL;")
             conn.execute("""
                 CREATE TABLE IF NOT EXISTS wardrobe_items (
                     item_id TEXT PRIMARY KEY,
