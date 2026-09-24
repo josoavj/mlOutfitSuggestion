@@ -72,11 +72,13 @@ src/outfit_ml/
 ├── features.py       — Extraction de variables
 ├── train.py          — Pipeline d'entraînement
 ├── recommend.py      — Orchestration des recommandations
+├── db_store.py       — Backend de persistance SQLite unifié (WAL)
+├── ontology/         — Ontologie OWL et raisonneur HermiT
 ├── dataset/          — Gestion du dataset et validation
 ├── wardrobe/         — Gestion de la garde-robe individuelle
-├── composition/      — Moteur de génération et RAG ChromaDB
+├── composition/      — Moteur de génération, RAG ChromaDB & règles OWL
 ├── preferences/      — Questionnaires et profil utilisateur
-└── tests/            — Suite de tests unitaires et intégration
+└── tests/            — Suite de tests unitaires, sécurité et intégration
 ```
 
 ---
