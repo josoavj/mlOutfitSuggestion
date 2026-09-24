@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import threading
 from datetime import datetime
 from pathlib import Path
@@ -20,6 +21,14 @@ from .models import (
     PreferencesPatch,
     UserPreferences,
 )
+
+
+def sanitize_user_id(user_id: str) -> str:
+    cleaned = re.sub(r'[^a-zA-Z0-9_-]', '', str(user_id or '')).strip()
+    if not cleaned:
+        return "default_user"
+    return cleaned
+
 
 PREFERENCES_DATA_ROOT = Path(os.getenv("PREFERENCES_DATA_ROOT", "data/preferences"))
 STORAGE_BACKEND = os.getenv("STORAGE_BACKEND", "file").strip().lower()
@@ -39,7 +48,8 @@ class PreferencesStore:
         return self._db_store
 
     def _user_file(self, user_id: str) -> Path:
-        return self.data_root / f"{user_id}.json"
+        safe_id = sanitize_user_id(user_id)
+        return self.data_root / f"{safe_id}.json"
 
     def get(self, user_id: str) -> UserPreferences:
         if STORAGE_BACKEND == "sqlite":
