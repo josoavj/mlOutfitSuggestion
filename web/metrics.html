@@ -51,6 +51,7 @@
           <a class="summary-link" href="#metriques">Métriques</a>
           <a class="summary-link" href="#roadmap">Feuille de route</a>
           <a class="summary-link" href="#feedback">Feedback</a>
+          <a class="summary-link" href="#export-import">Export & Import</a>
           <a class="summary-link" href="#json">JSON</a>
         </div>
       </div>
@@ -105,6 +106,7 @@
             <a class="summary-link" href="#metriques">Métriques</a>
             <a class="summary-link" href="#roadmap">Feuille de route</a>
             <a class="summary-link" href="#feedback">Feedback</a>
+            <a class="summary-link" href="#export-import">Export & Import</a>
             <a class="summary-link" href="#json">JSON</a>
           </div>
         </div>
@@ -170,6 +172,33 @@
 
         <p class="section-label" id="feedback">Feedback par type</p>
         <div id="feedbackBars" class="bars"></div>
+
+        <p class="section-label" id="export-import">Export & Import des Métriques</p>
+        <div class="info-box" style="margin-bottom: 20px;">
+          <p class="info-title" style="margin-bottom: 12px;">Format de données multi-choix (JSON, Excel, CSV, Markdown)</p>
+          <div style="display: flex; flex-wrap: wrap; gap: 15px; align-items: center;">
+            <label style="display: flex; align-items: center; gap: 8px; white-space: nowrap; height: 36px;">
+              <span style="font-size: 13px; white-space: nowrap;">Format :</span>
+              <select id="exportFormat" style="height: 36px; padding: 0 12px; border-radius: 8px; background: rgba(14, 30, 52, 0.8); color: var(--ink); border: 1px solid rgba(130, 188, 255, 0.3); font-size: 13px; outline: none; box-sizing: border-box;">
+                <option value="json" selected>JSON (.json)</option>
+                <option value="excel">Excel (.xlsx / CSV FR)</option>
+                <option value="csv">CSV standard (.csv)</option>
+                <option value="markdown">Markdown (.md)</option>
+              </select>
+            </label>
+            <button class="btn-refresh" id="exportBtn" style="height: 36px; padding: 0 16px; font-size: 13px; display: inline-flex; align-items: center; gap: 8px;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+              Exporter les métriques
+            </button>
+            <label class="btn-refresh" style="height: 36px; padding: 0 16px; font-size: 13px; display: inline-flex; align-items: center; gap: 8px; cursor: pointer;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+              Importer un rapport
+              <input type="file" id="importFileInput" accept=".json,.csv,.md,.txt" style="display: none;" />
+            </label>
+            <span id="importStatus" class="muted" style="font-size: 13px;"></span>
+          </div>
+        </div>
+
         <p class="section-label" id="json">Dashboard JSON</p>
         <pre id="dashBox">—</pre>
       </div>
@@ -640,12 +669,15 @@
       fillMetricTable('roadmapItems', roadmapEntries);
     }
 
+    let lastDashboardData = null;
+
     async function refreshDashboard() {
       setStatus('dashStatus','Chargement…','loading');
       byId('dashBox').textContent = '';
       try {
         const r = await fetch('/dashboard/technical',{method:'GET',headers:getHeaders()});
         const data = await r.json();
+        lastDashboardData = data;
         byId('dashBox').textContent = JSON.stringify(data, null, 2);
         if (!r.ok) {
           const msg=data&&(data.detail||data.message)?data.detail||data.message:'Erreur API';
@@ -664,6 +696,131 @@
       }
     }
 
+    function exportDashboardData() {
+      if (!lastDashboardData) {
+        alert("Aucune donnée disponible. Actualisez d'abord le dashboard.");
+        return;
+      }
+      const format = byId('exportFormat').value;
+      const timestamp = new Date().toISOString().slice(0, 10);
+      let filename = `metrics_report_${timestamp}`;
+      let content = "";
+      let mimeType = "text/plain";
+
+      if (format === 'json') {
+        filename += '.json';
+        mimeType = 'application/json';
+        content = JSON.stringify(lastDashboardData, null, 2);
+      } else if (format === 'excel') {
+        filename += '.csv';
+        mimeType = 'text/csv;charset=utf-8;';
+        content = "\uFEFFCatégorie;Métrique;Valeur\n" + generateCsvRows(lastDashboardData, ";");
+      } else if (format === 'csv') {
+        filename += '.csv';
+        mimeType = 'text/csv;charset=utf-8;';
+        content = "Catégorie,Métrique,Valeur\n" + generateCsvRows(lastDashboardData, ",");
+      } else if (format === 'markdown') {
+        filename += '.md';
+        mimeType = 'text/markdown;charset=utf-8;';
+        content = generateMarkdownReport(lastDashboardData);
+      }
+
+      downloadFile(content, filename, mimeType);
+    }
+
+    function generateCsvRows(data, sep) {
+      let rows = [];
+      const addRow = (cat, key, val) => {
+        const cleanVal = String(val ?? '—').replace(/[\r\n]+/g, ' ').replace(new RegExp(sep, 'g'), ' ');
+        rows.push(`"${cat}"${sep}"${key}"${sep}"${cleanVal}"`);
+      };
+
+      if (data.service) Object.entries(data.service).forEach(([k, v]) => addRow('Service', k, v));
+      if (data.model && data.model.metrics) Object.entries(data.model.metrics).forEach(([k, v]) => addRow('Modèle - Métriques', k, v));
+      if (data.rag) Object.entries(data.rag).forEach(([k, v]) => addRow('RAG ChromaDB', k, v));
+      if (data.ontology) Object.entries(data.ontology).forEach(([k, v]) => addRow('Ontologie OWL', k, v));
+      if (data.feedback && data.feedback.event_type_counts) Object.entries(data.feedback.event_type_counts).forEach(([k, v]) => addRow('Feedback', k, v));
+
+      return rows.join('\n');
+    }
+
+    function generateMarkdownReport(data) {
+      let md = `# Rapport de Métriques & Dashboard Technique\n\n`;
+      md += `*Généré le : ${new Date().toLocaleString('fr-FR')}*\n\n`;
+
+      if (data.service) {
+        md += `## Service\n\n| Propriété | Valeur |\n| --- | --- |\n`;
+        Object.entries(data.service).forEach(([k, v]) => { md += `| ${humanizeKey(k)} | ${v} |\n`; });
+        md += `\n`;
+      }
+
+      if (data.model && data.model.metrics) {
+        md += `## Métriques Modèle ML\n\n| Métrique | Valeur |\n| --- | --- |\n`;
+        Object.entries(data.model.metrics).forEach(([k, v]) => { md += `| ${humanizeKey(k)} | ${v} |\n`; });
+        md += `\n`;
+      }
+
+      if (data.ontology) {
+        md += `## Ontologie OWL & Raisonnement\n\n| Propriété | Valeur |\n| --- | --- |\n`;
+        Object.entries(data.ontology).forEach(([k, v]) => { md += `| ${humanizeKey(k)} | ${v} |\n`; });
+        md += `\n`;
+      }
+
+      if (data.rag) {
+        md += `## RAG Vectoriel ChromaDB\n\n| Propriété | Valeur |\n| --- | --- |\n`;
+        Object.entries(data.rag).forEach(([k, v]) => { md += `| ${humanizeKey(k)} | ${v} |\n`; });
+        md += `\n`;
+      }
+
+      return md;
+    }
+
+    function downloadFile(content, filename, mimeType) {
+      const blob = new Blob([content], { type: mimeType });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    function handleImportFile(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const statusEl = byId('importStatus');
+      statusEl.textContent = 'Lecture du fichier…';
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        try {
+          const text = e.target.result;
+          let imported = null;
+          if (file.name.endsWith('.json')) {
+            imported = JSON.parse(text);
+          } else {
+            statusEl.textContent = `Fichier ${file.name} chargé (${text.length} octets)`;
+            byId('dashBox').textContent = text;
+            return;
+          }
+
+          if (imported) {
+            lastDashboardData = imported;
+            renderDashboard(imported);
+            byId('dashBox').textContent = JSON.stringify(imported, null, 2);
+            statusEl.textContent = `Import réussi (${file.name})`;
+          }
+        } catch (err) {
+          statusEl.textContent = 'Erreur lors du décodage du fichier.';
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    byId('exportBtn').addEventListener('click', exportDashboardData);
+    byId('importFileInput').addEventListener('change', handleImportFile);
     byId('refreshDashBtn').addEventListener('click', refreshDashboard);
     refreshDashboard();
     window.addEventListener('scroll', syncSummaryFloat, { passive: true });

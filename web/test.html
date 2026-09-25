@@ -186,7 +186,23 @@
         <div id="contextChips" class="chip-row"></div>
         <p class="section-label">Top raisons</p>
         <div id="reasonChips" class="chip-row"></div>
-        <p class="section-label" id="resultTitle">Tenues recommandées</p>
+        <div class="row-head" style="margin-top: 25px;">
+          <p class="section-label" id="resultTitle" style="margin: 0;">Tenues recommandées</p>
+          <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+            <label style="display: flex; align-items: center; gap: 6px; white-space: nowrap; height: 32px;">
+              <span style="font-size: 12px; white-space: nowrap;">Format :</span>
+              <select id="exportOutfitsFormat" aria-label="Format d'exportation" style="height: 32px; padding: 0 10px; border-radius: 8px; background: rgba(14, 30, 52, 0.8); color: var(--ink); border: 1px solid rgba(130, 188, 255, 0.3); font-size: 12px; outline: none;">
+                <option value="markdown" selected>Rapport Markdown (.md)</option>
+                <option value="excel">Excel / CSV (.csv)</option>
+                <option value="json">JSON (.json)</option>
+              </select>
+            </label>
+            <button class="btn-refresh" id="exportOutfitsBtn" style="font-size: 12px; padding: 0 14px; height: 32px; display: inline-flex; align-items: center; gap: 6px;">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+              Exporter les tenues
+            </button>
+          </div>
+        </div>
         <div id="cards" class="cards"></div>
         <p class="section-label">Payload envoyé</p>
         <pre id="requestBox">—</pre>
@@ -744,6 +760,7 @@
           return;
         }
         setStatus('status','OK','ok');
+        lastRecommendationData = data;
         syncContextFromResolved(data);
         renderSuggestions(data);
       } catch(e) {
@@ -753,6 +770,168 @@
       }
     }
 
+    let lastRecommendationData = null;
+
+    function exportGeneratedOutfits() {
+      if (!lastRecommendationData || !Array.isArray(lastRecommendationData.suggestions) || !lastRecommendationData.suggestions.length) {
+        alert("Aucune tenue générée disponible. Lancez d'abord le test de recommandation.");
+        return;
+      }
+
+      const format = byId('exportOutfitsFormat').value;
+      const firstName = byId('firstName').value.trim() || 'Utilisateur';
+      const timestamp = new Date().toISOString().slice(0, 10);
+      let filename = `tenues_${firstName.toLowerCase()}_${timestamp}`;
+      let content = "";
+      let mimeType = "text/plain";
+
+      if (format === 'markdown') {
+        filename += '.md';
+        mimeType = 'text/markdown;charset=utf-8;';
+        content = generateOutfitsMarkdownReport(lastRecommendationData);
+      } else if (format === 'excel') {
+        filename += '.csv';
+        mimeType = 'text/csv;charset=utf-8;';
+        content = "\uFEFFRang;Score ML;Label Tenue;Vêtements Composants;Raisons Explicatives;Nom;Lieu;Météo;Agenda\n" + generateOutfitsCsvRows(lastRecommendationData, ";");
+      } else if (format === 'json') {
+        filename += '.json';
+        mimeType = 'application/json';
+        const exportObj = {
+          profile: getProfileDetailsForExport(),
+          context: lastRecommendationData.resolved_context || {},
+          inferred_body_shape: lastRecommendationData.inferred_body_shape,
+          suggestions: lastRecommendationData.suggestions
+        };
+        content = JSON.stringify(exportObj, null, 2);
+      }
+
+      downloadFile(content, filename, mimeType);
+    }
+
+    function getProfileDetailsForExport() {
+      const firstName = byId('firstName').value.trim();
+      const lastName = byId('lastName').value.trim();
+      return {
+        name: [firstName, lastName].filter(Boolean).join(' ') || 'Utilisateur',
+        gender: byId('gender').value,
+        age: byId('age').value,
+        height_cm: byId('heightCm').value,
+        sizes: {
+          clothing: byId('clothingSize').value,
+          top: byId('topSize').value,
+          bottom: byId('bottomSize').value,
+          shoe: byId('shoeSize').value
+        },
+        body_shape: bodyShapeLabel(byId('bodyShape').value),
+        styles: getStyleSelections()
+      };
+    }
+
+    function generateOutfitsMarkdownReport(data) {
+      const profile = getProfileDetailsForExport();
+      const ctx = data.resolved_context || {};
+      const suggestions = data.suggestions || [];
+      const openweather = ctx.openweather || {};
+
+      let md = `# 👔 Rapport de Recommandation de Tenues\n\n`;
+      md += `*Généré le : ${new Date().toLocaleString('fr-FR')}*\n\n`;
+
+      md += `## 👤 Profil Utilisateur\n\n`;
+      md += `- **Nom / Prénom :** ${profile.name}\n`;
+      md += `- **Genre :** ${toSentenceCase(profile.gender)} | **Âge :** ${profile.age} ans | **Taille :** ${profile.height_cm} cm\n`;
+      md += `- **Tailles :** Haut ${profile.sizes.top.toUpperCase()} | Bas ${profile.sizes.bottom.toUpperCase()} | Pointure ${profile.sizes.shoe}\n`;
+      md += `- **Morphologie :** ${profile.body_shape}\n`;
+      md += `- **Styles préférés :** ${profile.styles.map(s => toSentenceCase(s)).join(', ') || 'Aucun'}\n\n`;
+
+      md += `## 🌤️ Contexte & Météo\n\n`;
+      md += `- **Localisation :** ${ctx.location || 'Non précisée'}\n`;
+      if (ctx.weather && typeof ctx.weather.temperature_c === 'number') {
+        md += `- **Température :** ${ctx.weather.temperature_c.toFixed(1)} °C`;
+        if (typeof openweather.feels_like_c === 'number') {
+          md += ` (Ressenti : ${openweather.feels_like_c.toFixed(1)} °C)`;
+        }
+        md += `\n`;
+      }
+      if (ctx.weather && ctx.weather.condition) {
+        md += `- **Condition Météo :** ${toTitleCase(toFrenchText(ctx.weather.condition))}\n`;
+      }
+      const agendaLabels = Array.isArray(ctx.agenda_labels) ? ctx.agenda_labels : [];
+      if (agendaLabels.length) {
+        md += `- **Agenda du jour :** ${agendaLabels.map(l => toSentenceCase(toFrenchText(l))).join(', ')}\n`;
+      }
+      md += `\n`;
+
+      md += `## 👗 Tenues Recommandées (${suggestions.length})\n\n`;
+
+      suggestions.forEach((item, index) => {
+        const outfitLabel = item.outfit_label || item.outfit_id || `Tenue ${index + 1}`;
+        const scorePct = (Number(item.score || 0) * 100).toFixed(1);
+        const outfitItems = Array.isArray(item.outfit_items) ? item.outfit_items : [];
+        const reasons = Array.isArray(item.reasons)
+          ? item.reasons.map(r => toSentenceCase(toFrenchText(r)))
+          : [];
+
+        md += `### ${index + 1}. ${outfitLabel} — Score : ${scorePct} %\n\n`;
+        md += `**Vêtements composant la tenue :**\n`;
+        if (outfitItems.length) {
+          outfitItems.forEach(v => {
+            md += `- ${toSentenceCase(toFrenchText(humanizeKey(v)))}\n`;
+          });
+        } else {
+          md += `- *(Tenue complète pré-assemblée)*\n`;
+        }
+
+        if (reasons.length) {
+          md += `\n**Raisons explicatives :**\n`;
+          reasons.forEach(r => {
+            md += `- ${r}\n`;
+          });
+        }
+
+        md += `\n---\n\n`;
+      });
+
+      return md;
+    }
+
+    function generateOutfitsCsvRows(data, sep) {
+      const profile = getProfileDetailsForExport();
+      const ctx = data.resolved_context || {};
+      const suggestions = data.suggestions || [];
+
+      return suggestions.map((item, index) => {
+        const outfitItems = (item.outfit_items || []).map(v => toSentenceCase(toFrenchText(humanizeKey(v)))).join(" + ");
+        const reasons = (item.reasons || []).map(r => toSentenceCase(toFrenchText(r))).join(" | ");
+        const temp = ctx.weather && typeof ctx.weather.temperature_c === 'number' ? `${ctx.weather.temperature_c.toFixed(1)}°C` : '—';
+        const agenda = (ctx.agenda_labels || []).join(', ');
+
+        return [
+          index + 1,
+          Number(item.score || 0).toFixed(4),
+          item.outfit_label || item.outfit_id,
+          outfitItems || "Tenue pré-assemblée",
+          reasons || "—",
+          profile.name,
+          ctx.location || "—",
+          `${temp} ${ctx.weather?.condition || ''}`,
+          agenda || "—"
+        ].map(v => `"${String(v ?? '').replace(new RegExp(sep, 'g'), ' ')}"`).join(sep);
+      }).join("\n");
+    }
+
+    function downloadFile(content, filename, mimeType) {
+      const blob = new Blob([content], { type: mimeType });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    byId('exportOutfitsBtn').addEventListener('click', exportGeneratedOutfits);
     byId('runBtn').addEventListener('click', runRecommendation);
     window.addEventListener('scroll', syncSummaryFloat, { passive: true });
     window.addEventListener('load', syncSummaryFloat);

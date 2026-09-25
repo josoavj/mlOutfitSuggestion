@@ -330,8 +330,26 @@
       <div class="panel">
         <div class="row-head">
           <p class="section-title" style="margin:0;">Mes vêtements</p>
-          <span class="status-pill" id="itemCount">0 Vêtements</span>
+          <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+            <select id="exportWardrobeFormat" aria-label="Format d'exportation" style="padding: 5px 10px; border-radius: 8px; background: rgba(14, 30, 52, 0.8); color: var(--ink); border: 1px solid rgba(130, 188, 255, 0.3); font-size: 12px;">
+              <option value="json" selected>JSON (.json)</option>
+              <option value="excel">Excel (.xlsx / CSV FR)</option>
+              <option value="csv">CSV standard (.csv)</option>
+              <option value="markdown">Markdown (.md)</option>
+            </select>
+            <button class="btn-refresh" id="exportWardrobeBtn" style="font-size: 12px; padding: 5px 12px; height: 32px; display: inline-flex; align-items: center; gap: 6px;">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+              Exporter
+            </button>
+            <label class="btn-refresh" style="font-size: 12px; padding: 5px 12px; height: 32px; display: inline-flex; align-items: center; gap: 6px; cursor: pointer;">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+              Importer
+              <input type="file" id="importWardrobeFileInput" accept=".json,.csv" style="display: none;" />
+            </label>
+            <span class="status-pill" id="itemCount">0 Vêtements</span>
+          </div>
         </div>
+        <div id="importWardrobeStatus" class="muted" style="font-size: 12px; margin-bottom: 10px;"></div>
         <div class="wardrobe-grid" id="wardrobeGrid">
           <!-- Les items seront injectés ici -->
         </div>
@@ -363,12 +381,14 @@
 
   <script>
     const USER_ID = "u-001";
+    let currentItems = [];
 
     async function loadWardrobe() {
       try {
         const r = await fetch(`/wardrobe/items?user_id=${USER_ID}`);
         const items = await r.json();
-        renderWardrobe(items);
+        currentItems = Array.isArray(items) ? items : [];
+        renderWardrobe(currentItems);
       } catch (e) {
         console.error("Failed to load wardrobe", e);
       }
@@ -509,6 +529,133 @@
       loadWardrobe();
     }
 
+    function exportWardrobe() {
+      if (!currentItems.length) {
+        alert("Votre dressing est vide, aucun vêtement à exporter.");
+        return;
+      }
+      const format = document.getElementById("exportWardrobeFormat").value;
+      const timestamp = new Date().toISOString().slice(0, 10);
+      let filename = `dressing_export_${timestamp}`;
+      let content = "";
+      let mimeType = "text/plain";
+
+      if (format === "json") {
+        filename += ".json";
+        mimeType = "application/json";
+        content = JSON.stringify(currentItems, null, 2);
+      } else if (format === "excel") {
+        filename += ".csv";
+        mimeType = "text/csv;charset=utf-8;";
+        content = "\uFEFFID;Catégorie;Sous-catégorie;Couleur principale;Matière;Motif;Sexe;Formalités;Chaleur;Saisons\n" + generateWardrobeCsvRows(currentItems, ";");
+      } else if (format === "csv") {
+        filename += ".csv";
+        mimeType = "text/csv;charset=utf-8;";
+        content = "ID,Catégorie,Sous-catégorie,Couleur principale,Matière,Motif,Sexe,Formalités,Chaleur,Saisons\n" + generateWardrobeCsvRows(currentItems, ",");
+      } else if (format === "markdown") {
+        filename += ".md";
+        mimeType = "text/markdown;charset=utf-8;";
+        content = generateWardrobeMarkdown(currentItems);
+      }
+
+      downloadFile(content, filename, mimeType);
+    }
+
+    function generateWardrobeCsvRows(items, sep) {
+      return items.map(item => {
+        const form = (item.formality_levels || []).join("/");
+        const warm = (item.warmth_ratings || []).join("/");
+        const seas = (item.season_suitability || []).join("/");
+        return [
+          item.item_id || "",
+          item.category || "",
+          item.subcategory || "",
+          item.color_primary || "",
+          item.material || "",
+          item.pattern || "",
+          item.gender || "",
+          form,
+          warm,
+          seas
+        ].map(v => `"${String(v ?? '').replace(new RegExp(sep, "g"), " ")}"`).join(sep);
+      }).join("\n");
+    }
+
+    function generateWardrobeMarkdown(items) {
+      let md = `# Inventaire du Dressing Digital\n\n`;
+      md += `*Total : ${items.length} vêtements*\n\n`;
+      md += `| ID | Catégorie | Type | Couleur | Matière | Sexe | Formalité | Chaleur |\n`;
+      md += `| --- | --- | --- | --- | --- | --- | --- | --- |\n`;
+      items.forEach(item => {
+        md += `| \`${item.item_id}\` | ${capitalize(item.category)} | ${capitalize(item.subcategory)} | ${capitalize(item.color_primary)} | ${capitalize(item.material || "—")} | ${item.gender || "—"} | ${(item.formality_levels||[]).join(", ")} | ${(item.warmth_ratings||[]).join(", ")} |\n`;
+      });
+      return md;
+    }
+
+    function downloadFile(content, filename, mimeType) {
+      const blob = new Blob([content], { type: mimeType });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    async function handleImportWardrobe(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const statusEl = document.getElementById("importWardrobeStatus");
+      statusEl.textContent = "Importation en cours...";
+
+      const reader = new FileReader();
+      reader.onload = async (e) => {
+        try {
+          const text = e.target.result;
+          let itemsToAdd = [];
+          if (file.name.endsWith(".json")) {
+            const parsed = JSON.parse(text);
+            itemsToAdd = Array.isArray(parsed) ? parsed : [parsed];
+          } else {
+            alert("Format non supporté pour l'import direct. Utilisez un fichier JSON.");
+            statusEl.textContent = "";
+            return;
+          }
+
+          let added = 0;
+          for (const item of itemsToAdd) {
+            const payload = {
+              category: item.category || "top",
+              subcategory: item.subcategory || "vêtement",
+              color_primary: item.color_primary || "noir",
+              material: item.material || "coton",
+              pattern: item.pattern || "uni",
+              gender: item.gender || "unisex",
+              formality_levels: item.formality_levels || [3],
+              warmth_ratings: item.warmth_ratings || [3],
+              season_suitability: item.season_suitability || ["printemps", "automne"]
+            };
+            const r = await fetch(`/wardrobe/items?user_id=${USER_ID}`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(payload)
+            });
+            if (r.ok) added++;
+          }
+
+          statusEl.textContent = `${added} vêtement(s) importé(s) avec succès !`;
+          loadWardrobe();
+        } catch (err) {
+          statusEl.textContent = "Erreur lors de l'importation du fichier.";
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    document.getElementById('exportWardrobeBtn').addEventListener('click', exportWardrobe);
+    document.getElementById('importWardrobeFileInput').addEventListener('change', handleImportWardrobe);
     document.getElementById('addBtn').addEventListener('click', addItem);
     document.getElementById('bootstrapBtn').addEventListener('click', generateTestData);
     loadWardrobe();
