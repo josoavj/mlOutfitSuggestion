@@ -31,11 +31,18 @@ def _occasion_formality() -> dict[str, int]:
         return json.load(f)
 
 
+def _normalize_color_name(color: str) -> str:
+    parts = str(color or "").replace("_", " ").replace("-", " ").split()
+    return "".join(p.capitalize() for p in parts)
+
+
 def colors_harmonize(color_a: str, color_b: str) -> bool:
     """Remplace NEUTRALS/COMPLEMENTARY_PAIRS codés en dur dans compatibility.py."""
-    if color_a == color_b:
+    ca = _normalize_color_name(color_a)
+    cb = _normalize_color_name(color_b)
+    if ca == cb:
         return True
-    return frozenset((color_a, color_b)) in _color_pairs()
+    return frozenset((ca, cb)) in _color_pairs()
 
 
 def min_formality_for_occasion(occasion: str, default: int = 2) -> int:

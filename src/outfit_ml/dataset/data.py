@@ -260,14 +260,13 @@ def synthetic_combination_pairs(n_samples: int, seed: int = 42) -> pd.DataFrame:
     rng = Random(seed)
     body_shapes = ["hourglass", "rectangle", "pear", "inverted_triangle", "oval"]
     genders = ["female", "male"]
-    
-    # Pools d'items simplifiés pour la simulation
+
     colors = ["noir", "blanc", "gris", "bleu_marine", "bleu_clair", "beige", "marron", "vert", "rouge", "jaune", "rose", "violet"]
     neutrals = {"noir", "blanc", "gris", "beige", "marron", "bleu_marine"}
     patterns = ["uni", "raye", "imprime", "carreaux", "a_pois"]
-    
+
     rows: list[dict[str, int | float | str]] = []
-    
+
     for _ in range(n_samples):
         # Contexte utilisateur
         age = rng.randint(16, 65)
@@ -276,46 +275,42 @@ def synthetic_combination_pairs(n_samples: int, seed: int = 42) -> pd.DataFrame:
         body_shape = rng.choice(body_shapes)
         occasion = rng.choice(KNOWN_OCCASIONS)
         weather = rng.choice(KNOWN_WEATHER)
-        
-        # Cible de formalité selon l'occasion (même logique que recommend.py)
+
         formality_map = {"sport": 1, "casual": 2, "outdoor": 2, "work": 3, "date": 3, "meeting": 4, "event": 5}
         target_f = formality_map.get(occasion, 3)
-        
-        # Cible de chaleur selon la météo
+
         warmth_map = {"hot": 1, "mild": 3, "rainy": 3, "cold": 5}
         target_w = warmth_map.get(weather, 3)
 
-        # Génération des 3 items (Top, Bottom, Shoes) avec multi-niveaux
+        # Génération des 3 items avec échantillonnage sur toute l'échelle [1, 5]
         items_data = []
         for cat in ["top", "bottom", "shoes"]:
-            # On génère 1 à 3 niveaux de formalité/chaleur centrés sur la cible
-            fs = list(set([rng.randint(max(1, target_f - 1), min(5, target_f + 1)) for _ in range(rng.randint(1, 2))]))
-            ws = list(set([rng.randint(max(1, target_w - 1), min(5, target_w + 1)) for _ in range(rng.randint(1, 2))]))
+            fs = list(set([rng.randint(1, 5) for _ in range(rng.randint(1, 2))]))
+            ws = list(set([rng.randint(1, 5) for _ in range(rng.randint(1, 2))]))
             c = rng.choice(colors)
             p = rng.choice(patterns)
             items_data.append({"cat": cat, "color": c, "formalities": fs, "warmths": ws, "pattern": p})
-            
+
         top, bottom, shoes = items_data
-        
-        # Calcul des scores de cohérence pour le label (basé sur le niveau le plus proche)
+
         f_vals = [min(i["formalities"], key=lambda x: abs(x - target_f)) for i in items_data]
         max_f_gap = max(f_vals) - min(f_vals)
         f_score = 1.0 if max_f_gap <= 1 else (0.5 if max_f_gap == 2 else 0.0)
-        
+
         w_vals = [min(i["warmths"], key=lambda x: abs(x - target_w)) for i in items_data]
         avg_w = sum(w_vals) / 3
-        w_score = 1.0 - abs(avg_w - target_w) * 0.2
-        
-        # 1. Harmonie des couleurs (simplifié)
+        w_score = max(0.0, 1.0 - abs(avg_w - target_w) * 0.3)
+
+        # Harmonie des couleurs
         c_set = {top["color"], bottom["color"], shoes["color"]}
         n_neutrals = sum(1 for c in c_set if c in neutrals)
-        color_harmony = 1.0 if n_neutrals >= 2 else 0.5
-        
-        # Signal global pour le label
-        signal = (color_harmony * 0.4) + (f_score * 0.3) + (w_score * 0.3)
-        noisy_threshold = 0.6 + rng.uniform(-0.1, 0.1)
+        color_harmony = 1.0 if n_neutrals >= 2 else (0.6 if n_neutrals == 1 else 0.2)
+
+        # Signal global équilibré
+        signal = (color_harmony * 0.35) + (f_score * 0.35) + (w_score * 0.30)
+        noisy_threshold = 0.58 + rng.uniform(-0.05, 0.05)
         label = int(signal >= noisy_threshold)
-        
+
         row = {
             "age": age,
             "height_cm": height_cm,
@@ -340,5 +335,5 @@ def synthetic_combination_pairs(n_samples: int, seed: int = 42) -> pd.DataFrame:
             "label": label
         }
         rows.append(row)
-        
+
     return pd.DataFrame(rows)
