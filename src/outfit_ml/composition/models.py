@@ -34,6 +34,7 @@ class OutfitCombination(BaseModel):
     compatibility_score: float = 0.0
     ml_score: float = 0.0
     final_score: float = 0.0
+    scored_by: str = "ml"
 
     @property
     def item_ids(self) -> list[str]:
