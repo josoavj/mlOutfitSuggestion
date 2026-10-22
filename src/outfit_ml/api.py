@@ -352,6 +352,22 @@ def technical_dashboard(request: Request, _: None = Depends(require_api_key)) ->
     }
 
 
+from typing import Literal
+from fastapi import Query
+from .monitoring import history_payload
+
+
+@app.get("/dashboard/history")
+@limiter.limit(os.getenv("RATE_LIMIT_TECHNICAL", "60/minute"))
+def dashboard_history(
+    request: Request,
+    granularity: Literal["day", "week", "month"] = "week",
+    days: int = Query(90, ge=1, le=730),
+    _: None = Depends(require_api_key),
+) -> dict:
+    return history_payload(granularity, days)
+
+
 # ---------------------------------------------------------------------------
 # Recommendation endpoints
 # ---------------------------------------------------------------------------
