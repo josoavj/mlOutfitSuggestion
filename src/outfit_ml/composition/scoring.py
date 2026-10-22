@@ -115,18 +115,23 @@ def heuristic_score(combination: OutfitCombination, context: CompositionContext)
     return max(0.0, combination.compatibility_score + favorite_bonus - total_formality_penalty)
 
 
+def _fallback(combination: OutfitCombination, context: CompositionContext) -> float:
+    combination.scored_by = "heuristic"
+    return heuristic_score(combination, context)
+
+
 def ml_combination_score(combination: OutfitCombination, context: CompositionContext) -> float:
     """Scoring individuel pour rétro-compatibilité."""
     row = _build_feature_row(combination, context)
     model = get_model()
     if not model or not row:
-        return heuristic_score(combination, context)
+        return _fallback(combination, context)
 
     try:
         df = pd.DataFrame([row])
         return float(model.predict_proba(df)[0][1])
     except Exception:  # noqa: BLE001
-        return heuristic_score(combination, context)
+        return _fallback(combination, context)
 
 
 def score_candidates(
@@ -145,7 +150,7 @@ def score_candidates(
                 rows.append(row)
                 valid_indices.append(idx)
             else:
-                candidate.ml_score = heuristic_score(candidate, context)
+                candidate.ml_score = _fallback(candidate, context)
 
         if rows:
             try:
@@ -155,7 +160,7 @@ def score_candidates(
                     candidates[idx].ml_score = float(prob)
             except Exception:  # noqa: BLE001
                 for idx in valid_indices:
-                    candidates[idx].ml_score = heuristic_score(candidates[idx], context)
+                    candidates[idx].ml_score = _fallback(candidates[idx], context)
     else:
         for candidate in candidates:
             candidate.ml_score = score_fn(candidate, context)
