@@ -9,14 +9,14 @@
 __pycache__/
 *.pyc
 
-# Runtime feedback logs
+# Runtime feedback logs & monitoring DB
 data/feedback/
+data/monitoring.db*
+models/archive/
 .idea/vcs.xml
 .idea/misc.xml
 .idea/mlOutfitSuggestion.iml
 .idea/modules.xml
-.idea/misc.xml
 .idea/inspectionProfiles/profiles_settings.xml
-.idea/misc.xml
 .idea/caches/deviceStreaming.xml
 .idea/markdown.xml

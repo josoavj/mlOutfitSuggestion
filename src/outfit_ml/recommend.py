@@ -137,12 +137,20 @@ class OutfitRecommender:
             user_items = [item for item in user_items if item.item_id not in prefs.items_bannis]
 
         # 4. Compose outfits with ML Scoring
+        import time
+        import uuid
+        from .monitoring import log_inference
         from .composition.scoring import ml_combination_score
+
+        t0 = time.perf_counter()
+        stats: dict = {}
+
         combinations = compose_outfits(
             items=user_items,
             context=context,
             top_k=request.top_k,
-            score_fn=ml_combination_score
+            score_fn=ml_combination_score,
+            stats=stats,
         )
 
         # 5. Mark suggested items
@@ -175,6 +183,18 @@ class OutfitRecommender:
                     reasons=reasons,
                 )
             )
+
+        log_inference(
+            request_id=uuid.uuid4().hex,
+            user_id=request.user_id,
+            n_candidates=stats.get("n_candidates", 0),
+            n_suggestions=len(suggestions),
+            score_summary=stats,
+            ml_fallbacks=stats.get("ml_fallbacks", 0),
+            latency_ms=(time.perf_counter() - t0) * 1000,
+            outfit_keys=[" | ".join(sorted(s.outfit_items)) for s in suggestions],
+            top_keys=[s.outfit_items[0] for s in suggestions if s.outfit_items],
+        )
 
         return RecommendationResponse(
             user_id=request.user_id,

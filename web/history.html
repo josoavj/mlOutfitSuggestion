@@ -1,0 +1,317 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Suivi du modèle · Outfit Suggestion</title>
+<style>
+  :root {
+    --ink: #102149;
+    --ink-soft: #52607f;
+    --paper: #f5f6f9;
+    --surface: #ffffff;
+    --line: #dce1eb;
+    --blue: #2f6fe4;
+    --amber: #b86a12;
+    --green: #1f7a52;
+    --red: #b3372e;
+    --font: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--paper); color: var(--ink);
+    font: 15px/1.5 var(--font); font-variant-numeric: tabular-nums;
+  }
+  main { max-width: 1120px; margin: 0 auto; padding: 28px 20px 64px; }
+  h1 { font-size: 28px; line-height: 1.15; margin: 0; letter-spacing: -0.01em; }
+  h2 { font-size: 17px; margin: 0 0 2px; }
+  p { margin: 0; }
+  .muted { color: var(--ink-soft); }
+  .bar { display: flex; flex-wrap: wrap; gap: 16px 24px; align-items: flex-end; justify-content: space-between; margin-bottom: 24px; }
+  .controls { display: flex; flex-wrap: wrap; gap: 12px; }
+  .seg { display: inline-flex; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); overflow: hidden; }
+  .seg button {
+    font: inherit; color: var(--ink-soft); background: none; border: 0; padding: 7px 14px; cursor: pointer;
+  }
+  .seg button + button { border-left: 1px solid var(--line); }
+  .seg button[aria-pressed="true"] { background: var(--ink); color: #fff; }
+  button:focus-visible, input:focus-visible { outline: 3px solid var(--blue); outline-offset: 2px; }
+
+  .model { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 18px 20px; margin-bottom: 24px; }
+  .model header { display: flex; flex-wrap: wrap; gap: 4px 12px; align-items: baseline; margin-bottom: 14px; }
+  .badge { font-size: 13px; padding: 1px 8px; border-radius: 999px; border: 1px solid var(--line); color: var(--ink-soft); }
+  .badge.synthetic { border-color: var(--amber); color: var(--amber); }
+  .badge.real { border-color: var(--green); color: var(--green); }
+  .figures { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px 24px; }
+  .figures dt { color: var(--ink-soft); font-size: 13px; }
+  .figures dd { margin: 0; font-size: 26px; font-weight: 600; letter-spacing: -0.01em; }
+  .caveat { margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--line); color: var(--ink-soft); font-size: 14px; }
+
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(440px, 1fr)); gap: 16px; margin-bottom: 32px; }
+  @media (max-width: 520px) { .grid { grid-template-columns: 1fr; } }
+  .card { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px 16px 8px; }
+  .card .note { font-size: 13px; color: var(--ink-soft); margin-bottom: 6px; }
+  .legend { display: flex; flex-wrap: wrap; gap: 4px 16px; font-size: 13px; margin: 6px 0 2px; }
+  .legend span { display: inline-flex; align-items: center; gap: 6px; }
+  .legend svg { width: 22px; height: 8px; }
+  .chart > svg { width: 100%; height: auto; display: block; }
+  .chart text { font: 11px var(--font); fill: var(--ink-soft); }
+  .empty { padding: 36px 8px; color: var(--ink-soft); text-align: center; }
+
+  .tablewrap { overflow-x: auto; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; }
+  table { border-collapse: collapse; width: 100%; min-width: 760px; }
+  th, td { text-align: left; padding: 9px 14px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+  th { font-weight: 600; color: var(--ink-soft); font-size: 13px; }
+  tr:last-child td { border-bottom: 0; }
+  tr.current td { background: #eef3fd; }
+  .up { color: var(--green); } .down { color: var(--red); }
+  .warn { color: var(--amber); }
+
+  #status { margin: 12px 0; color: var(--red); min-height: 1.5em; }
+  #keyform { display: none; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 16px; }
+  #keyform.on { display: flex; }
+  #keyform input { font: inherit; padding: 7px 10px; border: 1px solid var(--line); border-radius: 8px; min-width: 260px; }
+  #keyform button { font: inherit; padding: 7px 14px; border-radius: 8px; border: 0; background: var(--ink); color: #fff; cursor: pointer; }
+</style>
+</head>
+<body>
+<main>
+  <div class="bar">
+    <div>
+      <h1>Suivi du modèle</h1>
+      <p class="muted">Performances, répétition des suggestions et historique des entraînements.</p>
+    </div>
+    <div class="controls">
+      <div class="seg" id="seg-gran" role="group" aria-label="Période d'agrégation">
+        <button data-v="day" aria-pressed="false">Jour</button>
+        <button data-v="week" aria-pressed="true">Semaine</button>
+        <button data-v="month" aria-pressed="false">Mois</button>
+      </div>
+      <div class="seg" id="seg-days" role="group" aria-label="Fenêtre d'analyse">
+        <button data-v="30" aria-pressed="false">30 jours</button>
+        <button data-v="90" aria-pressed="true">90 jours</button>
+        <button data-v="365" aria-pressed="false">1 an</button>
+      </div>
+    </div>
+  </div>
+
+  <form id="keyform" autocomplete="off">
+    <label for="apikey">Clé API requise</label>
+    <input id="apikey" type="password" placeholder="Valeur de API_AUTH_KEY">
+    <button type="submit">Enregistrer la clé</button>
+  </form>
+  <p id="status" role="status" aria-live="polite"></p>
+
+  <section class="model" id="model" aria-labelledby="model-title" hidden></section>
+
+  <div class="grid" id="charts"></div>
+
+  <h2 id="runs-title">Historique des entraînements</h2>
+  <p class="muted" style="margin-bottom:10px">Chaque ré-entraînement est conservé avec ses métriques et son modèle archivé.</p>
+  <div class="tablewrap" id="runs"></div>
+</main>
+
+<script>
+const state = { granularity: 'week', days: 90 };
+const $ = (s) => document.querySelector(s);
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+const nf = (v, d = 0) => v == null ? '–' : v.toLocaleString('fr-FR', { minimumFractionDigits: d, maximumFractionDigits: d });
+const pct = (v) => v == null ? '–' : nf(v * 100, 1) + ' %';
+const dec3 = (v) => nf(v, 3);
+const ms = (v) => v == null ? '–' : nf(v, 0) + ' ms';
+const int = (v) => nf(v, 0);
+
+const COLORS = ['#2f6fe4', '#b86a12', '#1f7a52'];
+const DASHES = ['', '6 4', '2 3'];
+
+const CHARTS = [
+  { title: 'Choix des utilisateurs', source: 'feedback', fmt: pct,
+    note: 'Part des tenues affichées qui sont choisies, cliquées ou rejetées.',
+    series: [['selection_rate', 'Choisies'], ['click_rate', 'Cliquées'], ['dismiss_rate', 'Rejetées']] },
+  { title: 'Répétition des suggestions', source: 'inference', fmt: pct,
+    note: 'Part des tenues déjà montrées au même utilisateur sur la période. Plus bas, plus varié.',
+    series: [['repeat_rate', 'Tenues répétées']] },
+  { title: 'Étalement des scores', source: 'inference', fmt: dec3,
+    note: 'Écart entre la meilleure et la moins bonne tenue d’un lot. Proche de 0, le classement est plat.',
+    series: [['score_range', 'Écart max–min'], ['score_std', 'Écart-type']] },
+  { title: 'Fiabilité du scoring', source: 'inference', fmt: pct,
+    note: 'Candidats notés par l’heuristique faute de modèle, et requêtes sans aucune suggestion.',
+    series: [['fallback_rate', 'Repli heuristique'], ['empty_rate', 'Réponses vides']] },
+  { title: 'Temps de réponse', source: 'inference', fmt: ms,
+    note: 'Durée de la génération de recommandations.',
+    series: [['latency_avg_ms', 'Moyenne'], ['latency_p95_ms', '95e centile']] },
+  { title: 'Volume', source: 'inference', fmt: int,
+    note: 'Requêtes de recommandation traitées.',
+    series: [['requests', 'Requêtes']] },
+];
+
+function niceMax(v) {
+  if (!(v > 0)) return 1;
+  const p = Math.pow(10, Math.floor(Math.log10(v)));
+  const n = v / p;
+  return (n <= 1 ? 1 : n <= 2 ? 2 : n <= 5 ? 5 : 10) * p;
+}
+
+function lineChart(host, rows, series, fmt) {
+  const has = rows.some(r => series.some(([k]) => r[k] != null));
+  if (!rows.length || !has) {
+    host.innerHTML = '<p class="empty">Pas encore de données sur cette période.</p>';
+    return;
+  }
+  const W = 640, H = 210, L = 56, R = 14, T = 14, B = 28;
+  const hi = niceMax(Math.max(...series.flatMap(([k]) => rows.map(r => r[k])).filter(v => v != null)));
+  const x = i => rows.length === 1 ? (L + W - R) / 2 : L + i * (W - L - R) / (rows.length - 1);
+  const y = v => T + (H - T - B) * (1 - v / hi);
+
+  let svg = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Graphique par période">`;
+  for (let k = 0; k <= 4; k++) {
+    const v = hi * k / 4, yy = y(v);
+    svg += `<line x1="${L}" x2="${W - R}" y1="${yy}" y2="${yy}" stroke="#dce1eb" stroke-width="1"/>`;
+    svg += `<text x="${L - 8}" y="${yy + 4}" text-anchor="end">${esc(fmt(v))}</text>`;
+  }
+  const step = Math.max(1, Math.ceil(rows.length / 5));
+  const last = rows.length - 1;
+  rows.forEach((r, i) => {
+    const show = i === last || (i % step === 0 && last - i >= Math.ceil(step / 2));
+    if (!show) return;
+    const anchor = i === last && last > 0 ? 'end' : 'middle';
+    svg += `<text x="${x(i)}" y="${H - 8}" text-anchor="${anchor}">${esc(r.period)}</text>`;
+  });
+  series.forEach(([key, name], si) => {
+    let d = '', pen = false;
+    rows.forEach((r, i) => {
+      const v = r[key];
+      if (v == null) { pen = false; return; }
+      d += `${pen ? 'L' : 'M'}${x(i).toFixed(1)} ${y(v).toFixed(1)} `;
+      pen = true;
+    });
+    svg += `<path d="${d}" fill="none" stroke="${COLORS[si]}" stroke-width="2.25" stroke-dasharray="${DASHES[si]}" stroke-linejoin="round"/>`;
+    rows.forEach((r, i) => {
+      if (r[key] == null) return;
+      svg += `<circle cx="${x(i).toFixed(1)}" cy="${y(r[key]).toFixed(1)}" r="3.5" fill="${COLORS[si]}"><title>${esc(r.period)} · ${esc(name)} : ${esc(fmt(r[key]))}</title></circle>`;
+    });
+  });
+  svg += '</svg>';
+
+  const legend = series.length > 1
+    ? `<div class="legend">${series.map(([, name], si) =>
+        `<span><svg viewBox="0 0 22 8" aria-hidden="true"><line x1="0" x2="22" y1="4" y2="4" stroke="${COLORS[si]}" stroke-width="2.5" stroke-dasharray="${DASHES[si]}"/></svg>${esc(name)}</span>`).join('')}</div>`
+    : '';
+  host.innerHTML = legend + svg;
+}
+
+function renderCharts(data) {
+  const root = $('#charts');
+  root.innerHTML = '';
+  CHARTS.forEach(spec => {
+    const card = document.createElement('section');
+    card.className = 'card';
+    card.innerHTML = `<h2>${esc(spec.title)}</h2><p class="note">${esc(spec.note)}</p><div class="chart"></div>`;
+    root.appendChild(card);
+    lineChart(card.querySelector('.chart'), data[spec.source] || [], spec.series, spec.fmt);
+  });
+}
+
+function renderModel(data) {
+  const box = $('#model');
+  const run = (data.training_runs || []).find(r => r.is_current) || (data.training_runs || [])[0];
+  if (!run) { box.hidden = true; return; }
+  const m = run.metrics || {};
+  const synthetic = (run.data_source || '').startsWith('synth');
+  box.hidden = false;
+  box.innerHTML = `
+    <header>
+      <h2 id="model-title">Modèle en service</h2>
+      <span class="badge ${synthetic ? 'synthetic' : 'real'}">${synthetic ? 'données synthétiques' : 'données réelles'}</span>
+      <span class="muted">${esc(run.algo)} · ${int(run.n_samples)} échantillons · ${esc(new Date(run.ts).toLocaleString('fr-FR', { dateStyle: 'medium', timeStyle: 'short' }))} · ${esc(run.run_id)}</span>
+    </header>
+    <dl class="figures">
+      <div><dt>ROC-AUC</dt><dd>${dec3(m.roc_auc)}</dd></div>
+      <div><dt>Précision moyenne</dt><dd>${dec3(m.average_precision)}</dd></div>
+      <div><dt>F1</dt><dd>${dec3(m.f1)}</dd></div>
+      <div><dt>Part de positifs</dt><dd>${pct(run.positive_rate)}</dd></div>
+      ${m.ndcg_at_3 != null ? `<div><dt>NDCG@3</dt><dd>${dec3(m.ndcg_at_3)}</dd></div>` : ''}
+    </dl>
+    ${synthetic ? '<p class="caveat">Ces chiffres sont mesurés sur des données synthétiques : ils montrent que l’entraînement est cohérent, pas que les suggestions plaisent. Les graphiques ci-dessous, alimentés par l’usage réel, en disent davantage.</p>' : ''}`;
+}
+
+function delta(cur, prev) {
+  if (cur == null || prev == null) return '';
+  const d = cur - prev;
+  if (Math.abs(d) < 0.0005) return '<span class="muted"> =</span>';
+  return `<span class="${d > 0 ? 'up' : 'down'}"> ${d > 0 ? '+' : '−'}${nf(Math.abs(d), 3)}</span>`;
+}
+
+function renderRuns(data) {
+  const runs = data.training_runs || [];
+  const host = $('#runs');
+  if (!runs.length) {
+    host.innerHTML = '<p class="empty">Aucun entraînement enregistré. Branchez log_training_run dans train.py puis relancez un entraînement.</p>';
+    return;
+  }
+  const rows = runs.map((r, i) => {
+    const prev = runs[i + 1];
+    const m = r.metrics || {}, pm = prev ? prev.metrics || {} : {};
+    const unbalanced = r.positive_rate != null && (r.positive_rate < 0.15 || r.positive_rate > 0.85);
+    return `<tr class="${r.is_current ? 'current' : ''}">
+      <td>${esc(new Date(r.ts).toLocaleString('fr-FR', { dateStyle: 'medium', timeStyle: 'short' }))}</td>
+      <td>${esc(r.algo)}</td>
+      <td>${esc(r.data_source)}</td>
+      <td>${int(r.n_samples)}</td>
+      <td>${dec3(m.roc_auc)}${delta(m.roc_auc, pm.roc_auc)}</td>
+      <td>${dec3(m.average_precision)}${delta(m.average_precision, pm.average_precision)}</td>
+      <td>${dec3(m.f1)}${delta(m.f1, pm.f1)}</td>
+      <td class="${unbalanced ? 'warn' : ''}">${pct(r.positive_rate)}${unbalanced ? ' · déséquilibré' : ''}</td>
+      <td>${esc(r.git_commit || '–')}</td>
+      <td>${r.is_current ? 'en service' : ''}</td>
+    </tr>`;
+  }).join('');
+  host.innerHTML = `<table>
+    <thead><tr><th>Date</th><th>Algorithme</th><th>Données</th><th>Échantillons</th><th>ROC-AUC</th><th>Précision moy.</th><th>F1</th><th>Part de positifs</th><th>Commit</th><th></th></tr></thead>
+    <tbody>${rows}</tbody></table>`;
+}
+
+async function load() {
+  const status = $('#status');
+  status.textContent = '';
+  const key = sessionStorage.getItem('outfit_api_key') || '';
+  let res;
+  try {
+    res = await fetch(`/dashboard/history?granularity=${state.granularity}&days=${state.days}`,
+      { headers: key ? { 'X-API-Key': key } : {} });
+  } catch (e) {
+    status.textContent = 'Impossible de joindre l’API. Vérifiez qu’elle est démarrée.';
+    return;
+  }
+  $('#keyform').classList.toggle('on', res.status === 401);
+  if (res.status === 401) { status.textContent = 'Clé API invalide ou absente.'; return; }
+  if (!res.ok) { status.textContent = `Erreur ${res.status} en lisant l’historique.`; return; }
+  const data = await res.json();
+  renderModel(data);
+  renderCharts(data);
+  renderRuns(data);
+}
+
+function bindSeg(id, key, parse) {
+  $(id).addEventListener('click', (e) => {
+    const b = e.target.closest('button');
+    if (!b) return;
+    state[key] = parse(b.dataset.v);
+    $(id).querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+    load();
+  });
+}
+bindSeg('#seg-gran', 'granularity', v => v);
+bindSeg('#seg-days', 'days', v => Number(v));
+
+$('#keyform').addEventListener('submit', (e) => {
+  e.preventDefault();
+  sessionStorage.setItem('outfit_api_key', $('#apikey').value.trim());
+  load();
+});
+
+load();
+</script>
+</body>
+</html>

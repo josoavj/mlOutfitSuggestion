@@ -254,7 +254,27 @@ def main() -> None:
     with args.metrics_output.open("w", encoding="utf-8") as file:
         json.dump(metadata, file, indent=2)
 
+    import hashlib
+    from .monitoring import log_training_run
+
+    dataset_hash = hashlib.sha1(
+        pd.util.hash_pandas_object(data.astype(str), index=False).values.tobytes()
+    ).hexdigest()[:12]
+
+    run_id = log_training_run(
+        algo=best_name,
+        data_source=data_source,
+        n_samples=len(data),
+        positive_rate=float(data["label"].mean()),
+        split_mode=args.split_mode,
+        metrics=best_metrics,
+        model_path=args.output,
+        params=best_pipeline.named_steps["model"].get_params(),
+        dataset_hash=dataset_hash,
+    )
+
     print(f"Modèle entraîné ({best_name}) et sauvegardé dans {args.output}")
+    print(f"Run enregistré dans monitoring : {run_id}")
     print(f"Métriques sauvegardées dans {args.metrics_output}")
     print(f"Lignes d'entraînement : {len(data)}")
     print(f"ROC-AUC={best_metrics['roc_auc']:.4f} AP={best_metrics['average_precision']:.4f}")
