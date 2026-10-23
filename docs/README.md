@@ -6,7 +6,9 @@ Nouveautes importantes à connaître:
 - Le mode auto supporte des overrides de profil/tailles/agenda.
 - Le modèle utilise des features de tailles (haut, bas, chaussures) pour le ranking.
 - Le dashboard technique (`/dashboard/technical`) inclut les métriques d'ontologie OWL, RAG, garde-robe et feedback.
-- L'interface web inclut désormais des pages dédiées à l'Onboarding, à la Gestion de la Garde-robe, aux Métriques et à la Console API.
+- L'interface web inclut des pages dédiées à l'Onboarding, à la Garde-robe, aux Métriques, au Suivi du Modèle (`/history.html`) et à la Console API.
+- Support des fonctionnalités d'exportation et d'importation multi-formats (JSON, Excel, CSV, Markdown) sur les pages Garde-robe, Test et Métriques.
+- Module de monitoring (`monitoring.py`) enregistrant les runs d'entraînement, l'archivage `.joblib` et les requêtes d'inférence en direct.
 - Support du backend de stockage relationnel SQLite (`STORAGE_BACKEND=sqlite` dans `db_store.py`) en mode WAL haute concurrence.
 - Sécurisation des clés API en temps constant (`secrets.compare_digest`), sanitisation des identifiants contre le Path Traversal et limite d'upload de 5 Mo.
 - Workflow CI automatisé avec GitHub Actions (`.github/workflows/ci.yml`).
