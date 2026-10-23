@@ -70,9 +70,10 @@ La solution comporte deux couches.
 ```
 src/outfit_ml/
 ├── features.py       — Extraction de variables
-├── train.py          — Pipeline d'entraînement
-├── recommend.py      — Orchestration des recommandations
+├── train.py          — Pipeline d'entraînement et archivage des modèles
+├── recommend.py      — Orchestration des recommandations et journalisation I/O
 ├── db_store.py       — Backend de persistance SQLite unifié (WAL)
+├── monitoring.py     — Suivi temporel d'inférence, répétition et entraînements
 ├── ontology/         — Ontologie OWL et raisonneur HermiT
 ├── dataset/          — Gestion du dataset et validation
 ├── wardrobe/         — Gestion de la garde-robe individuelle
