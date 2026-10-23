@@ -219,11 +219,12 @@ uvicorn src.outfit_ml.api:app --reload
 URL : `http://127.0.0.1:8000/ui`
 
 L'interface se décompose en plusieurs modules :
-- **Présentation** : Vue d'ensemble du système.
+- **Présentation** : Vue d'ensemble de l'architecture et du système.
 - **Onboarding** : Questionnaire de définition du profil de style utilisateur.
-- **Garde-robe** : Gestion du dressing digital (ajout et suppression d'items).
-- **Test** : Simulateur de recommandation avec résolution météo automatique.
-- **Métriques** : Dashboard technique (fraîcheur du modèle et feedback).
+- **Garde-robe** : Gestion du dressing digital (ajout/suppression, export/import JSON/Excel/CSV/Markdown).
+- **Test** : Simulateur de recommandation avec résolution météo automatique et export des tenues générées.
+- **Métriques** : Dashboard technique (fraîcheur du modèle, ontologie OWL, RAG, export/import du rapport).
+- **Suivi Modèle (`/history.html`)** : Suivi temporel de l'inférence, de la répétition des suggestions, du repli heuristique et de l'historique des ré-entraînements archivés.
 - **API Console** : Console interactive pour tester tous les endpoints.
 
 > En mode manuel dans l'onglet Test, la météo est résolue par la ville via OpenWeather. Il est possible de forcer des valeurs spécifiques pour simuler des cas extrêmes.

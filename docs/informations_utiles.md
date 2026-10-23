@@ -39,11 +39,14 @@ uvicorn src.outfit_ml.api:app --reload
 
 | Variable | Description |
 |---|---|
+| `STORAGE_BACKEND` | Moteur de stockage : `sqlite` (base relationnelle `data/app_database.db`) ou `file` (fichiers JSON) |
+| `MONITORING_DB` | Base SQLite du module de monitoring (`data/monitoring.db`) |
+| `MODEL_ARCHIVE_DIR` | Répertoire d'archivage des modèles ré-entraînés (`models/archive`) |
 | `OPENWEATHER_API_KEY` | Clé OpenWeather |
 | `MAGICMIRROR_DATA_SOURCE` | Source de données : `api` · `file` · `supabase` |
 | `FACE_REGISTRY_PATH` | Registre local des embeddings visage |
 | `FEEDBACK_LOG_PATH` | Journal JSONL des interactions |
-| `API_AUTH_ENABLED` / `API_AUTH_KEY` | Protection des endpoints ML |
+| `API_AUTH_ENABLED` / `API_AUTH_KEY` | Protection des endpoints ML (`secrets.compare_digest`) |
 | `ALLOWED_ORIGINS` | Liste blanche CORS des clients |
 
 ### Mode `api`
@@ -99,6 +102,14 @@ uvicorn src.outfit_ml.api:app --reload
 |---|---|---|
 | `POST` | `/vision/enroll` | Enrôler un visage utilisateur |
 | `POST` | `/vision/identify` | Identifier un visage depuis une image |
+
+### Observabilité & Monitoring
+
+| Méthode | Endpoint | Description |
+|---|---|---|
+| `GET` | `/dashboard/technical` | Métriques techniques, RAG ChromaDB, Ontologie OWL |
+| `GET` | `/dashboard/history` | Suivi de l'historique d'inférence, répétition et ré-entraînements par période |
+| `GET` | `/history.html` | Interface Web visuelle de suivi du modèle |
 
 ### Feedback
 
